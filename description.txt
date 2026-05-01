@@ -10,6 +10,7 @@ Types of buildings:
 2. Crafting machine: Automates the crafting of various resources.
 3. Furnace: Smelts raw ores into ingots to be used in future crafting.
 4. Enemy lair: Randomly spawned across the world, this building will spawn enemies based on a cooldown timer.
+5. Turret: Automatically targets and attacks incoming enemies.
 
 Logistics and Engine Mechanics:
 1. Conveyor logic will be implemented to move resources between different machines.
