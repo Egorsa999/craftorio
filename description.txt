@@ -1,0 +1,23 @@
+The world grid will consist of different types of cells:
+1. Default cell
+2. Ore cell
+3. Water cell (optional)
+
+The player will have an inventory to store resources. Chests will also be implemented.
+
+Types of buildings:
+1. Mining drill: Placed on a 3x3 grid area, it will collect all ores from "ore cells" within its range.
+2. Crafting machine: Automates the crafting of various resources.
+3. Furnace: Smelts raw ores into ingots to be used in future crafting.
+4. Enemy lair: Randomly spawned across the world, this building will spawn enemies based on a cooldown timer.
+
+Logistics and Engine Mechanics:
+1. Conveyor logic will be implemented to move resources between different machines.
+2. Conveyor throughput will be 1 item per second.
+3. The player will have a gun to protect their base; ammunition for the gun must be crafted by the player.
+4. The world grid will be generated using procedural generation.
+
+Optional Features:
+1. Add tiers and upgrade modules for buildings.
+2. Add dual-lane conveyors and higher-tier conveyors with better throughput.
+3. Add an electricity system for powering machines.
