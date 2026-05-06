@@ -1,32 +1,37 @@
 package io.github.craftorio;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.Gdx;
+import io.github.craftorio.controller.InputController;
+import io.github.craftorio.model.World;
+import io.github.craftorio.view.GameRenderer;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class MainGame extends ApplicationAdapter {
-    private SpriteBatch batch;
-    private Texture image;
+    private GameRenderer renderer;
+    private InputController controller;
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        image = new Texture("libgdx.png");
+        // Initialize our architecture (strictly in this order)
+        World world = new World();
+        controller = new InputController(world);
+        renderer = new GameRenderer(world);
     }
 
     @Override
     public void render() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        batch.draw(image, 140, 210);
-        batch.end();
+        // Get the time passed since the last frame (for smooth movement on any PC)
+        float delta = Gdx.graphics.getDeltaTime();
+
+        // 1. The Controller processes input and updates the Model
+        controller.update(delta);
+
+        // 2. The View renders the updated Model
+        renderer.render();
     }
 
     @Override
     public void dispose() {
-        batch.dispose();
-        image.dispose();
+        renderer.dispose();
     }
 }
