@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.craftorio.model.Cell;
 import io.github.craftorio.model.Player;
 import com.badlogic.gdx.graphics.Color;
+import io.github.craftorio.model.WorldMap;
 
 import java.awt.*;
 
@@ -26,8 +28,12 @@ public class PlayerCamera {
     private final ShapeRenderer shapeRenderer;
 
     Player player;
-    public PlayerCamera(Player player){
+    WorldMap worldMap;
+    public PlayerCamera(Player player, WorldMap worldMap){
         this.player = player;
+        this.worldMap = worldMap;
+
+
         this.camera = new OrthographicCamera();
         this.viewport = new ExtendViewport(MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT, camera);
         this.shapeRenderer = new ShapeRenderer();
@@ -45,16 +51,23 @@ public class PlayerCamera {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.SLATE);
-        shapeRenderer.rect(
-            camera.position.x - (camera.viewportWidth * camera.zoom) / 2f,
-            camera.position.y - (camera.viewportHeight * camera.zoom) / 2f,
-            camera.viewportWidth * camera.zoom,
-            camera.viewportHeight * camera.zoom
-        );
+        for (int i = 0; i < worldMap.getHeight(); i++){
+            for (int j = 0; j < worldMap.getWidth(); j++){
 
-        shapeRenderer.setColor(Color.GREEN);
-        shapeRenderer.rect(2, 2, 1, 1);
+                switch (worldMap.getCell(i, j).getResourseType()){
+                    case NONE:
+                        shapeRenderer.setColor(Color.SLATE);
+                        break;
+                    case IRON:
+                        shapeRenderer.setColor(Color.BLUE);
+                        break;
+                    case COPPER:
+                        shapeRenderer.setColor(Color.RED);
+                        break;
+                }
+                shapeRenderer.rect(i, j, 1, 1);
+            }
+        }
 
         float playerSize = 1f;
 
