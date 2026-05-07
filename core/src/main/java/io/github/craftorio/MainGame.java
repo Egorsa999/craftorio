@@ -18,9 +18,11 @@ public class MainGame extends ApplicationAdapter {
 
     @Override
     public void create() {
-        Player player = new Player();
-        controller = new InputController(player);
+
         worldMap = new WorldMap(worldWidth, worldHeight);
+
+        Player player = new Player(worldMap);
+        controller = new InputController(player);
         playerCamera = new PlayerCamera(player, worldMap);
 
     }

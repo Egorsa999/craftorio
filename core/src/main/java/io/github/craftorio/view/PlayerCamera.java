@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.craftorio.model.Cell;
@@ -42,8 +43,20 @@ public class PlayerCamera {
     }
 
     public void render(){
+
         camera.position.x = player.playerX;
         camera.position.y = player.playerY;
+
+        float halfViewportWidth = (viewport.getWorldWidth() * camera.zoom) / 2f;
+        float halfViewportHeight = (viewport.getWorldHeight() * camera.zoom) / 2f;
+
+        camera.position.x = MathUtils.clamp(camera.position.x, halfViewportWidth,
+            worldMap.getWidth() - halfViewportWidth);
+
+        camera.position.y = MathUtils.clamp(camera.position.y, halfViewportHeight,
+            worldMap.getHeight() - halfViewportHeight);
+
+
 
         camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -68,6 +81,7 @@ public class PlayerCamera {
                 shapeRenderer.rect(i, j, 1, 1);
             }
         }
+
 
         float playerSize = 1f;
 
