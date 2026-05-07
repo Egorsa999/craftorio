@@ -33,7 +33,7 @@ public class WorldMap {
     }
 
     private void checkBound(int row, int col) {
-        if (row < 0 || col < 0 || row >= height || col >= height) {
+        if (row < 0 || col < 0 || row >= height || col >= width) {
             throw new IndexOutOfBoundsException();
         }
     }
