@@ -2,14 +2,14 @@ package io.github.craftorio.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import io.github.craftorio.model.World;
+import io.github.craftorio.model.Player;
 
 public class InputController {
-    private final World world;
+    private final Player player;
 
     // The controller needs a reference to the Model to control it
-    public InputController(World world) {
-        this.world = world;
+    public InputController(Player player) {
+        this.player = player;
     }
 
     public void update(float delta) {
@@ -24,7 +24,7 @@ public class InputController {
 
         // Pass the command to the Model
         if (dx != 0 || dy != 0) {
-            world.updatePosition(delta, dx, dy);
+            player.updatePosition(delta, dx, dy);
         }
     }
 }
