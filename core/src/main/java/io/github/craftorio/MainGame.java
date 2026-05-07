@@ -3,19 +3,18 @@ package io.github.craftorio;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import io.github.craftorio.controller.InputController;
-import io.github.craftorio.model.World;
-import io.github.craftorio.view.GameRenderer;
+import io.github.craftorio.model.Player;
+import io.github.craftorio.view.PlayerCamera;
 
 public class MainGame extends ApplicationAdapter {
-    private GameRenderer renderer;
+    private PlayerCamera playerCamera;
     private InputController controller;
 
     @Override
     public void create() {
-        // Initialize our architecture (strictly in this order)
-        World world = new World();
-        controller = new InputController(world);
-        renderer = new GameRenderer(world);
+        Player player = new Player();
+        controller = new InputController(player);
+        playerCamera = new PlayerCamera(player);
     }
 
     @Override
@@ -27,11 +26,16 @@ public class MainGame extends ApplicationAdapter {
         controller.update(delta);
 
         // 2. The View renders the updated Model
-        renderer.render();
+        playerCamera.render();
+    }
+
+    @Override
+    public void resize(int width, int height){
+        playerCamera.resize(width, height);
     }
 
     @Override
     public void dispose() {
-        renderer.dispose();
+        playerCamera.dispose();
     }
 }

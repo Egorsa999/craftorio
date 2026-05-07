@@ -5,7 +5,7 @@ public class Cell {
 
     private final int row;
     private final int col;
-    private final resourceType resourceType;
+    private resourceType resourceType;
 
     public Cell(int row, int col, resourceType resourceType) {
         this.row = row;
@@ -23,5 +23,9 @@ public class Cell {
 
     public resourceType getResourseType() {
         return this.resourceType;
+    }
+
+    public void update(resourceType resourseType) {
+        this.resourceType = resourseType;
     }
 }
