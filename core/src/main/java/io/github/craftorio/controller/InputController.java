@@ -3,18 +3,23 @@ package io.github.craftorio.controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import io.github.craftorio.model.Player;
+import io.github.craftorio.view.PlayerCamera;
 
 public class InputController {
     private final Player player;
+    private final PlayerCamera camera;
 
     // The controller needs a reference to the Model to control it
-    public InputController(Player player) {
+    public InputController(Player player, PlayerCamera camera) {
         this.player = player;
+        this.camera = camera;
     }
 
     public void update(float delta) {
         float dx = 0;
         float dy = 0;
+
+        float dZoom = 0;
 
         // Read WASD or arrow key presses
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) dx = -1;
@@ -22,9 +27,16 @@ public class InputController {
         if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) dy = 1;
         if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) dy = -1;
 
+        if (Gdx.input.isKeyPressed(Input.Keys.MINUS)) dZoom = 1;
+        if (Gdx.input.isKeyPressed(Input.Keys.PLUS) || Gdx.input.isKeyPressed(Input.Keys.EQUALS)) dZoom = -1;
+
         // Pass the command to the Model
         if (dx != 0 || dy != 0) {
             player.updatePosition(delta, dx, dy);
+        }
+
+        if (dZoom != 0) {
+            camera.addZoom(dZoom * delta * 2.0f);
         }
     }
 }

@@ -1,73 +1,83 @@
 package io.github.craftorio.view;
 
-
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.craftorio.model.Cell;
 import io.github.craftorio.model.Player;
-import com.badlogic.gdx.graphics.Color;
 import io.github.craftorio.model.WorldMap;
 
-import java.awt.*;
-
 public class PlayerCamera {
-    private Viewport viewport;
-    private OrthographicCamera camera;
+    private final Viewport viewport;
+    private final OrthographicCamera camera;
+    private final ShapeRenderer shapeRenderer;
+
+    private final Player player;
+    private final WorldMap worldMap;
 
     private final float MIN_WIDTH = 32;
     private final float MIN_HEIGHT = 18;
-
     private final float MAX_WIDTH = 48;
     private final float MAX_HEIGHT = 27;
+    private final float PLAYER_SIZE = 1f;
 
-
-    private final ShapeRenderer shapeRenderer;
-
-    Player player;
-    WorldMap worldMap;
-    public PlayerCamera(Player player, WorldMap worldMap){
+    public PlayerCamera(Player player, WorldMap worldMap) {
         this.player = player;
         this.worldMap = worldMap;
-
 
         this.camera = new OrthographicCamera();
         this.viewport = new ExtendViewport(MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT, camera);
         this.shapeRenderer = new ShapeRenderer();
 
-        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1); // Gray
+        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
     }
 
-    public void render(){
+    public void render() {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        updateCameraPosition();
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        drawVisibleMap();
+        drawPlayer();
+
+        shapeRenderer.end();
+    }
+
+    private void updateCameraPosition() {
         camera.position.x = player.playerX;
         camera.position.y = player.playerY;
 
-        float halfViewportWidth = (viewport.getWorldWidth() * camera.zoom) / 2f;
-        float halfViewportHeight = (viewport.getWorldHeight() * camera.zoom) / 2f;
+        float visibleWidth = camera.viewportWidth * camera.zoom;
+        float visibleHeight = camera.viewportHeight * camera.zoom;
+        float halfWidth = visibleWidth / 2f;
+        float halfHeight = visibleHeight / 2f;
 
-        camera.position.x = MathUtils.clamp(camera.position.x, halfViewportWidth,
-            worldMap.getWidth() - halfViewportWidth);
-
-        camera.position.y = MathUtils.clamp(camera.position.y, halfViewportHeight,
-            worldMap.getHeight() - halfViewportHeight);
-
-
+        camera.position.x = MathUtils.clamp(camera.position.x, halfWidth, worldMap.getWidth() - halfWidth);
+        camera.position.y = MathUtils.clamp(camera.position.y, halfHeight, worldMap.getHeight() - halfHeight);
 
         camera.update();
-        shapeRenderer.setProjectionMatrix(camera.combined);
+    }
 
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    private void drawVisibleMap() {
+        float visibleWidth = camera.viewportWidth * camera.zoom;
+        float visibleHeight = camera.viewportHeight * camera.zoom;
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (int i = 0; i < worldMap.getHeight(); i++){
-            for (int j = 0; j < worldMap.getWidth(); j++){
+        int startX = (int) Math.max(0, (camera.position.x - visibleWidth / 2f) - 1);
+        int endX = (int) Math.min(worldMap.getWidth(), (camera.position.x + visibleWidth / 2f) + 1);
 
-                switch (worldMap.getCell(i, j).getResourseType()){
+        int startY = (int) Math.max(0, (camera.position.y - visibleHeight / 2f) - 1);
+        int endY = (int) Math.min(worldMap.getHeight(), (camera.position.y + visibleHeight / 2f) + 1);
+
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                switch (worldMap.getCell(x, y).getResourseType()) {
                     case NONE:
                         shapeRenderer.setColor(Color.SLATE);
                         break;
@@ -78,23 +88,24 @@ public class PlayerCamera {
                         shapeRenderer.setColor(Color.BROWN);
                         break;
                 }
-                shapeRenderer.rect(i, j, 1, 1);
+                shapeRenderer.rect(x, y, 1, 1);
             }
         }
+    }
 
-
-        float playerSize = 1f;
-
+    private void drawPlayer() {
         shapeRenderer.setColor(Color.ORANGE);
-
         shapeRenderer.rect(
-            player.playerX - (playerSize / 2),
-            player.playerY - (playerSize / 2),
-            playerSize,
-            playerSize
+            player.playerX - (PLAYER_SIZE / 2),
+            player.playerY - (PLAYER_SIZE / 2),
+            PLAYER_SIZE,
+            PLAYER_SIZE
         );
+    }
 
-        shapeRenderer.end();
+    public void addZoom(float amount) {
+        camera.zoom += amount;
+        camera.zoom = MathUtils.clamp(camera.zoom, 0.2f, 2.5f);
     }
 
     public void resize(int width, int height) {
@@ -104,5 +115,4 @@ public class PlayerCamera {
     public void dispose() {
         shapeRenderer.dispose();
     }
-
 }

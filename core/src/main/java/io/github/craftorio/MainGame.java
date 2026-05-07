@@ -22,8 +22,9 @@ public class MainGame extends ApplicationAdapter {
         worldMap = new WorldMap(worldWidth, worldHeight);
 
         Player player = new Player(worldMap);
-        controller = new InputController(player);
         playerCamera = new PlayerCamera(player, worldMap);
+        controller = new InputController(player, playerCamera);
+
 
     }
 
