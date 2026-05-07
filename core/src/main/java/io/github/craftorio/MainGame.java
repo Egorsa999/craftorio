@@ -4,17 +4,25 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import io.github.craftorio.controller.InputController;
 import io.github.craftorio.model.Player;
+import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.view.PlayerCamera;
 
 public class MainGame extends ApplicationAdapter {
     private PlayerCamera playerCamera;
+    private WorldMap worldMap;
     private InputController controller;
+
+    private int worldWidth = 100;
+    private int worldHeight = 100;
+
 
     @Override
     public void create() {
         Player player = new Player();
         controller = new InputController(player);
-        playerCamera = new PlayerCamera(player);
+        worldMap = new WorldMap(worldWidth, worldHeight);
+        playerCamera = new PlayerCamera(player, worldMap);
+
     }
 
     @Override
