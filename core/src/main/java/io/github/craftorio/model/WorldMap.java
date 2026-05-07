@@ -1,6 +1,7 @@
 package io.github.craftorio.model;
 
 import com.badlogic.gdx.math.MathUtils;
+import io.github.craftorio.model.generator.MapGenerator;
 
 public class WorldMap {
     private final Cell[][] map;
@@ -14,14 +15,11 @@ public class WorldMap {
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                int rng = MathUtils.random(2);
-                Cell.resourceType cellType = null;
-                if (rng == 0) cellType = Cell.resourceType.NONE;
-                if (rng == 1) cellType = Cell.resourceType.IRON;
-                if (rng == 2) cellType = Cell.resourceType.COPPER;
-                map[i][j] = new Cell(i, j, cellType);
+                map[i][j] = new Cell(i, j, Cell.resourceType.NONE);
             }
         }
+
+        MapGenerator.generateMap(this);
     }
 
     public int getWidth() {
