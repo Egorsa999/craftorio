@@ -103,6 +103,11 @@ public class PlayerCamera {
         );
     }
 
+    public void addZoom(float amount) {
+        camera.zoom += amount;
+        camera.zoom = MathUtils.clamp(camera.zoom, 0.2f, 2.5f);
+    }
+
     public void resize(int width, int height) {
         viewport.update(width, height, true);
     }
