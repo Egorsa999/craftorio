@@ -11,7 +11,7 @@ public abstract class Building {
     private final int width;
     private final int height;
 
-    public Building(WorldMap worldMap, int row, int col, int width, int height) {
+    public Building(WorldMap worldMap, int col, int row, int width, int height) {
         this.worldMap = worldMap;
         this.row = row;
         this.col = col;

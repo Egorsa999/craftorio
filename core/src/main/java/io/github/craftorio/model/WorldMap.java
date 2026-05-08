@@ -23,17 +23,17 @@ public class WorldMap {
 
         MapGenerator.generateMap(this);
         placeBuilding(new Belt(this, 50, 50, Direction.UP));
-        placeBuilding(new Belt(this, 51, 50, Direction.UP));
-        placeBuilding(new Belt(this, 52, 50, Direction.UP));
-        placeBuilding(new Belt(this, 53, 50, Direction.UP));
+        placeBuilding(new Belt(this, 50, 51, Direction.UP));
+        placeBuilding(new Belt(this, 50, 52, Direction.UP));
+        placeBuilding(new Belt(this, 50, 53, Direction.UP));
 
         Belt belt = (Belt) map[50][50].getOccupiedBuilding();
-        belt.acceptItem(1, 0);
-
-        placeBuilding(new Belt(this, 50, 52, Direction.DOWN));
-        placeBuilding(new Belt(this, 51, 52, Direction.DOWN));
-        placeBuilding(new Belt(this, 52, 52, Direction.DOWN));
-        placeBuilding(new Belt(this, 53, 52, Direction.DOWN));
+        belt.acceptItem(3, 0.9f);
+        belt.acceptItem(2, 0.5f);
+        belt.acceptItem(1, 0.0f);
+        belt = (Belt) map[51][50].getOccupiedBuilding();
+        belt.acceptItem(1, 0.9f);
+        belt.acceptItem(1, 0.0f);
     }
 
     public int getWidth() {
