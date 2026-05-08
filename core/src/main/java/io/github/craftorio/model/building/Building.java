@@ -15,7 +15,7 @@ public abstract class Building {
         this.height = height;
     }
 
-    public abstract void update();
+    public abstract void update(float delta);
 
     public int getRow() {
         return this.row;
