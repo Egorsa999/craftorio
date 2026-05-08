@@ -13,6 +13,7 @@ public class Belt extends Building {
 
     @Override
     public void update(float delta) {
+        System.out.println("Belt on col = " + this.getCol() + "; row = " + this.getRow() + "; animationOffset = " + this.getAnimationOffset());
         animationOffset += speed * delta;
         if (animationOffset >= 1.0f) {
             animationOffset -= 1.0f;

@@ -14,7 +14,9 @@ public class MainGame extends ApplicationAdapter {
 
     private int worldWidth = 100;
     private int worldHeight = 100;
-
+    // constants for 60TPS(Tick Per Second)
+    private static final float TIME_STEP = 1.0f / 60.0f;
+    private float accumulator = 0f;
 
     @Override
     public void create() {
@@ -33,10 +35,14 @@ public class MainGame extends ApplicationAdapter {
         // Get the time passed since the last frame (for smooth movement on any PC)
         float delta = Gdx.graphics.getDeltaTime();
 
-        // 1. The Controller processes input and updates the Model
-        controller.update(delta);
+        accumulator += delta;
 
-        // 2. The View renders the updated Model
+        while (accumulator >= TIME_STEP) {
+            controller.update(delta);
+            worldMap.update(delta);
+            accumulator -= TIME_STEP;
+        }
+
         playerCamera.render();
     }
 
