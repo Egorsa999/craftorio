@@ -27,10 +27,10 @@ public class WorldMap {
         placeBuilding(new Belt(52, 50, Direction.UP));
         placeBuilding(new Belt(53, 50, Direction.UP));
 
-        placeBuilding(new Belt(50, 51, Direction.DOWN));
-        placeBuilding(new Belt(51, 51, Direction.DOWN));
-        placeBuilding(new Belt(52, 51, Direction.DOWN));
-        placeBuilding(new Belt(53, 51, Direction.DOWN));
+        placeBuilding(new Belt(50, 52, Direction.DOWN));
+        placeBuilding(new Belt(51, 52, Direction.DOWN));
+        placeBuilding(new Belt(52, 52, Direction.DOWN));
+        placeBuilding(new Belt(53, 52, Direction.DOWN));
     }
 
     public int getWidth() {

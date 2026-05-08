@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.craftorio.model.Player;
 import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.building.Belt;
+import io.github.craftorio.view.renderer.BeltRenderer;
 
 public class PlayerCamera {
     private final Viewport viewport;
@@ -89,6 +91,11 @@ public class PlayerCamera {
                         break;
                 }
                 shapeRenderer.rect(x, y, 1, 1);
+                if (worldMap.getCell(x, y).getOccupiedBuilding() != null) {
+                    if ((worldMap.getCell(x, y).getOccupiedBuilding() instanceof Belt belt)) {
+                        BeltRenderer.draw(shapeRenderer, belt, Belt.getAnimationOffset());
+                    }
+                }
             }
         }
     }

@@ -21,7 +21,7 @@ public class Belt extends Building {
         // TODO update item progression
     }
 
-    public float getAnimationOffset() {
-        return this.animationOffset;
+    public static float getAnimationOffset() {
+        return animationOffset;
     }
 }
