@@ -3,6 +3,7 @@ package io.github.craftorio.model.generator;
 import com.badlogic.gdx.math.MathUtils;
 import io.github.craftorio.model.WorldMap;
 
+
 public class MapGenerator {
     static public void generateMap(WorldMap worldMap) {
         int width = worldMap.getWidth();
@@ -17,12 +18,12 @@ public class MapGenerator {
             for (int c = 0; c < width; c++) {
                 float noise = calculateNoise(c * frequency, r * frequency, seed);
 
-                Cell.resourceType type = Cell.resourceType.NONE;
+                ResourceType type = ResourceType.NONE;
 
                 if (noise > threshold) {
-                    type = Cell.resourceType.IRON;
+                    type = ResourceType.IRON;
                 } else if (noise < -threshold) {
-                    type = Cell.resourceType.COPPER;
+                    type = ResourceType.COPPER;
                 }
 
                 worldMap.getCell(c, r).updateResourceType(type);

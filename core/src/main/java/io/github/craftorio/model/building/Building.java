@@ -11,16 +11,19 @@ public abstract class Building {
     protected final BuildingRegistry registry;
     // bottom-left corner coordinates
     public Point anchor;
+    public Direction direction;
     // size of object
     private final int width;
     private final int height;
     private final List<Point> occupiedTiles;
 
-    public Building(BuildingRegistry registry, Point anchor, int width, int height) {
+
+    public Building(BuildingRegistry registry, Point anchor, int width, int height, Direction direction) {
         this.registry = registry;
         this.anchor = anchor;
         this.width = width;
         this.height = height;
+        this.direction = direction;
 
         occupiedTiles = new ArrayList<>();
         for (int x = 0; x < width; x++) {

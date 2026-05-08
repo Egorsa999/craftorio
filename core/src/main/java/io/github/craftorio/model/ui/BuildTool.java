@@ -1,4 +1,4 @@
-package io.github.craftorio.model;
+package io.github.craftorio.model.ui;
 
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
@@ -8,11 +8,11 @@ import java.awt.Point;
 public class BuildTool {
     private BuildingType selectedType = null;
     private Direction currentRotation = Direction.UP;
-    private Point hoverPosition = new Point(0, 0);
+    private final Point hoverPosition = new Point(0, 0);
 
     public void selectBuilding(BuildingType type) {
         this.selectedType = type;
-        this.currentRotation = Direction.UP; // Сбрасываем поворот
+        this.currentRotation = Direction.UP;
     }
 
     public void clearSelection() {
