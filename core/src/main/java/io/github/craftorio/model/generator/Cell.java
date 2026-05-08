@@ -1,4 +1,4 @@
-package io.github.craftorio.model;
+package io.github.craftorio.model.generator;
 
 import io.github.craftorio.model.building.Building;
 

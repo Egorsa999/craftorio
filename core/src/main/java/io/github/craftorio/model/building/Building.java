@@ -14,22 +14,24 @@ public abstract class Building {
     // size of object
     private final int width;
     private final int height;
+    private final List<Point> occupiedTiles;
 
     public Building(BuildingRegistry registry, Point anchor, int width, int height) {
         this.registry = registry;
         this.anchor = anchor;
         this.width = width;
         this.height = height;
+
+        occupiedTiles = new ArrayList<>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                occupiedTiles.add(new Point(anchor.x + x, anchor.y + y));
+            }
+        }
     }
 
     public List<Point> getOccupiedTiles() {
-        List<Point> tiles = new ArrayList<>();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                tiles.add(new Point(anchor.x + x, anchor.y + y));
-            }
-        }
-        return tiles;
+        return occupiedTiles;
     }
 
     public abstract void update();

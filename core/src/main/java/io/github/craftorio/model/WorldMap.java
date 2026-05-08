@@ -3,7 +3,12 @@ package io.github.craftorio.model;
 import io.github.craftorio.model.building.Belt;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.generator.Cell;
 import io.github.craftorio.model.generator.MapGenerator;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorldMap {
     private final Cell[][] map;
@@ -79,6 +84,19 @@ public class WorldMap {
                 }
             }
         }
+    }
+
+    public List<Cell.resourceType> getResources (List<Point> tiles){
+        List<Cell.resourceType> resources = new ArrayList<>();
+        for (Point tile : tiles){
+            if (getCell(tile.x, tile.y).getResourceType() == Cell.resourceType.COPPER){
+                resources.add(Cell.resourceType.COPPER);
+            }
+            if (getCell(tile.x, tile.y).getResourceType() == Cell.resourceType.IRON){
+                resources.add(Cell.resourceType.IRON);
+            }
+        }
+        return resources;
     }
 
     public void update(float delta) {

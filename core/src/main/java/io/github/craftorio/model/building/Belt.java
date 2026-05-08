@@ -1,6 +1,6 @@
 package io.github.craftorio.model.building;
 
-import io.github.craftorio.model.Cell;
+import io.github.craftorio.model.generator.Cell;
 import io.github.craftorio.model.WorldMap;
 
 import java.util.ArrayList;

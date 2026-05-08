@@ -1,7 +1,6 @@
 package io.github.craftorio.model.generator;
 
 import com.badlogic.gdx.math.MathUtils;
-import io.github.craftorio.model.Cell;
 import io.github.craftorio.model.WorldMap;
 
 public class MapGenerator {
