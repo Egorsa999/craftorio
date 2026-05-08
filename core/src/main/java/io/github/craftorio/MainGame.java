@@ -38,8 +38,8 @@ public class MainGame extends ApplicationAdapter {
         accumulator += delta;
 
         while (accumulator >= TIME_STEP) {
-            controller.update(delta);
-            worldMap.update(delta);
+            controller.update(TIME_STEP);
+            worldMap.update(TIME_STEP);
             accumulator -= TIME_STEP;
         }
 
