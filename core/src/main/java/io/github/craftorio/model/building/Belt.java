@@ -1,24 +1,25 @@
 package io.github.craftorio.model.building;
 
+import io.github.craftorio.model.BuildingRegistry;
+import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.generator.Cell;
 import io.github.craftorio.model.WorldMap;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class Belt extends Building {
-    public Direction direction;
-
-    private static final float speed = 1.0f;
+    private static final float speed = 1f / 60f;
     private static final float ItemSize = 0.3f;
     private static float animationOffset = 0.0f;
 
     // TODO replace by RingBuffer
-    private ArrayList<Integer> itemId;
+    private ArrayList<ItemType> itemId;
     private ArrayList<Float> itemProgress;
 
-    public Belt(WorldMap worldMap, int col, int row, Direction direction) {
-        super(worldMap, col, row, 1, 1);
+    public Belt(BuildingRegistry registry, Point anchor, Direction direction) {
+        super(registry, anchor, BuildingType.BELT.getWidth(), BuildingType.BELT.getHeight(), direction);
         this.direction = direction;
         this.itemId = new ArrayList<>();
         this.itemProgress = new ArrayList<>();
@@ -30,8 +31,8 @@ public class Belt extends Building {
     }
 
     private Belt getNextBelt() {
-        int nextCol = getCol();
-        int nextRow = getRow();
+        int nextCol = getX();
+        int nextRow = getY();
 
         switch (direction) {
             case RIGHT: nextCol++; break;
@@ -41,8 +42,8 @@ public class Belt extends Building {
         }
 
         try {
-            Cell nextCell = worldMap.getCell(nextCol, nextRow);
-            if (nextCell != null && nextCell.getOccupiedBuilding() instanceof Belt nextBelt) {
+            Building nextBuilding = registry.getBuildingAt(new Point(nextCol, nextRow));
+            if (nextBuilding instanceof Belt nextBelt) {
                 return nextBelt;
             }
             return null;
@@ -52,12 +53,11 @@ public class Belt extends Building {
     }
 
     @Override
-    public void update(float delta) {
-        float moveDistance = speed * delta;
-        if (!itemId.isEmpty()) System.out.println("Items for belt on col: " + getCol() + "; row: " + getRow() + ";");
+    public void update() {
+        if (!itemId.isEmpty()) System.out.println("Items for belt on col: " + getX() + "; row: " + getY() + ";");
         for (int i = 0; i < itemId.size(); i++) {
             System.out.println("         id: " + itemId.get(i) + "; progress: " + itemProgress.get(i) + ";");
-            float progressWill = itemProgress.get(i) + moveDistance;
+            float progressWill = itemProgress.get(i) + speed;
             if (i > 0) {
                 float progressPrev = itemProgress.get(i - 1);
                 if (progressPrev - ItemSize < progressWill) {
@@ -83,7 +83,7 @@ public class Belt extends Building {
         }
     }
 
-    private boolean tryTransferItem(Integer id, float progress) {
+    private boolean tryTransferItem(ItemType id, float progress) {
         Belt nextBelt = getNextBelt();
         if (nextBelt != null) {
             return nextBelt.acceptItem(id, progress);
@@ -91,7 +91,7 @@ public class Belt extends Building {
         return false;
     }
 
-    public boolean acceptItem(Integer id, float progress) {
+    public boolean acceptItem(ItemType id, float progress) {
         if (!itemId.isEmpty()) {
             if (itemProgress.getLast() < ItemSize) {
                 return false;
@@ -106,7 +106,7 @@ public class Belt extends Building {
         return animationOffset;
     }
 
-    public ArrayList<Integer> getItemId() {
+    public ArrayList<ItemType> getItemId() {
         return this.itemId;
     }
 

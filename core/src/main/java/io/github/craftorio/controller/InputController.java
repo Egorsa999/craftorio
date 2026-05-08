@@ -37,6 +37,7 @@ public class InputController extends InputAdapter {
     }
 
     public void update(float delta) {
+        mouseMoved(lastMouseX, lastMouseY); // mega crutch
         float dx = 0;
         float dy = 0;
         float dZoom = 0;
@@ -62,6 +63,11 @@ public class InputController extends InputAdapter {
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.NUM_1) {
             buildTool.selectBuilding(BuildingType.MINER);
+            mouseMoved(lastMouseX, lastMouseY);
+            return true;
+        }
+        if (keycode == Input.Keys.NUM_2) {
+            buildTool.selectBuilding(BuildingType.BELT);
             mouseMoved(lastMouseX, lastMouseY);
             return true;
         }

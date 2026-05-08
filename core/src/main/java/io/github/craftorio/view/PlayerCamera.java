@@ -12,11 +12,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.Player;
 import io.github.craftorio.model.WorldMap;
-import io.github.craftorio.model.building.Building;
-import io.github.craftorio.model.building.BuildingFactory;
-import io.github.craftorio.model.building.BuildingType;
-import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.ui.BuildTool;
+import io.github.craftorio.view.renderer.BeltRenderer;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -87,10 +85,13 @@ public class PlayerCamera {
         float height = factory.calculateOccupiedHeight(type, rotation);
 
         //System.out.println(pos.x + " " + pos.y);
+        if (type == BuildingType.BELT) {
+            BeltRenderer.draw(shapeRenderer, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y),  rotation), Belt.getAnimationOffset(), 0.5f);
+            return;
+        }
         shapeRenderer.setColor(0.2f, 0.8f, 0.2f, 0.5f);
 
         shapeRenderer.rect(pos.x, pos.y, width, height);
-
     }
 
     public Vector3 unproject(Vector3 screenCoords) {
@@ -162,6 +163,10 @@ public class PlayerCamera {
             for (int y = startY; y < endY; y++) {
                 Building current = registry.getBuildingAt(new Point(x, y));
                 if (current == null || used.contains(current))continue;
+                if (current instanceof Belt currentBelt) {
+                    BeltRenderer.draw(shapeRenderer, currentBelt, Belt.getAnimationOffset(), 1f);
+                    continue;
+                }
                 used.add(current);
                 shapeRenderer.setColor(Color.GREEN);
                 shapeRenderer.rect(current.getX(), current.getY(), current.getWidth(), current.getHeight());

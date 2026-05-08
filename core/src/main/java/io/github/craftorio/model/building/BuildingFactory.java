@@ -54,7 +54,7 @@ public class BuildingFactory {
         return switch (type) {
             case MINER -> new Miner(registry, worldMap, anchor,
                 width, height, rotation);
-            //case BELT -> new Belt(registry, anchor, rotation);
+            case BELT -> new Belt(registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }

@@ -3,10 +3,7 @@ package io.github.craftorio;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import io.github.craftorio.controller.InputController;
-import io.github.craftorio.model.BuildingManager;
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.Player;
-import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.*;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.ui.BuildTool;
@@ -20,6 +17,7 @@ public class MainGame extends ApplicationAdapter {
     private BuildTool buildTool;
     private BuildingFactory factory;
     private BuildingRegistry buildingRegistry;
+    private SimulationEngine simulationEngine;
 
     private int worldWidth = 100;
     private int worldHeight = 100;
@@ -33,6 +31,7 @@ public class MainGame extends ApplicationAdapter {
 
         worldMap = new WorldMap(worldWidth, worldHeight);
         buildingRegistry = new BuildingRegistry();
+        simulationEngine = new SimulationEngine(buildingRegistry);
         factory = new BuildingFactory(worldMap, buildingRegistry);
         Player player = new Player(worldMap);
         playerCamera = new PlayerCamera(player, worldMap, buildTool, factory, buildingRegistry);
@@ -50,7 +49,7 @@ public class MainGame extends ApplicationAdapter {
 
         while (accumulator >= TIME_STEP) {
             controller.update(TIME_STEP);
-            //worldMap.update(TIME_STEP);
+            simulationEngine.update();
             accumulator -= TIME_STEP;
         }
 
