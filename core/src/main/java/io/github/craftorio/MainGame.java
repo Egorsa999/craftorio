@@ -3,14 +3,23 @@ package io.github.craftorio;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import io.github.craftorio.controller.InputController;
+import io.github.craftorio.model.BuildingManager;
+import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.Player;
 import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.building.BuildingFactory;
+import io.github.craftorio.model.building.BuildingType;
+import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.PlayerCamera;
 
 public class MainGame extends ApplicationAdapter {
     private PlayerCamera playerCamera;
     private WorldMap worldMap;
     private InputController controller;
+    private BuildingManager buildingManager;
+    private BuildTool buildTool;
+    private BuildingFactory factory;
+    private BuildingRegistry buildingRegistry;
 
     private int worldWidth = 100;
     private int worldHeight = 100;
@@ -20,14 +29,16 @@ public class MainGame extends ApplicationAdapter {
 
     @Override
     public void create() {
+        buildTool = new BuildTool();
 
         worldMap = new WorldMap(worldWidth, worldHeight);
-
+        buildingRegistry = new BuildingRegistry();
+        factory = new BuildingFactory(worldMap, buildingRegistry);
         Player player = new Player(worldMap);
-        playerCamera = new PlayerCamera(player, worldMap);
-        controller = new InputController(player, playerCamera);
-
-
+        playerCamera = new PlayerCamera(player, worldMap, buildTool, factory, buildingRegistry);
+        buildingManager = new BuildingManager(buildingRegistry, worldMap, factory);
+        controller = new InputController(player, playerCamera, buildTool, buildingManager, factory);
+        Gdx.input.setInputProcessor(controller);
     }
 
     @Override
@@ -39,7 +50,7 @@ public class MainGame extends ApplicationAdapter {
 
         while (accumulator >= TIME_STEP) {
             controller.update(TIME_STEP);
-            worldMap.update(TIME_STEP);
+            //worldMap.update(TIME_STEP);
             accumulator -= TIME_STEP;
         }
 

@@ -24,5 +24,7 @@ public class Player {
 
         playerX = MathUtils.clamp(playerX, 0.5f, worldMap.getWidth() - 0.5f);
         playerY = MathUtils.clamp(playerY, 0.5f, worldMap.getHeight() - 0.5f);
+
+        //System.out.println(playerX + " " + playerY);
     }
 }
