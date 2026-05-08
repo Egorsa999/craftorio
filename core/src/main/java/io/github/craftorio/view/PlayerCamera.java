@@ -77,7 +77,7 @@ public class PlayerCamera {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                switch (worldMap.getCell(x, y).getResourseType()) {
+                switch (worldMap.getCell(x, y).getResourceType()) {
                     case NONE:
                         shapeRenderer.setColor(Color.SLATE);
                         break;

@@ -21,7 +21,7 @@ public class Cell {
         return this.col;
     }
 
-    public resourceType getResourseType() {
+    public resourceType getResourceType() {
         return this.resourceType;
     }
 
