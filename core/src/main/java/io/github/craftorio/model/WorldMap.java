@@ -15,14 +15,22 @@ public class WorldMap {
         this.height = height;
         map = new Cell[height][width];
 
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                map[i][j] = new Cell(i, j, Cell.resourceType.NONE);
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                map[row][col] = new Cell(col, row, Cell.resourceType.NONE);
             }
         }
 
         MapGenerator.generateMap(this);
         placeBuilding(new Belt(50, 50, Direction.UP));
+        placeBuilding(new Belt(51, 50, Direction.UP));
+        placeBuilding(new Belt(52, 50, Direction.UP));
+        placeBuilding(new Belt(53, 50, Direction.UP));
+
+        placeBuilding(new Belt(50, 51, Direction.DOWN));
+        placeBuilding(new Belt(51, 51, Direction.DOWN));
+        placeBuilding(new Belt(52, 51, Direction.DOWN));
+        placeBuilding(new Belt(53, 51, Direction.DOWN));
     }
 
     public int getWidth() {
@@ -33,19 +41,19 @@ public class WorldMap {
         return this.height;
     }
 
-    private void checkBound(int row, int col) {
+    private void checkBound(int col, int row) {
         if (row < 0 || col < 0 || row >= height || col >= width) {
             throw new IndexOutOfBoundsException();
         }
     }
 
-    public Cell getCell(int row, int col) {
-        checkBound(row, col);
+    public Cell getCell(int col, int row) {
+        checkBound(col, row);
         return map[row][col];
     }
 
-    public void setCell(int row, int col, Cell.resourceType resourseType) {
-        checkBound(row, col);
+    public void setCell(int col, int row, Cell.resourceType resourseType) {
+        checkBound(col, row);
         map[row][col].updateResourceType(resourseType);
     }
 
@@ -55,7 +63,7 @@ public class WorldMap {
         boolean canPlace = true;
         for (int i = row; i < row + building.getHeight(); i++) {
             for (int j = col; j < col + building.getWidth(); j++) {
-                checkBound(i, j);
+                checkBound(j, i);
                 if (map[i][j].isOccupied()) {
                     canPlace = false;
                 }

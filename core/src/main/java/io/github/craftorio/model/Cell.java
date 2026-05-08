@@ -11,7 +11,7 @@ public class Cell {
     private boolean isOccupied;
     private Building occupiedBuilding;
 
-    public Cell(int row, int col, resourceType resourceType) {
+    public Cell(int col, int row, resourceType resourceType) {
         this.row = row;
         this.col = col;
         this.resourceType = resourceType;

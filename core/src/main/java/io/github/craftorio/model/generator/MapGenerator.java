@@ -26,7 +26,7 @@ public class MapGenerator {
                     type = Cell.resourceType.COPPER;
                 }
 
-                worldMap.getCell(r, c).updateResourceType(type);
+                worldMap.getCell(c, r).updateResourceType(type);
             }
         }
     }
