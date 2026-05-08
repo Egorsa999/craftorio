@@ -1,32 +1,45 @@
 package io.github.craftorio.model.building;
 
-import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.BuildingRegistry;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public abstract class Building {
-    protected final WorldMap worldMap;
+    protected final BuildingRegistry registry;
     // bottom-left corner coordinates
-    private final int row;
-    private final int col;
+    public Point anchor;
     // size of object
     private final int width;
     private final int height;
 
-    public Building(WorldMap worldMap, int row, int col, int width, int height) {
-        this.worldMap = worldMap;
-        this.row = row;
-        this.col = col;
+    public Building(BuildingRegistry registry, Point anchor, int width, int height) {
+        this.registry = registry;
+        this.anchor = anchor;
         this.width = width;
         this.height = height;
     }
 
-    public abstract void update(float delta);
-
-    public int getRow() {
-        return this.row;
+    public List<Point> getOccupiedTiles() {
+        List<Point> tiles = new ArrayList<>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                tiles.add(new Point(anchor.x + x, anchor.y + y));
+            }
+        }
+        return tiles;
     }
 
-    public int getCol() {
-        return this.col;
+    public abstract void update();
+
+    public int getX() {
+        return this.anchor.x;
+    }
+
+    public int getY() {
+        return this.anchor.y;
     }
 
     public int getHeight() {
