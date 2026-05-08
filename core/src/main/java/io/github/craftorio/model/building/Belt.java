@@ -3,21 +3,22 @@ package io.github.craftorio.model.building;
 public class Belt extends Building {
     public Direction direction;
 
-    private final float speed = 1.0f;
-    private float animationOffset = 0.0f;
+    private static final float speed = 1.0f;
+    private static float animationOffset = 0.0f;
 
     public Belt(int row, int col, Direction direction) {
         super(row, col, 1, 1);
         this.direction = direction;
     }
 
+    public static void updateAnimationOffset(float delta) {
+        animationOffset += speed * delta;
+        animationOffset %= 1;
+    }
+
     @Override
     public void update(float delta) {
-        System.out.println("Belt on col = " + this.getCol() + "; row = " + this.getRow() + "; animationOffset = " + this.getAnimationOffset());
-        animationOffset += speed * delta;
-        if (animationOffset >= 1.0f) {
-            animationOffset -= 1.0f;
-        }
+        // TODO update item progression
     }
 
     public float getAnimationOffset() {

@@ -79,6 +79,7 @@ public class WorldMap {
     }
 
     public void update(float delta) {
+        Belt.updateAnimationOffset(delta);
         // TODO optimise update for each building not in stupid way like this
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
