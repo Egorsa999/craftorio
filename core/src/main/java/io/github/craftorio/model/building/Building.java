@@ -1,6 +1,9 @@
 package io.github.craftorio.model.building;
 
+import io.github.craftorio.model.WorldMap;
+
 public abstract class Building {
+    protected final WorldMap worldMap;
     // bottom-left corner coordinates
     private final int row;
     private final int col;
@@ -8,7 +11,8 @@ public abstract class Building {
     private final int width;
     private final int height;
 
-    public Building(int row, int col, int width, int height) {
+    public Building(WorldMap worldMap, int row, int col, int width, int height) {
+        this.worldMap = worldMap;
         this.row = row;
         this.col = col;
         this.width = width;
