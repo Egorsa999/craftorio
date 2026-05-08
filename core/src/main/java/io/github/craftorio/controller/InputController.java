@@ -2,26 +2,45 @@ package io.github.craftorio.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import io.github.craftorio.model.Player;
+import io.github.craftorio.model.BuildingManager;
+import io.github.craftorio.model.building.BuildingFactory;
+import io.github.craftorio.model.building.BuildingType; // Замените на ваш импорт
+import io.github.craftorio.model.building.Direction; // Замените на ваш импорт
+import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.PlayerCamera;
 
-public class InputController {
+public class InputController extends InputAdapter {
     private final Player player;
     private final PlayerCamera camera;
+    private final BuildTool buildTool;
+    private final BuildingManager buildingManager;
+    private final BuildingFactory factory;
 
-    // The controller needs a reference to the Model to control it
-    public InputController(Player player, PlayerCamera camera) {
+    private final Vector3 tempCoords = new Vector3();
+
+    private static final float TILE_SIZE = 1f;
+
+    private int lastMouseX = 0;
+    private int lastMouseY = 0;
+
+    public InputController(Player player, PlayerCamera camera, BuildTool buildTool, BuildingManager buildingManager,
+                           BuildingFactory factory) {
         this.player = player;
         this.camera = camera;
+        this.buildTool = buildTool;
+        this.buildingManager = buildingManager;
+        this.factory = factory;
     }
 
     public void update(float delta) {
         float dx = 0;
         float dy = 0;
-
         float dZoom = 0;
 
-        // Read WASD or arrow key presses
         if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) dx = -1;
         if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) dx = 1;
         if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) dy = 1;
@@ -30,7 +49,6 @@ public class InputController {
         if (Gdx.input.isKeyPressed(Input.Keys.MINUS)) dZoom = 1;
         if (Gdx.input.isKeyPressed(Input.Keys.PLUS) || Gdx.input.isKeyPressed(Input.Keys.EQUALS)) dZoom = -1;
 
-        // Pass the command to the Model
         if (dx != 0 || dy != 0) {
             player.updatePosition(delta, dx, dy);
         }
@@ -39,4 +57,80 @@ public class InputController {
             camera.addZoom(dZoom * delta * 2.0f);
         }
     }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.NUM_1) {
+            buildTool.selectBuilding(BuildingType.MINER);
+            mouseMoved(lastMouseX, lastMouseY);
+            return true;
+        }
+        if (keycode == Input.Keys.ESCAPE) {
+            buildTool.clearSelection();
+            return true;
+        }
+
+        if (keycode == Input.Keys.R) {
+            buildTool.rotateRight();
+            updateHoveredGrid();
+            return true;
+        }
+
+
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        lastMouseX = screenX;
+        lastMouseY = screenY;
+
+        if (buildTool.isActive()) {
+            updateHoveredGrid();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT && buildTool.isActive()) {
+            System.out.println(buildTool.getHoverPosition().x + " " + buildTool.getHoverPosition().y);
+            boolean success = buildingManager.tryPlaceBuilding(
+                buildTool.getSelectedType(),
+                buildTool.getHoverPosition(),
+                buildTool.getCurrentRotation()
+            );
+
+            if (success) {
+                System.out.println("Building placed!");
+            } else {
+                System.out.println("Cannot build here!");
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    private void updateHoveredGrid() {
+        if (!buildTool.isActive()) return;
+
+        tempCoords.set(lastMouseX, lastMouseY, 0);
+        camera.unproject(tempCoords);
+
+        BuildingType type = buildTool.getSelectedType();
+        Direction rotation = buildTool.getCurrentRotation();
+
+        int width = factory.calculateOccupiedWidth(type, rotation);
+        int height = factory.calculateOccupiedHeight(type, rotation);
+
+        float halfWidth = (width * TILE_SIZE) / 2f;
+        float halfHeight = (height * TILE_SIZE) / 2f;
+
+        int gridX = MathUtils.round((tempCoords.x - halfWidth) / TILE_SIZE);
+        int gridY = MathUtils.round((tempCoords.y - halfHeight) / TILE_SIZE);
+
+        buildTool.updateHoverPosition(gridX, gridY);
+    }
+
 }

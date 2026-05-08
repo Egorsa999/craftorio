@@ -1,17 +1,16 @@
-package io.github.craftorio.model;
+package io.github.craftorio.model.generator;
 
 import io.github.craftorio.model.building.Building;
 
 public class Cell {
-    public enum resourceType {NONE, IRON, COPPER};
 
     private final int row;
     private final int col;
-    private resourceType resourceType;
+    private ResourceType resourceType;
     private boolean isOccupied;
     private Building occupiedBuilding;
 
-    public Cell(int col, int row, resourceType resourceType) {
+    public Cell(int col, int row, ResourceType resourceType) {
         this.row = row;
         this.col = col;
         this.resourceType = resourceType;
@@ -27,7 +26,7 @@ public class Cell {
         return this.col;
     }
 
-    public resourceType getResourceType() {
+    public ResourceType getResourceType() {
         return this.resourceType;
     }
 
@@ -49,7 +48,7 @@ public class Cell {
         return this.occupiedBuilding;
     }
 
-    public void updateResourceType(resourceType resourceType) {
+    public void updateResourceType(ResourceType resourceType) {
         this.resourceType = resourceType;
     }
 }
