@@ -2,6 +2,7 @@ package io.github.craftorio.model;
 
 
 import com.badlogic.gdx.math.MathUtils;
+import io.github.craftorio.GameConfig;
 
 public class Player {
 
@@ -10,7 +11,7 @@ public class Player {
     public float playerX;
     public float playerY;
 
-    public static final float speed = 8;
+    public static final float speed = GameConfig.PLAYER_SPEED;
 
     public Player(WorldMap worldMap){
         this.worldMap = worldMap;

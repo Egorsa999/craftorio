@@ -27,18 +27,6 @@ public class WorldMap {
         }
 
         MapGenerator.generateMap(this);
-//        placeBuilding(new Belt(this, 50, 50, Direction.UP));
-//        placeBuilding(new Belt(this, 51, 50, Direction.UP));
-//        placeBuilding(new Belt(this, 52, 50, Direction.UP));
-//        placeBuilding(new Belt(this, 53, 50, Direction.UP));
-//
-//        Belt belt = (Belt) map[50][50].getOccupiedBuilding();
-//        belt.acceptItem(1, 0);
-//
-//        placeBuilding(new Belt(this, 50, 52, Direction.DOWN));
-//        placeBuilding(new Belt(this, 51, 52, Direction.DOWN));
-//        placeBuilding(new Belt(this, 52, 52, Direction.DOWN));
-//        placeBuilding(new Belt(this, 53, 52, Direction.DOWN));
     }
 
     public int getWidth() {
@@ -65,27 +53,6 @@ public class WorldMap {
         map[row][col].updateResourceType(resourseType);
     }
 
-//    public void placeBuilding(Building building) {
-//        int row = building.getRow();
-//        int col = building.getCol();
-//        boolean canPlace = true;
-//        for (int i = row; i < row + building.getHeight(); i++) {
-//            for (int j = col; j < col + building.getWidth(); j++) {
-//                checkBound(j, i);
-//                if (map[i][j].isOccupied()) {
-//                    canPlace = false;
-//                }
-//            }
-//        }
-//        if (canPlace) {
-//            for (int i = row; i < row + building.getHeight(); i++) {
-//                for (int j = col; j < col + building.getWidth(); j++) {
-//                    map[i][j].updateOccupiedBuilding(building);
-//                }
-//            }
-//        }
-//    }
-
     public List<ResourceType> getResources (List<Point> tiles){
         List<ResourceType> resources = new ArrayList<>();
         for (Point tile : tiles){
@@ -98,18 +65,4 @@ public class WorldMap {
         }
         return resources;
     }
-
-//    public void update(float delta) {
-//        Belt.updateAnimationOffset(delta);
-//        // TODO optimise update for each building not in stupid way like this
-//        for (int i = 0; i < height; i++) {
-//            for (int j = 0; j < width; j++) {
-//                if (map[i][j].isOccupied()
-//                    && i == map[i][j].getOccupiedBuilding().getRow()
-//                    && j == map[i][j].getOccupiedBuilding().getCol()) {
-//                    map[i][j].getOccupiedBuilding().update(delta);
-//                }
-//            }
-//        }
-//    }
 }

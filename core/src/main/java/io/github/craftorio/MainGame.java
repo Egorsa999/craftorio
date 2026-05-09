@@ -19,10 +19,10 @@ public class MainGame extends ApplicationAdapter {
     private BuildingRegistry buildingRegistry;
     private SimulationEngine simulationEngine;
 
-    private int worldWidth = 100;
-    private int worldHeight = 100;
+    private int worldWidth = GameConfig.WORLD_SIZE_WIDTH;
+    private int worldHeight = GameConfig.WORLD_SIZE_HEIGHT;
     // constants for 60TPS(Tick Per Second)
-    private static final float TIME_STEP = 1.0f / 60.0f;
+    private static final float TIME_STEP = GameConfig.TICK_TIME;
     private float accumulator = 0f;
 
     @Override
