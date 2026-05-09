@@ -125,19 +125,36 @@ public class PlayerCamera {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                switch (worldMap.getCell(x, y).getResourceType()) {
-                    case NONE:
-                        shapeRenderer.setColor(Color.SLATE);
+                switch (worldMap.getCell(x, y).getTerrainType()) {
+                    case GRASS:
+                        shapeRenderer.setColor(Color.GREEN);
                         break;
-                    case IRON:
+                    case SAND:
+                        shapeRenderer.setColor(Color.YELLOW);
+                        break;
+                    case WATER:
+                        shapeRenderer.setColor(Color.BLUE);
+                        break;
+                    case WALL:
                         shapeRenderer.setColor(Color.DARK_GRAY);
-                        break;
-                    case COPPER:
-                        shapeRenderer.setColor(Color.BROWN);
                         break;
                 }
 
                 shapeRenderer.rect(x, y, 1, 1);
+
+                switch (worldMap.getCell(x, y).getResourceType()) {
+                    case COPPER:
+                        shapeRenderer.setColor(Color.BROWN);
+                        break;
+                    case IRON:
+                        shapeRenderer.setColor(Color.SLATE);
+                        break;
+                    case COAL:
+                        shapeRenderer.setColor(Color.BLACK);
+                        break;
+                }
+                shapeRenderer.rect(x + 0.2f, y + 0.2f, 0.8f, 0.8f);
+
 //                if (worldMap.getCell(x, y).getOccupiedBuilding() != null) {
 //                    if ((worldMap.getCell(x, y).getOccupiedBuilding() instanceof Belt belt)) {
 //                        BeltRenderer.draw(shapeRenderer, belt, Belt.getAnimationOffset());
@@ -186,7 +203,7 @@ public class PlayerCamera {
 
     public void addZoom(float amount) {
         camera.zoom += amount;
-        camera.zoom = MathUtils.clamp(camera.zoom, 0.2f, 2.5f);
+        camera.zoom = MathUtils.clamp(camera.zoom, 0.2f, 100f);
     }
 
     public void resize(int width, int height) {

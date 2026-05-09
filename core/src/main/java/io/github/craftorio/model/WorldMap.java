@@ -5,6 +5,7 @@ import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.generator.Cell;
 import io.github.craftorio.model.generator.MapGenerator;
 import io.github.craftorio.model.generator.ResourceType;
+import io.github.craftorio.model.generator.TerrainType;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class WorldMap {
 
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
-                map[row][col] = new Cell(col, row, ResourceType.NONE);
+                map[row][col] = new Cell(col, row, ResourceType.NONE, TerrainType.GRASS);
             }
         }
 
@@ -48,9 +49,14 @@ public class WorldMap {
         return map[row][col];
     }
 
-    public void setCell(int col, int row, ResourceType resourseType) {
+    public void setResourceType(int col, int row, ResourceType resourceType) {
         checkBound(col, row);
-        map[row][col].updateResourceType(resourseType);
+        map[row][col].updateResourceType(resourceType);
+    }
+
+    public void setTerrainType(int col, int row, TerrainType terrainType) {
+        checkBound(col, row);
+        map[row][col].updateTerrainType(terrainType);
     }
 
     public List<ResourceType> getResources (List<Point> tiles){

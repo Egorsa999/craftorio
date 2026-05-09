@@ -7,15 +7,17 @@ public class Cell {
     private final int row;
     private final int col;
     private ResourceType resourceType;
+    private TerrainType terrainType;
     private boolean isOccupied;
     private Building occupiedBuilding;
 
-    public Cell(int col, int row, ResourceType resourceType) {
+    public Cell(int col, int row, ResourceType resourceType, TerrainType terrainType) {
         this.row = row;
         this.col = col;
         this.resourceType = resourceType;
         this.occupiedBuilding = null;
         this.isOccupied = false;
+        this.terrainType = terrainType;
     }
 
     public int getRow() {
@@ -28,6 +30,9 @@ public class Cell {
 
     public ResourceType getResourceType() {
         return this.resourceType;
+    }
+    public TerrainType getTerrainType() {
+        return this.terrainType;
     }
 
     public boolean isOccupied() {
@@ -50,5 +55,9 @@ public class Cell {
 
     public void updateResourceType(ResourceType resourceType) {
         this.resourceType = resourceType;
+    }
+
+    public void updateTerrainType(TerrainType terrainType) {
+        this.terrainType = terrainType;
     }
 }
