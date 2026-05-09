@@ -22,7 +22,6 @@ public class InputController extends InputAdapter {
 
     private final Vector3 tempCoords = new Vector3();
 
-    private static final float TILE_SIZE = 1f;
 
     private int lastMouseX = 0;
     private int lastMouseY = 0;
@@ -130,11 +129,11 @@ public class InputController extends InputAdapter {
         int width = factory.calculateOccupiedWidth(type, rotation);
         int height = factory.calculateOccupiedHeight(type, rotation);
 
-        float halfWidth = (width * TILE_SIZE) / 2f;
-        float halfHeight = (height * TILE_SIZE) / 2f;
+        float halfWidth = (width) / 2f;
+        float halfHeight = (height) / 2f;
 
-        int gridX = MathUtils.round((tempCoords.x - halfWidth) / TILE_SIZE);
-        int gridY = MathUtils.round((tempCoords.y - halfHeight) / TILE_SIZE);
+        int gridX = MathUtils.round((tempCoords.x - halfWidth));
+        int gridY = MathUtils.round((tempCoords.y - halfHeight));
 
         buildTool.updateHoverPosition(gridX, gridY);
     }

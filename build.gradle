@@ -8,7 +8,6 @@ buildscript {
   }
   dependencies {
 
-
   }
 }
 
@@ -67,3 +66,10 @@ subprojects {
 }
 
 eclipse.project.name = 'craftorio' + '-parent'
+
+project(":lwjgl3") {
+  dependencies {
+    implementation project(":core")
+    implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+  }
+}
