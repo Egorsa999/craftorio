@@ -8,4 +8,8 @@ public enum Direction {
         int nextIndex = (this.ordinal() + 1) % values.length;
         return values[nextIndex];
     }
+
+    float to_degrees() {
+
+    }
 }
