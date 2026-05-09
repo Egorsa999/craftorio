@@ -1,4 +1,4 @@
-package io.github.craftorio.view;
+package io.github.craftorio.view.camera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -17,7 +17,7 @@ import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.ui.BuildTool;
-import io.github.craftorio.view.renderer.BeltRenderer;
+import io.github.craftorio.view.item_renderer.BeltRenderer;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -50,6 +50,7 @@ public class PlayerCamera {
     private final float MAX_HEIGHT = 27;
     private final float PLAYER_SIZE = 1f;
 
+
     public PlayerCamera(Player player, WorldMap worldMap, BuildTool buildTool, BuildingFactory factory,
                         BuildingRegistry registry) {
         tileTextures = new HashMap<>();
@@ -57,7 +58,7 @@ public class PlayerCamera {
 
         this.atlas = new TextureAtlas(Gdx.files.internal("atlas/main_atlas.atlas"));
         this.playerTexture = atlas.findRegion("player");
-        this.whitePixel = atlas.findRegion("white_pixel");
+        this.whitePixel = atlas.findRegion("blank");
         this.conveyorTexture = atlas.findRegion("conveyor");
         tileTextures.put(ResourceType.IRON, atlas.findRegion("iron"));
         tileTextures.put(ResourceType.COPPER, atlas.findRegion("copper"));
@@ -112,8 +113,6 @@ public class PlayerCamera {
         batch.setColor(0.2f, 0.8f, 0.2f, 0.5f);
         batch.draw(whitePixel, pos.x, pos.y, width, height);
         batch.setColor(Color.WHITE);
-
-        shapeRenderer.rect(pos.x, pos.y, width, height);
     }
 
     public Vector3 unproject(Vector3 screenCoords) {
