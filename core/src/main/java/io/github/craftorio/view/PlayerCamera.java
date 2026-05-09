@@ -213,6 +213,15 @@ public class PlayerCamera {
                 batch.setColor(Color.WHITE);
             }
         }
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                Building current = registry.getBuildingAt(new Point(x, y));
+                if (current == null || used.contains(current))continue;
+                if (current instanceof Belt currentBelt) {
+                    BeltRenderer.drawItems(shapeRenderer, currentBelt, Belt.getAnimationOffset(), 1f);
+                }
+            }
+        }
     }
 
     private void drawPlayer() {
