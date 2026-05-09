@@ -65,6 +65,11 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
         return false;
     }
 
+    @Override
+    public boolean canReceiveFromMe(Point point) {
+        return true;
+    }
+
     private Building getNextBuilding() {
         int nextCol = getX();
         int nextRow = getY() - 1;
@@ -80,5 +85,10 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
             return building.receiveItem(type, progress);
         }
         return false;
+    }
+
+    @Override
+    public boolean canThroughInMe(Point point) {
+        return true;
     }
 }

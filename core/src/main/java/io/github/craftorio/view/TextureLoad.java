@@ -29,7 +29,7 @@ public class TextureLoad {
         resourceSprites.put(ResourceType.IRON, load("iron"));
         resourceSprites.put(ResourceType.COPPER, load("copper"));
         resourceSprites.put(ResourceType.NONE, load("ground"));
-        buildingSprites.put(BuildingType.BELT, load("conveyor"));
+        buildingSprites.put(BuildingType.MINER, load("blank"));
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));
         conveyorTextures.put(0, load("conveyor0"));

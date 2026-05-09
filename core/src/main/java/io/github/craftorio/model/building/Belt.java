@@ -132,14 +132,9 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
         Building r = getRightBuilding();
         Building d = getDownBuilding();
 
-        Direction du = getRelativeDir(direction, (u == null ? direction : u.direction));
-        Direction dl = getRelativeDir(direction, (l == null ? direction : l.direction));
-        Direction dr = getRelativeDir(direction, (r == null ? direction : r.direction));
-        Direction dd = getRelativeDir(direction, (d == null ? direction : d.direction));
-
         // type 3
-        if (u instanceof ReceiveItem && d instanceof ThroughItem && l instanceof ThroughItem && r instanceof ThroughItem) {
-            if (du == Direction.UP && dl == Direction.RIGHT && dr == Direction.LEFT && dd == Direction.UP) {
+        if (d instanceof ThroughItem dd && l instanceof ThroughItem ll && r instanceof ThroughItem rr) {
+            if (ll.canThroughInMe(new Point(getX(), getY())) && rr.canThroughInMe(new Point(getX(), getY())) && dd.canThroughInMe(new Point(getX(), getY()))) {
                 beltType = 3;
                 rotation = dirToInt(direction) * 90f;
                 reflection = 1f;
@@ -148,17 +143,17 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
         }
 
         // type 2
-        if (d instanceof ThroughItem) {
-            if (r instanceof ThroughItem) {
-                if (dr == Direction.LEFT) {
+        if (d instanceof ThroughItem dd && dd.canThroughInMe(new Point(getX(), getY()))) {
+            if (r instanceof ThroughItem rr) {
+                if (rr.canThroughInMe(new Point(getX(), getY()))) {
                     beltType = 2;
                     rotation = dirToInt(direction) * 90f;
                     reflection = 1f;
                     return;
                 }
             }
-            if (l instanceof ThroughItem) {
-                if (dl == Direction.RIGHT) {
+            if (l instanceof ThroughItem ll) {
+                if (ll.canThroughInMe(new Point(getX(), getY()))) {
                     beltType = 2;
                     rotation = dirToInt(direction) * 90f;
                     reflection = -1f;
@@ -168,8 +163,8 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
         }
 
         // type 4
-        if (l instanceof ThroughItem && r instanceof ThroughItem) {
-            if (dl == Direction.RIGHT && dr == Direction.LEFT) {
+        if (l instanceof ThroughItem ll && r instanceof ThroughItem rr) {
+            if (ll.canThroughInMe(new Point(getX(), getY())) && rr.canThroughInMe(new Point(getX(), getY()))) {
                 beltType = 4;
                 rotation = dirToInt(direction) * 90f;
                 reflection = 1f;
@@ -178,16 +173,16 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
         }
 
         // type 1
-        if (l instanceof ReceiveItem) {
-            if (dl == Direction.RIGHT) {
+        if (l instanceof ThroughItem ll) {
+            if (ll.canThroughInMe(new Point(getX(), getY()))) {
                 beltType = 1;
                 rotation = dirToInt(direction) * 90f;
                 reflection = 1f;
                 return;
             }
         }
-        if (r instanceof ReceiveItem) {
-            if (dr == Direction.LEFT) {
+        if (r instanceof ThroughItem rr) {
+            if (rr.canThroughInMe(new Point(getX(), getY()))) {
                 beltType = 1;
                 rotation = dirToInt(direction) * 90f;
                 reflection = -1f;
@@ -256,8 +251,28 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
     public boolean throughItem(ItemType id, Float progress) { return false; }
 
     @Override
+    public boolean canThroughInMe(Point point) {
+        int nextCol = getX();
+        int nextRow = getY();
+
+        switch (direction) {
+            case RIGHT: nextCol++; break;
+            case LEFT:  nextCol--; break;
+            case UP:    nextRow++; break;
+            case DOWN:  nextRow--; break;
+        }
+
+        return (new Point(nextCol, nextRow)).equals(point);
+    }
+
+    @Override
     public boolean receiveItem(ItemType id, Float progress) {
         return receiveItem(id, progress, this.direction);
+    }
+
+    @Override
+    public boolean canReceiveFromMe(Point point) {
+        return true;
     }
 
     public boolean receiveItem(ItemType id, Float progress, Direction from) {
