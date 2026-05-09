@@ -2,6 +2,7 @@ package io.github.craftorio.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import io.github.craftorio.MainGame;
 
 /** Launches the desktop (LWJGL3) application. */
@@ -12,6 +13,16 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
+        boolean debug = true;
+
+        if (debug) {
+            System.out.println("Packing textures...");
+            TexturePacker.Settings settings = new TexturePacker.Settings();
+            settings.maxWidth = 2048;
+            settings.maxHeight = 2048;
+
+            TexturePacker.process(settings, "assets/raw", "assets/atlas", "main_atlas");
+        }
         return new Lwjgl3Application(new MainGame(), getDefaultConfiguration());
     }
 
