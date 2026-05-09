@@ -18,8 +18,8 @@ public class Lwjgl3Launcher {
         if (debug) {
             System.out.println("Packing textures...");
             TexturePacker.Settings settings = new TexturePacker.Settings();
-            settings.maxWidth = 2048;
-            settings.maxHeight = 2048;
+            settings.maxWidth = 4096;
+            settings.maxHeight = 4096;
 
             TexturePacker.process(settings, "assets/raw", "assets/atlas", "main_atlas");
         }

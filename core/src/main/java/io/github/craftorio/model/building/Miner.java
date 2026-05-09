@@ -22,7 +22,7 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
     private final int BASE_TICKS_PER_ITEM = 120;
 
     public Miner(BuildingRegistry registry, WorldMap worldMap, Point anchor, int width, int height, Direction direction) {
-        super(registry, anchor, width, height, direction);
+        super(registry, anchor, width, height, direction, BuildingType.MINER);
         this.worldMap = worldMap;
 
         List<ResourceType> occupiedOres = worldMap.getResources(getOccupiedTiles());

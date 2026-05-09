@@ -16,14 +16,15 @@ public abstract class Building {
     private final int width;
     private final int height;
     private final List<Point> occupiedTiles;
+    public final BuildingType type;
 
-
-    public Building(BuildingRegistry registry, Point anchor, int width, int height, Direction direction) {
+    public Building(BuildingRegistry registry, Point anchor, int width, int height, Direction direction, BuildingType type) {
         this.registry = registry;
         this.anchor = anchor;
         this.width = width;
         this.height = height;
         this.direction = direction;
+        this.type = type;
 
         occupiedTiles = new ArrayList<>();
         for (int x = 0; x < width; x++) {
