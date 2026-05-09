@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.craftorio.model.BuildingRegistry;
+import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.Player;
 import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.building.*;
@@ -34,10 +35,11 @@ public class PlayerCamera {
     private final BuildingRegistry registry;
     private final TextureAtlas atlas;
     private final Map<ResourceType, TextureRegion> tileTextures;
+    private final Map<ItemType, TextureRegion> tileItems;
 
     private final TextureRegion playerTexture;
     private final TextureRegion whitePixel;
-    private final TextureRegion conveyorTexture;
+    private final HashMap<Integer, TextureRegion> conveyorTextures;
 
     private final Player player;
     private final WorldMap worldMap;
@@ -57,10 +59,22 @@ public class PlayerCamera {
         this.atlas = new TextureAtlas(Gdx.files.internal("atlas/main_atlas.atlas"));
         this.playerTexture = atlas.findRegion("player");
         this.whitePixel = atlas.findRegion("blank");
-        this.conveyorTexture = atlas.findRegion("conveyor");
+
+        this.conveyorTextures = new HashMap<>();
+        conveyorTextures.put(-1, whitePixel);
+        conveyorTextures.put(0, atlas.findRegion("conveyor0"));
+        conveyorTextures.put(1, atlas.findRegion("conveyor1"));
+        conveyorTextures.put(2, atlas.findRegion("conveyor2"));
+        conveyorTextures.put(3, atlas.findRegion("conveyor3"));
+        conveyorTextures.put(4, atlas.findRegion("conveyor4"));
+
         tileTextures.put(ResourceType.IRON, atlas.findRegion("iron"));
         tileTextures.put(ResourceType.COPPER, atlas.findRegion("copper"));
         tileTextures.put(ResourceType.NONE, atlas.findRegion("ground"));
+
+        this.tileItems = new HashMap<>();
+        tileItems.put(ItemType.COPPER_ORE, atlas.findRegion("item-copper"));
+        tileItems.put(ItemType.IRON_ORE, atlas.findRegion("item-iron"));
 
 
         this.player = player;
@@ -109,7 +123,7 @@ public class PlayerCamera {
 
         //System.out.println(pos.x + " " + pos.y);
         if (type == BuildingType.BELT) {
-            BeltRenderer.drawBackground(batch, conveyorTexture, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), Belt.getAnimationOffset(), 0.5f);
+            BeltRenderer.drawBackground(batch, conveyorTextures, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), Belt.getAnimationOffset(), 0.5f);
             return;
         }
         batch.setColor(1f, 0f, 0f, 0.5f);
@@ -200,7 +214,7 @@ public class PlayerCamera {
                 Building current = registry.getBuildingAt(new Point(x, y));
                 if (current == null || used.contains(current))continue;
                 if (current instanceof Belt currentBelt) {
-                    BeltRenderer.drawBackground(batch, conveyorTexture, currentBelt, Belt.getAnimationOffset(), 1f);
+                    BeltRenderer.drawBackground(batch, conveyorTextures, currentBelt, Belt.getAnimationOffset(), 1f);
                     continue;
                 }
                 used.add(current);
@@ -215,7 +229,7 @@ public class PlayerCamera {
                 Building current = registry.getBuildingAt(new Point(x, y));
                 if (current == null || used.contains(current))continue;
                 if (current instanceof Belt currentBelt) {
-                    BeltRenderer.drawItems(batch, whitePixel, currentBelt, Belt.getAnimationOffset(), 1f);
+                    BeltRenderer.drawItems(batch, tileItems, currentBelt, Belt.getAnimationOffset(), 1f);
                 }
             }
         }

@@ -4,6 +4,7 @@ import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.ItemType;
 
+import javax.accessibility.Accessible;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -16,12 +17,22 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
     private ArrayList<Float> itemProgress;
     private ArrayList<Direction> itemFrom;
 
+    public int beltType;
+    public float rotation;
+    public float reflection;
+
     public Belt(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, BuildingType.BELT.getWidth(), BuildingType.BELT.getHeight(), direction);
         this.direction = direction;
         this.itemId = new ArrayList<>();
         this.itemProgress = new ArrayList<>();
         this.itemFrom = new ArrayList<>();
+
+        this.beltType = 0;
+        this.rotation = dirToInt(direction) * 90f;
+        this.reflection = 1f;
+
+        updateType();
     }
 
     public static void updateAnimationOffset(float delta) {
@@ -33,7 +44,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
         return animationOffset;
     }
 
-    private Building getNextBuilding() {
+    private Building getUpperBuilding() {
         int nextCol = getX();
         int nextRow = getY();
 
@@ -47,8 +58,152 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
         return registry.getBuildingAt(new Point(nextCol, nextRow));
     }
 
+    private Building getDownBuilding() {
+        int nextCol = getX();
+        int nextRow = getY();
+
+        switch (direction) {
+            case RIGHT: nextCol--; break;
+            case LEFT:  nextCol++; break;
+            case UP:    nextRow--; break;
+            case DOWN:  nextRow++; break;
+        }
+
+        return registry.getBuildingAt(new Point(nextCol, nextRow));
+    }
+
+    private Building getLeftBuilding() {
+        int nextCol = getX();
+        int nextRow = getY();
+
+        switch (direction) {
+            case RIGHT: nextRow++; break;
+            case LEFT:  nextRow--; break;
+            case UP:    nextCol--; break;
+            case DOWN:  nextCol++; break;
+        }
+
+        return registry.getBuildingAt(new Point(nextCol, nextRow));
+    }
+
+    private Building getRightBuilding() {
+        int nextCol = getX();
+        int nextRow = getY();
+
+        switch (direction) {
+            case RIGHT: nextRow--; break;
+            case LEFT:  nextRow++; break;
+            case UP:    nextCol++; break;
+            case DOWN:  nextCol--; break;
+        }
+
+        return registry.getBuildingAt(new Point(nextCol, nextRow));
+    }
+
+    private int dirToInt(Direction dir) {
+        switch (dir) {
+            case UP:    return 0;
+            case RIGHT: return 1;
+            case DOWN:  return 2;
+            case LEFT:  return 3;
+        }
+        return 0;
+    }
+
+    private Direction getRelativeDir(Direction myDir, Direction otherDir) {
+        int myAngle = dirToInt(myDir);
+        int otherAngle = dirToInt(otherDir);
+
+        int diff = (otherAngle - myAngle + 4) % 4;
+
+        switch (diff) {
+            case 0: return Direction.UP;
+            case 1: return Direction.RIGHT;
+            case 2: return Direction.DOWN;
+            case 3: return Direction.LEFT;
+        }
+        return Direction.UP;
+    }
+
+    private void updateType() {
+        System.out.println("TryUpdate");
+        Building u = getUpperBuilding();
+        Building l = getLeftBuilding();
+        Building r = getRightBuilding();
+        Building d = getDownBuilding();
+
+        Direction du = getRelativeDir(direction, (u == null ? direction : u.direction));
+        Direction dl = getRelativeDir(direction, (l == null ? direction : l.direction));
+        Direction dr = getRelativeDir(direction, (r == null ? direction : r.direction));
+        Direction dd = getRelativeDir(direction, (d == null ? direction : d.direction));
+
+        // type 3
+        if (u instanceof ReceiveItem && d instanceof ThroughItem && l instanceof ThroughItem && r instanceof ThroughItem) {
+            if (du == Direction.UP && dl == Direction.RIGHT && dr == Direction.LEFT && dd == Direction.UP) {
+                beltType = 3;
+                rotation = dirToInt(direction) * 90f;
+                reflection = 1f;
+                return;
+            }
+        }
+
+        // type 2
+        if (d instanceof ThroughItem) {
+            if (r instanceof ThroughItem) {
+                if (dr == Direction.LEFT) {
+                    beltType = 2;
+                    rotation = dirToInt(direction) * 90f;
+                    reflection = 1f;
+                    return;
+                }
+            }
+            if (l instanceof ThroughItem) {
+                if (dl == Direction.RIGHT) {
+                    beltType = 2;
+                    rotation = dirToInt(direction) * 90f;
+                    reflection = -1f;
+                    return;
+                }
+            }
+        }
+
+        // type 4
+        if (l instanceof ThroughItem && r instanceof ThroughItem) {
+            if (dl == Direction.RIGHT && dr == Direction.LEFT) {
+                beltType = 4;
+                rotation = dirToInt(direction) * 90f;
+                reflection = 1f;
+                return;
+            }
+        }
+
+        // type 1
+        if (l instanceof ReceiveItem) {
+            if (dl == Direction.RIGHT) {
+                beltType = 1;
+                rotation = dirToInt(direction) * 90f;
+                reflection = 1f;
+                return;
+            }
+        }
+        if (r instanceof ReceiveItem) {
+            if (dr == Direction.LEFT) {
+                beltType = 1;
+                rotation = dirToInt(direction) * 90f;
+                reflection = -1f;
+                return;
+            }
+        }
+
+        // type 0
+        beltType = 0;
+        rotation = dirToInt(direction) * 90f;
+        reflection = 1f;
+    }
+
     @Override
     public void update() {
+        updateType();
         for (int i = 0; i < itemId.size(); i++) {
             float progressWill = itemProgress.get(i) + speed;
 
@@ -58,7 +213,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
                     progressWill = progressPrev - ItemSize;
                 }
             } else {
-                Building nextBuilding = getNextBuilding();
+                Building nextBuilding = getUpperBuilding();
                 if (nextBuilding instanceof Belt nextBelt) {
                     if (!nextBelt.itemProgress.isEmpty()) {
                         float tailProgress = nextBelt.itemProgress.getLast();
@@ -88,7 +243,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
     }
 
     public boolean throughItem(int index, ItemType id, Float progress) {
-        Building nextBuilding = getNextBuilding();
+        Building nextBuilding = getUpperBuilding();
         if (nextBuilding instanceof Belt nextBelt) {
             return nextBelt.receiveItem(id, progress, this.direction);
         } else if (nextBuilding instanceof ReceiveItem building) {
