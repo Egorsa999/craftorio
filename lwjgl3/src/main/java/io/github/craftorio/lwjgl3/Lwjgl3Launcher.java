@@ -21,7 +21,7 @@ public class Lwjgl3Launcher {
             settings.maxWidth = 2048;
             settings.maxHeight = 2048;
 
-            TexturePacker.process(settings, "assets/raw", "atlas", "main_atlas");
+            TexturePacker.process(settings, "assets/raw", "assets/atlas", "main_atlas");
         }
         return new Lwjgl3Application(new MainGame(), getDefaultConfiguration());
     }
