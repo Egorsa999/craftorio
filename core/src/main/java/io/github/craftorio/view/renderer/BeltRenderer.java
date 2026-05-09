@@ -90,9 +90,5 @@ public class BeltRenderer {
 
             shapeRenderer.rect(drawX, drawY, ITEM_SIZE, ITEM_SIZE);
         }
-
-        batch.draw(conveyorTexture, x, y, 0.5f, 0.5f, 1f, 1f, 1f, 1f, rotation);
-
-        batch.setColor(Color.WHITE);
     }
 }

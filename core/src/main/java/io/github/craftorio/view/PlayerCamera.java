@@ -81,6 +81,12 @@ public class PlayerCamera {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         updateCameraPosition();
 
+        updateCameraPosition();
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
         batch.setProjectionMatrix(camera.combined);
         batch.enableBlending();
 
@@ -92,6 +98,8 @@ public class PlayerCamera {
         drawPlayer();
 
         batch.end();
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private void drawBuildPreview() {
@@ -106,7 +114,7 @@ public class PlayerCamera {
 
         //System.out.println(pos.x + " " + pos.y);
         if (type == BuildingType.BELT) {
-            BeltRenderer.draw(batch, conveyorTexture, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), Belt.getAnimationOffset(), 0.5f);
+            BeltRenderer.drawBackground(shapeRenderer, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), Belt.getAnimationOffset(), 0.5f);
             return;
         }
         batch.setColor(0.2f, 0.8f, 0.2f, 0.5f);
@@ -203,7 +211,7 @@ public class PlayerCamera {
                 Building current = registry.getBuildingAt(new Point(x, y));
                 if (current == null || used.contains(current))continue;
                 if (current instanceof Belt currentBelt) {
-                    BeltRenderer.draw(batch, conveyorTexture, currentBelt, Belt.getAnimationOffset(), 1f);
+                    BeltRenderer.drawBackground(shapeRenderer, currentBelt, Belt.getAnimationOffset(), 1f);
                     continue;
                 }
                 used.add(current);
@@ -248,5 +256,6 @@ public class PlayerCamera {
     public void dispose() {
         batch.dispose();
         atlas.dispose();
+        shapeRenderer.dispose();
     }
 }
