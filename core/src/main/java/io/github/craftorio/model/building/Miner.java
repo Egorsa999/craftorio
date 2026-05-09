@@ -37,6 +37,7 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
         if (!outputBuffer.isEmpty()) {
 //            System.out.println("TRY THROUGH " + outputBuffer.element());
             if (throughItem(outputBuffer.element(), 0.0f)) {
+                System.out.println("NEW ITEM");
                 outputBuffer.remove();
             }
         }
@@ -75,7 +76,7 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
     public boolean throughItem(ItemType type, Float progress) {
         Building nextBuilding = getNextBuilding();
         if (nextBuilding instanceof ReceiveItem building) {
-            System.out.println("try");
+//            System.out.println("try");
             return building.receiveItem(type, progress);
         }
         return false;

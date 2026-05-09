@@ -86,7 +86,7 @@ public class PlayerCamera {
 
         //System.out.println(pos.x + " " + pos.y);
         if (type == BuildingType.BELT) {
-            BeltRenderer.draw(shapeRenderer, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y),  rotation), Belt.getAnimationOffset(), 0.5f);
+            BeltRenderer.drawBackground(shapeRenderer, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y),  rotation), Belt.getAnimationOffset(), 0.5f);
             return;
         }
         shapeRenderer.setColor(0.2f, 0.8f, 0.2f, 0.5f);
@@ -164,12 +164,21 @@ public class PlayerCamera {
                 Building current = registry.getBuildingAt(new Point(x, y));
                 if (current == null || used.contains(current))continue;
                 if (current instanceof Belt currentBelt) {
-                    BeltRenderer.draw(shapeRenderer, currentBelt, Belt.getAnimationOffset(), 1f);
+                    BeltRenderer.drawBackground(shapeRenderer, currentBelt, Belt.getAnimationOffset(), 1f);
                     continue;
                 }
                 used.add(current);
                 shapeRenderer.setColor(Color.GREEN);
                 shapeRenderer.rect(current.getX(), current.getY(), current.getWidth(), current.getHeight());
+            }
+        }
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                Building current = registry.getBuildingAt(new Point(x, y));
+                if (current == null || used.contains(current))continue;
+                if (current instanceof Belt currentBelt) {
+                    BeltRenderer.drawItems(shapeRenderer, currentBelt, Belt.getAnimationOffset(), 1f);
+                }
             }
         }
     }
