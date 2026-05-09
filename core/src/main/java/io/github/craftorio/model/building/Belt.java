@@ -1,5 +1,6 @@
 package io.github.craftorio.model.building;
 
+import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.generator.Cell;
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class Belt extends Building {
-    private static final float speed = 1f / 60f;
+    // x * TICK_TIME = throughput is x item / per second
+    private static final float speed = 2f * GameConfig.TICK_TIME;
+
     private static final float ItemSize = 0.3f;
     private static float animationOffset = 0.0f;
 
