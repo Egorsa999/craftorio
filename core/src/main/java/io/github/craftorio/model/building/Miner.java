@@ -9,7 +9,7 @@ import io.github.craftorio.model.generator.ResourceType;
 import java.awt.Point;
 import java.util.*;
 
-public class Miner extends Building  {
+public class Miner extends Building implements ThroughItem, ReceiveItem {
 
     private final WorldMap worldMap;
 
@@ -34,6 +34,13 @@ public class Miner extends Building  {
 
     @Override
     public void update() {
+        if (!outputBuffer.isEmpty()) {
+//            System.out.println("TRY THROUGH " + outputBuffer.element());
+            if (throughItem(outputBuffer.element(), 0.0f)) {
+                System.out.println("NEW ITEM");
+                outputBuffer.remove();
+            }
+        }
         if (outputBuffer.size() >= MAX_BUFFER_SIZE) {
             return;
         }
@@ -44,14 +51,34 @@ public class Miner extends Building  {
             int currentProgress = oreProgress.get(type) + multiplier;
 
             float requiredTicks = BASE_TICKS_PER_ITEM * type.getMiningDifficulty();
-
             if (currentProgress >= requiredTicks) {
                 ItemType extracted = type.getDrop();
                 outputBuffer.add(extracted);
                 currentProgress = 0;
-
             }
             oreProgress.put(type, currentProgress);
         }
+    }
+
+    @Override
+    public boolean receiveItem(ItemType type, Float progress) {
+        return false;
+    }
+
+    private Building getNextBuilding() {
+        int nextCol = getX();
+        int nextRow = getY() - 1;
+
+        return registry.getBuildingAt(new Point(nextCol, nextRow));
+    }
+
+    @Override
+    public boolean throughItem(ItemType type, Float progress) {
+        Building nextBuilding = getNextBuilding();
+        if (nextBuilding instanceof ReceiveItem building) {
+//            System.out.println("try");
+            return building.receiveItem(type, progress);
+        }
+        return false;
     }
 }
