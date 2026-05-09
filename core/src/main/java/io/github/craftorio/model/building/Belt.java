@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class Belt extends Building {
+public class Belt extends Building implements ThroughItem, ReceiveItem {
     // x * TICK_TIME = throughput is x item / per second
     private static final float speed = 2f * GameConfig.TICK_TIME;
 
@@ -33,7 +33,7 @@ public class Belt extends Building {
         animationOffset %= 1;
     }
 
-    private Belt getNextBelt() {
+    private Building getNextBuilding() {
         int nextCol = getX();
         int nextRow = getY();
 
@@ -44,15 +44,7 @@ public class Belt extends Building {
             case DOWN:  nextRow--; break;
         }
 
-        try {
-            Building nextBuilding = registry.getBuildingAt(new Point(nextCol, nextRow));
-            if (nextBuilding instanceof Belt nextBelt) {
-                return nextBelt;
-            }
-            return null;
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+        return registry.getBuildingAt(new Point(nextCol, nextRow));
     }
 
     @Override
@@ -67,13 +59,15 @@ public class Belt extends Building {
                     progressWill = progressPrev - ItemSize;
                 }
             } else {
-                Belt nextBelt = getNextBelt();
-                if (nextBelt != null && !nextBelt.itemProgress.isEmpty() && progressWill + ItemSize - 1.0f > nextBelt.itemProgress.getLast()) {
-                    progressWill = 1.0f + nextBelt.itemProgress.getLast() - ItemSize;
+                Building nextBuilding = getNextBuilding();
+                if (nextBuilding instanceof Belt nextBelt) {
+                    if (!nextBelt.itemProgress.isEmpty() && progressWill + ItemSize - 1.0f > nextBelt.itemProgress.getLast()) {
+                        progressWill = 1.0f + nextBelt.itemProgress.getLast() - ItemSize;
+                    }
                 }
             }
             if (progressWill >= 1.0f) {
-                if (tryTransferItem(itemId.get(i), progressWill - 1.0f)) {
+                if (throughItem(itemId.get(i), progressWill - 1.0f)) {
                     itemId.remove(i);
                     itemProgress.remove(i);
                     i--;
@@ -86,20 +80,22 @@ public class Belt extends Building {
         }
     }
 
-    private boolean tryTransferItem(ItemType id, float progress) {
-        Belt nextBelt = getNextBelt();
-        if (nextBelt != null) {
-            return nextBelt.acceptItem(id, progress);
+    public boolean throughItem(ItemType id, Float progress) {
+        Building nextBuilding = getNextBuilding();
+        if (nextBuilding instanceof ReceiveItem building) {
+            return building.receiveItem(id, progress);
         }
         return false;
     }
 
-    public boolean acceptItem(ItemType id, float progress) {
+    public boolean receiveItem(ItemType id, Float progress) {
+        System.out.println("BELT TRY RECEIVE ITEM");
         if (!itemId.isEmpty()) {
             if (itemProgress.getLast() < ItemSize) {
                 return false;
             }
         }
+        System.out.println("BELT RECEIVED ITEM!!!");
         itemId.add(id);
         itemProgress.add(progress);
         return true;
