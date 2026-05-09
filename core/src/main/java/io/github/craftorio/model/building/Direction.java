@@ -9,7 +9,12 @@ public enum Direction {
         return values[nextIndex];
     }
 
-    float to_degrees() {
-
+    public float to_degrees() {
+        return switch (this) {
+            case UP -> 90f;
+            case RIGHT -> 0f;
+            case DOWN -> 270f;
+            case LEFT -> 180f;
+        };
     }
 }

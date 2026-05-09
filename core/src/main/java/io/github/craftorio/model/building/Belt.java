@@ -22,7 +22,7 @@ public class Belt extends Building {
     private ArrayList<Float> itemProgress;
 
     public Belt(BuildingRegistry registry, Point anchor, Direction direction) {
-        super(registry, anchor, BuildingType.BELT.getWidth(), BuildingType.BELT.getHeight(), direction);
+        super(registry, anchor, BuildingType.BELT.getWidth(), BuildingType.BELT.getHeight(), direction, BuildingType.BELT);
         this.direction = direction;
         this.itemId = new ArrayList<>();
         this.itemProgress = new ArrayList<>();

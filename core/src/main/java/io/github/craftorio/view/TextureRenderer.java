@@ -1,18 +1,15 @@
-package io.github.craftorio.view.camera;
+package io.github.craftorio.view;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import io.github.craftorio.model.building.Building;
-
-import static io.github.craftorio.model.building.Direction.*;
 
 public class TextureRenderer {
 
     public static void draw(SpriteBatch batch, GameSprite sprite, float x, float y, float width, float height, float rotation,
                             Color colorFilter, float statetime) {
         TextureRegion texture = sprite.getKeyFrame(statetime);
-        batch.setColor(colorFilter);
+        if(colorFilter != null) batch.setColor(colorFilter);
         float originX = width / 2f;
         float originY = height / 2f;
 

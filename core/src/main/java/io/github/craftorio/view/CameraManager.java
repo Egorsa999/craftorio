@@ -1,4 +1,4 @@
-package io.github.craftorio.view.camera;
+package io.github.craftorio.view;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;

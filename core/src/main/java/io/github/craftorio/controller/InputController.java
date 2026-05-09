@@ -11,11 +11,11 @@ import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType; // Замените на ваш импорт
 import io.github.craftorio.model.building.Direction; // Замените на ваш импорт
 import io.github.craftorio.model.ui.BuildTool;
-import io.github.craftorio.view.PlayerCamera;
+import io.github.craftorio.view.CameraManager;
 
 public class InputController extends InputAdapter {
     private final Player player;
-    private final PlayerCamera camera;
+    private final CameraManager camera;
     private final BuildTool buildTool;
     private final BuildingManager buildingManager;
     private final BuildingFactory factory;
@@ -26,7 +26,7 @@ public class InputController extends InputAdapter {
     private int lastMouseX = 0;
     private int lastMouseY = 0;
 
-    public InputController(Player player, PlayerCamera camera, BuildTool buildTool, BuildingManager buildingManager,
+    public InputController(Player player, CameraManager camera, BuildTool buildTool, BuildingManager buildingManager,
                            BuildingFactory factory) {
         this.player = player;
         this.camera = camera;

@@ -5,12 +5,13 @@ import com.badlogic.gdx.Gdx;
 import io.github.craftorio.controller.InputController;
 import io.github.craftorio.model.*;
 import io.github.craftorio.model.building.BuildingFactory;
-import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.ui.BuildTool;
-import io.github.craftorio.view.PlayerCamera;
+import io.github.craftorio.view.CameraManager;
+import io.github.craftorio.view.WorldRenderer;
 
 public class MainGame extends ApplicationAdapter {
-    private PlayerCamera playerCamera;
+    private CameraManager playerCamera;
+    private WorldRenderer WorldRender;
     private WorldMap worldMap;
     private InputController controller;
     private BuildingManager buildingManager;
@@ -34,7 +35,8 @@ public class MainGame extends ApplicationAdapter {
         simulationEngine = new SimulationEngine(buildingRegistry);
         factory = new BuildingFactory(worldMap, buildingRegistry);
         Player player = new Player(worldMap);
-        playerCamera = new PlayerCamera(player, worldMap, buildTool, factory, buildingRegistry);
+        playerCamera = new CameraManager(player, worldMap);
+        WorldRender = new WorldRenderer(playerCamera, player, worldMap, buildTool, factory, buildingRegistry);
         buildingManager = new BuildingManager(buildingRegistry, worldMap, factory);
         controller = new InputController(player, playerCamera, buildTool, buildingManager, factory);
         Gdx.input.setInputProcessor(controller);
@@ -53,7 +55,7 @@ public class MainGame extends ApplicationAdapter {
             accumulator -= TIME_STEP;
         }
 
-        playerCamera.render();
+        WorldRender.render();
     }
 
     @Override
@@ -63,6 +65,6 @@ public class MainGame extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        playerCamera.dispose();
+        WorldRender.dispose();
     }
 }
