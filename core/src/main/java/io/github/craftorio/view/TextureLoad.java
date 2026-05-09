@@ -1,5 +1,6 @@
 package io.github.craftorio.view;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +16,7 @@ public class TextureLoad {
     private final Map<ResourceType, GameSprite> resourceSprites = new EnumMap<>(ResourceType.class);
     private final Map<BuildingType, GameSprite> buildingSprites = new EnumMap<>(BuildingType.class);
     private final HashMap<String, GameSprite> StringSprites = new HashMap<>();
+    private final HashMap<Integer, GameSprite> conveyorTextures = new HashMap<>();
     private final TextureAtlas atlas;
 
     public TextureLoad(TextureAtlas atlas) {
@@ -30,6 +32,11 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.BELT, load("conveyor"));
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));
+        conveyorTextures.put(0, load("conveyor0"));
+        conveyorTextures.put(1, load("conveyor1"));
+        conveyorTextures.put(2, load("conveyor2"));
+        conveyorTextures.put(3, load("conveyor3"));
+        conveyorTextures.put(4, load("conveyor4"));
     }
 
     private GameSprite load(String regionName) {
@@ -49,6 +56,8 @@ public class TextureLoad {
         }
         return frames;
     }
+
+    public HashMap<Integer, GameSprite> getConveyorTextures() {return conveyorTextures;}
 
     public GameSprite get(ResourceType type) {
         return resourceSprites.get(type);

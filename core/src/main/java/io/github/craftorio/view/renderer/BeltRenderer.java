@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.building.Belt;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.view.GameSprite;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,17 +34,17 @@ public class BeltRenderer {
         return new float[]{0.5f, 0.5f};
     }
 
-    public static void drawBackground(SpriteBatch batch, HashMap<Integer, TextureRegion> texture, Belt belt, float globalOffset, float transparency) {
+    public static void drawBackground(SpriteBatch batch, HashMap<Integer, GameSprite> texture, Belt belt, float globalOffset, float transparency) {
         float x = belt.getX();
         float y = belt.getY();
         System.out.println(x + " " + y);
         batch.setColor(1f, 1f, 1f, transparency);
-        batch.draw(texture.get(belt.beltType), x, y, 0.5f, 0.5f, 1f, 1f, belt.reflection, 1f, -belt.rotation);
+        batch.draw(texture.get(belt.beltType).getFirstFrame(), x, y, 0.5f, 0.5f, 1f, 1f, belt.reflection, 1f, -belt.rotation);
 
         batch.setColor(Color.WHITE);
     }
 
-    public static void drawItems(SpriteBatch batch, Map<ItemType, TextureRegion> texture, Belt belt, float globalOffset, float transparency) {
+    public static void drawItems(SpriteBatch batch, Map<ItemType, GameSprite> texture, Belt belt, float globalOffset, float transparency) {
         float x = belt.getX();
         float y = belt.getY();
 
@@ -72,7 +73,7 @@ public class BeltRenderer {
             float drawY = y + cy - (ITEM_SIZE / 2f);
             batch.setColor(Color.WHITE);
 
-            batch.draw(texture.get(type), drawX, drawY, ITEM_SIZE, ITEM_SIZE);
+            batch.draw(texture.get(type).getFirstFrame(), drawX, drawY, ITEM_SIZE, ITEM_SIZE);
         }
 
         batch.setColor(Color.WHITE);

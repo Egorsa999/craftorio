@@ -13,6 +13,7 @@ import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.ui.BuildTool;
+import io.github.craftorio.view.renderer.BeltRenderer;
 
 import java.awt.Point;
 import java.util.HashSet;
@@ -100,6 +101,11 @@ public class WorldRenderer {
 
                 if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
 
+                if (current instanceof Belt belt) {
+                    BeltRenderer.drawBackground(batch, Textures.getConveyorTextures(), belt, Belt.getAnimationOffset(), 1f);
+                    continue;
+                }
+
                 TextureRenderer.draw(
                     batch, Textures.get(current.type),
                     x, y,
@@ -130,6 +136,11 @@ public class WorldRenderer {
 
         float width = factory.calculateOccupiedWidth(type, rotation);
         float height = factory.calculateOccupiedHeight(type, rotation);
+
+        if (type == BuildingType.BELT) {
+            BeltRenderer.drawBackground(batch, Textures.getConveyorTextures(), (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), Belt.getAnimationOffset(), 0.5f);
+            return;
+        }
 
         TextureRenderer.draw(
             batch, Textures.get(type),
