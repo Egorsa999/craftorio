@@ -7,8 +7,11 @@ import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.building.Belt;
 import io.github.craftorio.model.building.Direction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BeltRenderer {
-    private static final float ITEM_SIZE = 0.3f;
+    private static final float ITEM_SIZE = 0.6f;
 
     private static float[] getEntry(Direction fromDir) {
         switch(fromDir) {
@@ -30,26 +33,17 @@ public class BeltRenderer {
         return new float[]{0.5f, 0.5f};
     }
 
-    public static void drawBackground(SpriteBatch batch, TextureRegion texture, Belt belt, float globalOffset, float transparency) {
+    public static void drawBackground(SpriteBatch batch, HashMap<Integer, TextureRegion> texture, Belt belt, float globalOffset, float transparency) {
         float x = belt.getX();
         float y = belt.getY();
-
+        System.out.println(x + " " + y);
         batch.setColor(1f, 1f, 1f, transparency);
-
-        float rotation = 0f;
-        switch (belt.direction) {
-            case UP:    rotation = 0f; break;
-            case LEFT:  rotation = 90f; break;
-            case DOWN:  rotation = 180f; break;
-            case RIGHT: rotation = 270f; break;
-        }
-
-        batch.draw(texture, x, y, 0.5f, 0.5f, 1f, 1f, 1f, 1f, rotation);
+        batch.draw(texture.get(belt.beltType), x, y, 0.5f, 0.5f, 1f, 1f, belt.reflection, 1f, -belt.rotation);
 
         batch.setColor(Color.WHITE);
     }
 
-    public static void drawItems(SpriteBatch batch, TextureRegion texture, Belt belt, float globalOffset, float transparency) {
+    public static void drawItems(SpriteBatch batch, Map<ItemType, TextureRegion> texture, Belt belt, float globalOffset, float transparency) {
         float x = belt.getX();
         float y = belt.getY();
 
@@ -76,16 +70,9 @@ public class BeltRenderer {
 
             float drawX = x + cx - (ITEM_SIZE / 2f);
             float drawY = y + cy - (ITEM_SIZE / 2f);
+            batch.setColor(Color.WHITE);
 
-            if (type == ItemType.IRON_ORE) {
-                batch.setColor(0.85f, 0.85f, 0.85f, transparency);
-            } else if (type == ItemType.COPPER_ORE) {
-                batch.setColor(0.9f, 0.5f, 0.2f, transparency);
-            } else {
-                batch.setColor(0.2f, 0.6f, 0.9f, transparency);
-            }
-
-            batch.draw(texture, drawX, drawY, ITEM_SIZE, ITEM_SIZE);
+            batch.draw(texture.get(type), drawX, drawY, ITEM_SIZE, ITEM_SIZE);
         }
 
         batch.setColor(Color.WHITE);
