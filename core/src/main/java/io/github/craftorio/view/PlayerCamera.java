@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -13,6 +15,7 @@ import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.Player;
 import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.renderer.BeltRenderer;
 
@@ -21,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class PlayerCamera {
     private final Viewport viewport;
@@ -29,9 +33,16 @@ public class PlayerCamera {
     private final BuildTool buildTool;
     private final BuildingFactory factory;
     private final BuildingRegistry registry;
+    private final TextureAtlas atlas;
+    private final Map<ResourceType, TextureRegion> tileTextures;
+
+    private final TextureRegion playerTexture;
+    private final TextureRegion whitePixel;
+    private final TextureRegion conveyorTexture;
 
     private final Player player;
     private final WorldMap worldMap;
+    private final SpriteBatch batch;
 
     private final float MIN_WIDTH = 32;
     private final float MIN_HEIGHT = 18;
@@ -41,6 +52,18 @@ public class PlayerCamera {
 
     public PlayerCamera(Player player, WorldMap worldMap, BuildTool buildTool, BuildingFactory factory,
                         BuildingRegistry registry) {
+        tileTextures = new HashMap<>();
+        batch = new SpriteBatch();
+
+        this.atlas = new TextureAtlas(Gdx.files.internal("atlas/main_atlas.atlas"));
+        this.playerTexture = atlas.findRegion("player");
+        this.whitePixel = atlas.findRegion("white_pixel");
+        this.conveyorTexture = atlas.findRegion("conveyor");
+        tileTextures.put(ResourceType.IRON, atlas.findRegion("iron"));
+        tileTextures.put(ResourceType.COPPER, atlas.findRegion("copper"));
+        tileTextures.put(ResourceType.NONE, atlas.findRegion("ground"));
+
+
         this.player = player;
         this.worldMap = worldMap;
 
@@ -56,22 +79,19 @@ public class PlayerCamera {
 
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         updateCameraPosition();
-        shapeRenderer.setProjectionMatrix(camera.combined);
 
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        batch.setProjectionMatrix(camera.combined);
+        batch.enableBlending();
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        batch.begin();
 
         drawVisibleMap();
         drawVisibleBuildings();
         drawBuildPreview();
         drawPlayer();
 
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+        batch.end();
     }
 
     private void drawBuildPreview() {
@@ -86,10 +106,12 @@ public class PlayerCamera {
 
         //System.out.println(pos.x + " " + pos.y);
         if (type == BuildingType.BELT) {
-            BeltRenderer.draw(shapeRenderer, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y),  rotation), Belt.getAnimationOffset(), 0.5f);
+            BeltRenderer.draw(batch, conveyorTexture, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), Belt.getAnimationOffset(), 0.5f);
             return;
         }
-        shapeRenderer.setColor(0.2f, 0.8f, 0.2f, 0.5f);
+        batch.setColor(0.2f, 0.8f, 0.2f, 0.5f);
+        batch.draw(whitePixel, pos.x, pos.y, width, height);
+        batch.setColor(Color.WHITE);
 
         shapeRenderer.rect(pos.x, pos.y, width, height);
     }
@@ -125,24 +147,12 @@ public class PlayerCamera {
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
-                switch (worldMap.getCell(x, y).getResourceType()) {
-                    case NONE:
-                        shapeRenderer.setColor(Color.SLATE);
-                        break;
-                    case IRON:
-                        shapeRenderer.setColor(Color.DARK_GRAY);
-                        break;
-                    case COPPER:
-                        shapeRenderer.setColor(Color.BROWN);
-                        break;
-                }
+                ResourceType type = worldMap.getCell(x, y).getResourceType();
+                TextureRegion region = tileTextures.get(type);
 
-                shapeRenderer.rect(x, y, 1, 1);
-//                if (worldMap.getCell(x, y).getOccupiedBuilding() != null) {
-//                    if ((worldMap.getCell(x, y).getOccupiedBuilding() instanceof Belt belt)) {
-//                        BeltRenderer.draw(shapeRenderer, belt, Belt.getAnimationOffset());
-//                    }
-//                }
+                if (region != null) {
+                    batch.draw(region, x, y, 1, 1);
+                }
             }
         }
     }
@@ -164,24 +174,28 @@ public class PlayerCamera {
                 Building current = registry.getBuildingAt(new Point(x, y));
                 if (current == null || used.contains(current))continue;
                 if (current instanceof Belt currentBelt) {
-                    BeltRenderer.draw(shapeRenderer, currentBelt, Belt.getAnimationOffset(), 1f);
+                    BeltRenderer.draw(batch, conveyorTexture, currentBelt, Belt.getAnimationOffset(), 1f);
                     continue;
                 }
                 used.add(current);
-                shapeRenderer.setColor(Color.GREEN);
-                shapeRenderer.rect(current.getX(), current.getY(), current.getWidth(), current.getHeight());
+
+                batch.setColor(Color.GREEN);
+                batch.draw(whitePixel, current.getX(), current.getY(), current.getWidth(), current.getHeight());
+                batch.setColor(Color.WHITE);
             }
         }
     }
 
     private void drawPlayer() {
-        shapeRenderer.setColor(Color.ORANGE);
-        shapeRenderer.rect(
-            player.playerX - (PLAYER_SIZE / 2),
-            player.playerY - (PLAYER_SIZE / 2),
-            PLAYER_SIZE,
-            PLAYER_SIZE
-        );
+        if (playerTexture != null) {
+            batch.draw(
+                playerTexture,
+                player.playerX - (PLAYER_SIZE / 2),
+                player.playerY - (PLAYER_SIZE / 2),
+                PLAYER_SIZE,
+                PLAYER_SIZE
+            );
+        }
     }
 
     public void addZoom(float amount) {
@@ -194,6 +208,7 @@ public class PlayerCamera {
     }
 
     public void dispose() {
-        shapeRenderer.dispose();
+        batch.dispose();
+        atlas.dispose();
     }
 }
