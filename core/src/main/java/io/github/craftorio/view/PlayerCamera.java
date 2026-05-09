@@ -29,7 +29,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class PlayerCamera {
     private final Viewport viewport;
     private final OrthographicCamera camera;
-    private final ShapeRenderer shapeRenderer;
     private final BuildTool buildTool;
     private final BuildingFactory factory;
     private final BuildingRegistry registry;
@@ -57,7 +56,7 @@ public class PlayerCamera {
 
         this.atlas = new TextureAtlas(Gdx.files.internal("atlas/main_atlas.atlas"));
         this.playerTexture = atlas.findRegion("player");
-        this.whitePixel = atlas.findRegion("white_pixel");
+        this.whitePixel = atlas.findRegion("blank");
         this.conveyorTexture = atlas.findRegion("conveyor");
         tileTextures.put(ResourceType.IRON, atlas.findRegion("iron"));
         tileTextures.put(ResourceType.COPPER, atlas.findRegion("copper"));
@@ -70,7 +69,6 @@ public class PlayerCamera {
         this.registry = registry;
         this.camera = new OrthographicCamera();
         this.viewport = new ExtendViewport(MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT, camera);
-        this.shapeRenderer = new ShapeRenderer();
         this.buildTool = buildTool;
         this.factory = factory;
 
@@ -82,10 +80,8 @@ public class PlayerCamera {
         updateCameraPosition();
 
         updateCameraPosition();
-        shapeRenderer.setProjectionMatrix(camera.combined);
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         batch.setProjectionMatrix(camera.combined);
         batch.enableBlending();
@@ -98,7 +94,6 @@ public class PlayerCamera {
         drawPlayer();
 
         batch.end();
-        shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
@@ -114,14 +109,13 @@ public class PlayerCamera {
 
         //System.out.println(pos.x + " " + pos.y);
         if (type == BuildingType.BELT) {
-            BeltRenderer.drawBackground(shapeRenderer, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), Belt.getAnimationOffset(), 0.5f);
+            BeltRenderer.drawBackground(batch, conveyorTexture, (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), Belt.getAnimationOffset(), 0.5f);
             return;
         }
-        batch.setColor(0.2f, 0.8f, 0.2f, 0.5f);
+        batch.setColor(1f, 0f, 0f, 0.5f);
         batch.draw(whitePixel, pos.x, pos.y, width, height);
-        batch.setColor(Color.WHITE);
 
-        shapeRenderer.rect(pos.x, pos.y, width, height);
+        batch.setColor(Color.WHITE);
     }
 
     public Vector3 unproject(Vector3 screenCoords) {
@@ -157,39 +151,34 @@ public class PlayerCamera {
             for (int y = startY; y < endY; y++) {
                 switch (worldMap.getCell(x, y).getTerrainType()) {
                     case GRASS:
-                        shapeRenderer.setColor(Color.GREEN);
+                        batch.setColor(Color.GREEN);
                         break;
                     case SAND:
-                        shapeRenderer.setColor(Color.YELLOW);
+                        batch.setColor(Color.YELLOW);
                         break;
                     case WATER:
-                        shapeRenderer.setColor(Color.BLUE);
+                        batch.setColor(Color.BLUE);
                         break;
                     case WALL:
-                        shapeRenderer.setColor(Color.DARK_GRAY);
+                        batch.setColor(Color.DARK_GRAY);
                         break;
                 }
 
-                shapeRenderer.rect(x, y, 1, 1);
+                batch.draw(whitePixel, x, y, 1, 1);
 
                 switch (worldMap.getCell(x, y).getResourceType()) {
                     case COPPER:
-                        shapeRenderer.setColor(Color.BROWN);
+                        batch.setColor(Color.BROWN);
                         break;
                     case IRON:
-                        shapeRenderer.setColor(Color.SLATE);
+                        batch.setColor(Color.SLATE);
                         break;
                     case COAL:
-                        shapeRenderer.setColor(Color.BLACK);
+                        batch.setColor(Color.BLACK);
                         break;
                 }
-                shapeRenderer.rect(x + 0.2f, y + 0.2f, 0.8f, 0.8f);
-
-//                if (worldMap.getCell(x, y).getOccupiedBuilding() != null) {
-//                    if ((worldMap.getCell(x, y).getOccupiedBuilding() instanceof Belt belt)) {
-//                        BeltRenderer.draw(shapeRenderer, belt, Belt.getAnimationOffset());
-//                    }
-//                }
+                batch.draw(whitePixel, x + 0.2f, y + 0.2f, 0.8f, 0.8f);
+                batch.setColor(Color.WHITE);
             }
         }
     }
@@ -211,7 +200,7 @@ public class PlayerCamera {
                 Building current = registry.getBuildingAt(new Point(x, y));
                 if (current == null || used.contains(current))continue;
                 if (current instanceof Belt currentBelt) {
-                    BeltRenderer.drawBackground(shapeRenderer, currentBelt, Belt.getAnimationOffset(), 1f);
+                    BeltRenderer.drawBackground(batch, conveyorTexture, currentBelt, Belt.getAnimationOffset(), 1f);
                     continue;
                 }
                 used.add(current);
@@ -226,7 +215,7 @@ public class PlayerCamera {
                 Building current = registry.getBuildingAt(new Point(x, y));
                 if (current == null || used.contains(current))continue;
                 if (current instanceof Belt currentBelt) {
-                    BeltRenderer.drawItems(shapeRenderer, currentBelt, Belt.getAnimationOffset(), 1f);
+                    BeltRenderer.drawItems(batch, whitePixel, currentBelt, Belt.getAnimationOffset(), 1f);
                 }
             }
         }
@@ -256,6 +245,5 @@ public class PlayerCamera {
     public void dispose() {
         batch.dispose();
         atlas.dispose();
-        shapeRenderer.dispose();
     }
 }

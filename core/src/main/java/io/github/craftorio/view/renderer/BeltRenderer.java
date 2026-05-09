@@ -1,7 +1,8 @@
 package io.github.craftorio.view.renderer;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.building.Belt;
 import io.github.craftorio.model.building.Direction;
@@ -29,34 +30,26 @@ public class BeltRenderer {
         return new float[]{0.5f, 0.5f};
     }
 
-    private static Direction getOpposite(Direction d) {
-        switch (d) {
-            case UP: return Direction.DOWN;
-            case DOWN: return Direction.UP;
-            case LEFT: return Direction.RIGHT;
-            case RIGHT: return Direction.LEFT;
-        }
-        return Direction.DOWN;
-    }
-
-    public static void drawBackground(ShapeRenderer shapeRenderer, Belt belt, float globalOffset, float transparency) {
+    public static void drawBackground(SpriteBatch batch, TextureRegion texture, Belt belt, float globalOffset, float transparency) {
         float x = belt.getX();
         float y = belt.getY();
 
-        shapeRenderer.setColor(0.3f, 0.3f, 0.3f, transparency);
-        shapeRenderer.rect(x, y, 1, 1);
+        batch.setColor(1f, 1f, 1f, transparency);
 
-        shapeRenderer.setColor(0f, 1f, 0f, transparency);
-        float thick = 0.20f;
+        float rotation = 0f;
         switch (belt.direction) {
-            case RIGHT: shapeRenderer.rect(x + 1f - thick, y, thick, 1); break;
-            case LEFT:  shapeRenderer.rect(x, y, thick, 1); break;
-            case UP:    shapeRenderer.rect(x, y + 1f - thick, 1, thick); break;
-            case DOWN:  shapeRenderer.rect(x, y, 1, thick); break;
+            case UP:    rotation = 0f; break;
+            case LEFT:  rotation = 90f; break;
+            case DOWN:  rotation = 180f; break;
+            case RIGHT: rotation = 270f; break;
         }
+
+        batch.draw(texture, x, y, 0.5f, 0.5f, 1f, 1f, 1f, 1f, rotation);
+
+        batch.setColor(Color.WHITE);
     }
 
-    public static void drawItems(ShapeRenderer shapeRenderer, Belt belt, float globalOffset, float transparency) {
+    public static void drawItems(SpriteBatch batch, TextureRegion texture, Belt belt, float globalOffset, float transparency) {
         float x = belt.getX();
         float y = belt.getY();
 
@@ -84,11 +77,17 @@ public class BeltRenderer {
             float drawX = x + cx - (ITEM_SIZE / 2f);
             float drawY = y + cy - (ITEM_SIZE / 2f);
 
-            if (type == ItemType.IRON_ORE) shapeRenderer.setColor(0.85f, 0.85f, 0.85f, transparency);
-            else if (type == ItemType.COPPER_ORE) shapeRenderer.setColor(0.9f, 0.5f, 0.2f, transparency);
-            else shapeRenderer.setColor(0.2f, 0.6f, 0.9f, transparency);
+            if (type == ItemType.IRON_ORE) {
+                batch.setColor(0.85f, 0.85f, 0.85f, transparency);
+            } else if (type == ItemType.COPPER_ORE) {
+                batch.setColor(0.9f, 0.5f, 0.2f, transparency);
+            } else {
+                batch.setColor(0.2f, 0.6f, 0.9f, transparency);
+            }
 
-            shapeRenderer.rect(drawX, drawY, ITEM_SIZE, ITEM_SIZE);
+            batch.draw(texture, drawX, drawY, ITEM_SIZE, ITEM_SIZE);
         }
+
+        batch.setColor(Color.WHITE);
     }
 }
