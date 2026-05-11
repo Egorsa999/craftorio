@@ -1,342 +1,384 @@
 
 main_atlas.png
-size: 512, 64
+size: 512, 128
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 blank
   rotate: false
-  xy: 2, 25
+  xy: 2, 21
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor0
   rotate: false
-  xy: 36, 25
+  xy: 68, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor1
   rotate: false
-  xy: 70, 25
+  xy: 102, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor2
   rotate: false
-  xy: 104, 25
+  xy: 136, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor3
   rotate: false
-  xy: 138, 25
+  xy: 170, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor4
   rotate: false
-  xy: 172, 25
+  xy: 204, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-copper
+grass
   rotate: false
-  xy: 206, 25
+  xy: 238, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-ground
+item-coal
   rotate: false
-  xy: 240, 25
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-iron
-  rotate: false
-  xy: 274, 25
+  xy: 272, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 item-copper
   rotate: false
-  xy: 308, 25
+  xy: 306, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 item-iron
   rotate: false
-  xy: 342, 25
+  xy: 340, 87
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+miner
+  rotate: false
+  xy: 2, 55
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+ore-coal
+  rotate: false
+  xy: 374, 87
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+ore-copper
+  rotate: false
+  xy: 408, 87
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+ore-iron
+  rotate: false
+  xy: 442, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 player
   rotate: false
-  xy: 376, 25
+  xy: 476, 87
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 player_idle_down
   rotate: false
-  xy: 2, 6
+  xy: 2, 2
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 0
 player_idle_down
   rotate: false
-  xy: 410, 40
+  xy: 68, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 1
 player_idle_down
   rotate: false
-  xy: 21, 6
+  xy: 21, 2
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 2
 player_idle_down
   rotate: false
-  xy: 429, 40
+  xy: 155, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 3
 player_idle_side
   rotate: false
-  xy: 40, 6
+  xy: 40, 2
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 0
 player_idle_side
   rotate: false
-  xy: 448, 40
+  xy: 174, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 1
 player_idle_side
   rotate: false
-  xy: 59, 6
+  xy: 193, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 2
 player_idle_side
   rotate: false
-  xy: 467, 40
+  xy: 212, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 3
 player_idle_up
   rotate: false
-  xy: 78, 6
+  xy: 231, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 0
 player_idle_up
   rotate: false
-  xy: 486, 40
+  xy: 250, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 1
 player_idle_up
   rotate: false
-  xy: 97, 6
+  xy: 269, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 2
 player_idle_up
   rotate: false
-  xy: 116, 6
+  xy: 288, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 3
 player_run_down
   rotate: false
-  xy: 135, 6
+  xy: 307, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 0
 player_run_down
   rotate: false
-  xy: 154, 6
+  xy: 326, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 1
 player_run_down
   rotate: false
-  xy: 173, 6
+  xy: 345, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 2
 player_run_down
   rotate: false
-  xy: 192, 6
+  xy: 364, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 3
 player_run_down
   rotate: false
-  xy: 192, 6
+  xy: 364, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 7
 player_run_down
   rotate: false
-  xy: 211, 6
+  xy: 383, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 4
 player_run_down
   rotate: false
-  xy: 230, 6
+  xy: 402, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 5
 player_run_down
   rotate: false
-  xy: 249, 6
+  xy: 421, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 6
 player_run_side
   rotate: false
-  xy: 268, 6
+  xy: 440, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 0
 player_run_side
   rotate: false
-  xy: 287, 6
+  xy: 459, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 1
 player_run_side
   rotate: false
-  xy: 306, 6
+  xy: 478, 68
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 2
 player_run_side
   rotate: false
-  xy: 325, 6
+  xy: 155, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 3
 player_run_side
   rotate: false
-  xy: 344, 6
+  xy: 174, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 4
 player_run_side
   rotate: false
-  xy: 363, 6
+  xy: 193, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 5
 player_run_side
   rotate: false
-  xy: 382, 6
+  xy: 212, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 6
 player_run_side
   rotate: false
-  xy: 410, 21
+  xy: 231, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 7
 player_run_up
   rotate: false
-  xy: 429, 21
+  xy: 250, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 0
 player_run_up
   rotate: false
-  xy: 448, 21
+  xy: 269, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 1
 player_run_up
   rotate: false
-  xy: 467, 21
+  xy: 288, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 2
 player_run_up
   rotate: false
-  xy: 486, 21
+  xy: 307, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 3
 player_run_up
   rotate: false
-  xy: 486, 21
+  xy: 307, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 7
 player_run_up
   rotate: false
-  xy: 401, 2
+  xy: 326, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 4
 player_run_up
   rotate: false
-  xy: 420, 2
+  xy: 345, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 5
 player_run_up
   rotate: false
-  xy: 439, 2
+  xy: 364, 49
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: 6
+sand
+  rotate: false
+  xy: 36, 21
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+wall
+  rotate: false
+  xy: 87, 53
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+water
+  rotate: false
+  xy: 121, 53
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
