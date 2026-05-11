@@ -102,7 +102,6 @@ public class InputController extends InputAdapter {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT && buildTool.isActive()) {
-            System.out.println(buildTool.getHoverPosition().x + " " + buildTool.getHoverPosition().y);
             boolean success = buildingManager.tryPlaceBuilding(
                 buildTool.getSelectedType(),
                 buildTool.getHoverPosition(),

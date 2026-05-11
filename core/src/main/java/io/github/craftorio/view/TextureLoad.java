@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.generator.ResourceType;
+import io.github.craftorio.model.generator.TerrainType;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -17,6 +19,8 @@ public class TextureLoad {
     private final Map<BuildingType, GameSprite> buildingSprites = new EnumMap<>(BuildingType.class);
     private final HashMap<String, GameSprite> StringSprites = new HashMap<>();
     private final HashMap<Integer, GameSprite> conveyorTextures = new HashMap<>();
+    private final HashMap<ItemType, GameSprite> itemSprites = new HashMap<>();
+    private final HashMap<TerrainType, GameSprite> terrarianSprites = new HashMap<>();
     private final TextureAtlas atlas;
 
     public TextureLoad(TextureAtlas atlas) {
@@ -26,10 +30,18 @@ public class TextureLoad {
     }
 
     private void loadSprites() {
-        resourceSprites.put(ResourceType.IRON, load("iron"));
-        resourceSprites.put(ResourceType.COPPER, load("copper"));
-        resourceSprites.put(ResourceType.NONE, load("ground"));
-        buildingSprites.put(BuildingType.MINER, load("blank"));
+        resourceSprites.put(ResourceType.IRON, load("ore-iron"));
+        resourceSprites.put(ResourceType.COPPER, load("ore-copper"));
+        resourceSprites.put(ResourceType.COAL, load("ore-coal"));
+        resourceSprites.put(ResourceType.NONE, load("blank"));
+
+        terrarianSprites.put(TerrainType.GRASS, load("grass"));
+        terrarianSprites.put(TerrainType.SAND, load("sand"));
+        terrarianSprites.put(TerrainType.WALL, load("wall"));
+        terrarianSprites.put(TerrainType.WATER, load("water"));
+
+        buildingSprites.put(BuildingType.MINER, load("miner"));
+
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));
 
@@ -45,6 +57,10 @@ public class TextureLoad {
         conveyorTextures.put(2, load("conveyor2"));
         conveyorTextures.put(3, load("conveyor3"));
         conveyorTextures.put(4, load("conveyor4"));
+
+        itemSprites.put(ItemType.IRON_ORE, load("item-iron"));
+        itemSprites.put(ItemType.COAL, load("item-coal"));
+        itemSprites.put(ItemType.COPPER_ORE, load("item-copper"));
     }
 
     private GameSprite load(String regionName) {
@@ -69,6 +85,14 @@ public class TextureLoad {
 
     public GameSprite get(ResourceType type) {
         return resourceSprites.get(type);
+    }
+
+    public GameSprite get(TerrainType type) {
+        return terrarianSprites.get(type);
+    }
+
+    public GameSprite get(ItemType type) {
+        return itemSprites.get(type);
     }
 
     public GameSprite get(BuildingType type) {

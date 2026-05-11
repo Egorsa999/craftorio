@@ -7,7 +7,10 @@ import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.building.Belt;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.view.GameSprite;
+import io.github.craftorio.view.TextureLoad;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,18 +40,26 @@ public class BeltRenderer {
     public static void drawBackground(SpriteBatch batch, HashMap<Integer, GameSprite> texture, Belt belt, float globalOffset, float transparency) {
         float x = belt.getX();
         float y = belt.getY();
-        System.out.println(x + " " + y);
         batch.setColor(1f, 1f, 1f, transparency);
         batch.draw(texture.get(belt.beltType).getFirstFrame(), x, y, 0.5f, 0.5f, 1f, 1f, belt.reflection, 1f, -belt.rotation);
 
         batch.setColor(Color.WHITE);
     }
 
-    public static void drawItems(SpriteBatch batch, Map<ItemType, GameSprite> texture, Belt belt, float globalOffset, float transparency) {
+    public static void drawItems(SpriteBatch batch, TextureLoad textureLoad, Belt belt, float globalOffset, float transparency) {
         float x = belt.getX();
         float y = belt.getY();
 
-        for (int i = belt.getItemId().size() - 1; i >= 0; i--) {
+        ArrayList<Integer> order = new ArrayList<>();
+        for (int i = 0; i < belt.getItemId().size(); i++) {
+            order.add(i);
+        }
+
+
+        if (belt.direction == Direction.RIGHT) Collections.reverse(order);
+        if (belt.direction == Direction.DOWN) Collections.reverse(order);
+
+        for (int i : order) {
             ItemType type = belt.getItemId().get(i);
             float p = belt.getItemProgress().get(i);
             Direction fromDir = belt.getItemFrom().get(i);
@@ -73,7 +84,7 @@ public class BeltRenderer {
             float drawY = y + cy - (ITEM_SIZE / 2f);
             batch.setColor(Color.WHITE);
 
-            batch.draw(texture.get(type).getFirstFrame(), drawX, drawY, ITEM_SIZE, ITEM_SIZE);
+            batch.draw(textureLoad.get(type).getFirstFrame(), drawX, drawY, ITEM_SIZE, ITEM_SIZE);
         }
 
         batch.setColor(Color.WHITE);
