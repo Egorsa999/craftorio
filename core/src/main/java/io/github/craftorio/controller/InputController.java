@@ -52,6 +52,9 @@ public class InputController extends InputAdapter {
         if (dx != 0 || dy != 0) {
             player.updatePosition(delta, dx, dy);
         }
+        else {
+            player.stop();
+        }
 
         if (dZoom != 0) {
             camera.addZoom(dZoom * delta * 2.0f);

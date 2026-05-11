@@ -32,6 +32,14 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.BELT, load("conveyor"));
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));
+
+        StringSprites.put("player_idle_side", loadAnimated("player_idle_side", 0.15f));
+        StringSprites.put("player_idle_up", loadAnimated("player_idle_up", 0.15f));
+        StringSprites.put("player_idle_down", loadAnimated("player_idle_down", 0.15f));
+        StringSprites.put("player_run_side", loadAnimated("player_run_side", 0.1f));
+        StringSprites.put("player_run_up", loadAnimated("player_run_up", 0.1f));
+        StringSprites.put("player_run_down", loadAnimated("player_run_down", 0.1f));
+
         conveyorTextures.put(0, load("conveyor0"));
         conveyorTextures.put(1, load("conveyor1"));
         conveyorTextures.put(2, load("conveyor2"));
@@ -43,10 +51,10 @@ public class TextureLoad {
         return new GameSprite(atlas.findRegion(regionName));
     }
 
-    private GameSprite loadAnimated(String baseName) {
-        Array<TextureRegion> frames = loadFrames(baseName);
+    private GameSprite loadAnimated(String baseName, float frameDuration) {
+        Array<TextureAtlas.AtlasRegion> frames = atlas.findRegions(baseName);
         if (frames.size == 0) return load(baseName);
-        return new GameSprite(new Animation<>(0.1f, frames, Animation.PlayMode.LOOP));
+        return new GameSprite(new Animation<>(frameDuration, frames, Animation.PlayMode.LOOP));
     }
 
     private Array<TextureRegion> loadFrames(String baseName) {
