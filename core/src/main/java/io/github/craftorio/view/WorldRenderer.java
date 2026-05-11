@@ -117,7 +117,7 @@ public class WorldRenderer {
                 if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
 
                 if (current instanceof Belt belt) {
-                    BeltRenderer.drawBackground(batch, Textures.getConveyorTextures(), belt, Belt.getAnimationOffset(), 1f);
+                    BeltRenderer.drawBackground(batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
                     continue;
                 }
 
@@ -183,7 +183,7 @@ public class WorldRenderer {
         float height = factory.calculateOccupiedHeight(type, rotation);
 
         if (type == BuildingType.BELT) {
-            BeltRenderer.drawBackground(batch, Textures.getConveyorTextures(), (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), Belt.getAnimationOffset(), 0.5f);
+            BeltRenderer.drawBackground(batch, Textures.getConveyorTextures(), (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), stateTime, 0.5f);
             return;
         }
 

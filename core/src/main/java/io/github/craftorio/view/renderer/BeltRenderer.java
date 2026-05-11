@@ -37,11 +37,11 @@ public class BeltRenderer {
         return new float[]{0.5f, 0.5f};
     }
 
-    public static void drawBackground(SpriteBatch batch, HashMap<Integer, GameSprite> texture, Belt belt, float globalOffset, float transparency) {
+    public static void drawBackground(SpriteBatch batch, HashMap<Integer, GameSprite> texture, Belt belt, float stateTime, float transparency) {
         float x = belt.getX();
         float y = belt.getY();
         batch.setColor(1f, 1f, 1f, transparency);
-        batch.draw(texture.get(belt.beltType).getFirstFrame(), x, y, 0.5f, 0.5f, 1f, 1f, belt.reflection, 1f, -belt.rotation);
+        batch.draw(texture.get(belt.beltType).getKeyFrame(stateTime), x, y, 0.5f, 0.5f, 1f, 1f, belt.reflection, 1f, -belt.rotation);
 
         batch.setColor(Color.WHITE);
     }

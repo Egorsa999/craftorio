@@ -52,11 +52,11 @@ public class TextureLoad {
         StringSprites.put("player_run_up", loadAnimated("player_run_up", 0.1f));
         StringSprites.put("player_run_down", loadAnimated("player_run_down", 0.1f));
 
-        conveyorTextures.put(0, load("conveyor0"));
-        conveyorTextures.put(1, load("conveyor1"));
-        conveyorTextures.put(2, load("conveyor2"));
-        conveyorTextures.put(3, load("conveyor3"));
-        conveyorTextures.put(4, load("conveyor4"));
+        conveyorTextures.put(0, loadAnimated("conveyor-0", 0.1f));
+        conveyorTextures.put(1, loadAnimated("conveyor-1", 0.1f));
+        conveyorTextures.put(2, loadAnimated("conveyor-2", 0.1f));
+        conveyorTextures.put(3, loadAnimated("conveyor-3", 0.1f));
+        conveyorTextures.put(4, loadAnimated("conveyor-4", 0.1f));
 
         itemSprites.put(ItemType.IRON_ORE, load("item-iron"));
         itemSprites.put(ItemType.COAL, load("item-coal"));
