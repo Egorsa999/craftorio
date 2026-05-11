@@ -37,6 +37,7 @@ public class InputController extends InputAdapter {
 
     public void update(float delta) {
         mouseMoved(lastMouseX, lastMouseY); // mega crutch
+        touchDragged(lastMouseX, lastMouseY, 67); // mega crutch2
         float dx = 0;
         float dy = 0;
         float dZoom = 0;
@@ -98,7 +99,6 @@ public class InputController extends InputAdapter {
         lastMouseX = screenX;
         lastMouseY = screenY;
 
-
         if (buildTool.isActive()) {
             updateHoveredGrid();
         }
@@ -108,11 +108,17 @@ public class InputController extends InputAdapter {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT && buildTool.isActive()) {
-            boolean success = buildingManager.tryPlaceBuilding(
-                buildTool.getSelectedType(),
-                buildTool.getHoverPosition(),
-                buildTool.getCurrentRotation()
-            );
+            buildTool.tryBuild();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+//        System.out.println(screenX + " " + screenY);
+        mouseMoved(screenX, screenY);
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && buildTool.isActive()) {
+            buildTool.tryBuild();
 
             return true;
         }

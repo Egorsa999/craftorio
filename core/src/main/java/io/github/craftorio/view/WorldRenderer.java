@@ -119,7 +119,7 @@ public class WorldRenderer {
                 if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
 
                 if (current instanceof Belt belt) {
-                    BeltRenderer.drawBackground(batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
+                    BeltRenderer.drawBackground(null, batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
                     continue;
                 }
 
@@ -188,14 +188,14 @@ public class WorldRenderer {
         float width = type.getWidth();
         float height = type.getHeight();
 
-        if (type == BuildingType.BELT) {
-            BeltRenderer.drawBackground(batch, Textures.getConveyorTextures(), (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), stateTime, 0.5f);
-            return;
-        }
 
         Color colorFilter = new Color(1f, 1f, 1f, 0.5f);
         if (!buildTool.isValidPlace())colorFilter = new Color(1f, 0f, 0f, 0.5f);
 
+        if (type == BuildingType.BELT) {
+            BeltRenderer.drawBackground(colorFilter, batch, Textures.getConveyorTextures(), (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), stateTime, 0.5f);
+            return;
+        }
         TextureRenderer.drawBuilding(
             batch, Textures.get(type),
             (float)pos.getX(), (float)pos.getY(),
