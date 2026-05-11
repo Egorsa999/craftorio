@@ -133,10 +133,40 @@ public class WorldRenderer {
     }
 
     private void drawPlayer() {
+        String baseName = "player";
+        if (player.isMoving()) baseName += "_run";
+        else baseName += "_idle";
+
+        boolean flipX = false;
+
+        if (player.getDirection() == Direction.LEFT)flipX = true;
+
+        switch (player.getDirection()){
+            case UP:
+                baseName += "_up";
+                break;
+            case DOWN:
+                baseName += "_down";
+                break;
+            case LEFT, RIGHT:
+                baseName += "_side";
+                break;
+        }
+
+        float x = player.playerX - (PLAYER_SIZE / 2f);
+        float y = player.playerY - (PLAYER_SIZE / 2f);
+
+        float drawWidth = PLAYER_SIZE;
+
+        if (flipX) {
+            x += PLAYER_SIZE;
+            drawWidth = -PLAYER_SIZE;
+        }
+
         TextureRenderer.draw(
-            batch, Textures.get("player"),
-            player.playerX, player.playerY,
-            PLAYER_SIZE, PLAYER_SIZE,
+            batch, Textures.get(baseName),
+            x, y,
+            drawWidth, PLAYER_SIZE,
             0, null,
             stateTime
         );
