@@ -4,6 +4,7 @@ import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.generator.TerrainType;
 
 import java.awt.Point;
 import java.util.List;
@@ -20,20 +21,24 @@ public class BuildingManager {
         this.factory = factory;
     }
 
-    public boolean tryPlaceBuilding(BuildingType type, Point anchor, Direction rotation){
-        List<Point> requiredTiles = factory.calculateOccupiedTiles(type, anchor, rotation);
+    public boolean tryPlaceBuilding(BuildingType type, Point anchor, Direction direction){
+        if (!isValidPlace(type, anchor, direction)){
+            return false;
+        }
 
+        Building newBuilding = factory.createBuilding(type, anchor, direction);
+        registry.addBuilding(newBuilding);
+        return true;
+    }
+
+    public boolean isValidPlace(BuildingType type, Point anchor, Direction direction){
+        List<Point> requiredTiles = factory.calculateOccupiedTiles(type, anchor, direction);
         if (!isAreaFree(requiredTiles)) {
             return false;
         }
-
-        if (!isValidTerrainFor(type, requiredTiles)) {
+        if (!isValidTerrainFor(type, requiredTiles, anchor, direction)) {
             return false;
         }
-
-        Building newBuilding = factory.createBuilding(type, anchor, rotation);
-        registry.addBuilding(newBuilding);
-
         return true;
     }
 
@@ -47,8 +52,20 @@ public class BuildingManager {
         return true;
     }
 
-    private boolean isValidTerrainFor(BuildingType type, List<Point> tiles) {
-        //TODO something with worldMap
+    private boolean isValidTerrainFor(BuildingType type, List<Point> tiles, Point anchor, Direction direction) {
+        for (Point p : tiles) {
+            TerrainType terrainType = worldMap.getCell(p.x, p.y).getTerrainType();
+            if(terrainType == TerrainType.WALL || terrainType == TerrainType.WATER){
+                return false;
+            }
+        }
+        if (type == BuildingType.MINER){
+            if (worldMap.getResources(tiles).isEmpty())return false;
+        }
+        if (type == BuildingType.HORIZONTAL_MINER){
+            Point point = factory.getRealCoordinates(new Point(0, 2), anchor, direction, type);
+            if (worldMap.getCell(point.x, point.y).getTerrainType() != TerrainType.WALL) return false;
+        }
         return true;
     }
 

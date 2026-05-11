@@ -28,16 +28,16 @@ public class MainGame extends ApplicationAdapter {
 
     @Override
     public void create() {
-        buildTool = new BuildTool();
-
         worldMap = new WorldMap(worldWidth, worldHeight);
         buildingRegistry = new BuildingRegistry();
         simulationEngine = new SimulationEngine(buildingRegistry);
         factory = new BuildingFactory(worldMap, buildingRegistry);
         Player player = new Player(worldMap);
         playerCamera = new CameraManager(player, worldMap);
-        WorldRender = new WorldRenderer(playerCamera, player, worldMap, buildTool, factory, buildingRegistry);
         buildingManager = new BuildingManager(buildingRegistry, worldMap, factory);
+        buildTool = new BuildTool(buildingManager);
+        WorldRender = new WorldRenderer(playerCamera, player, worldMap, buildTool, factory, buildingRegistry);
+
         controller = new InputController(player, playerCamera, buildTool, buildingManager, factory);
         Gdx.input.setInputProcessor(controller);
     }

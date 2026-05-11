@@ -1,6 +1,5 @@
 package io.github.craftorio.view;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -41,6 +40,7 @@ public class TextureLoad {
         terrarianSprites.put(TerrainType.WATER, load("water"));
 
         buildingSprites.put(BuildingType.MINER, load("miner"));
+        buildingSprites.put(BuildingType.HORIZONTAL_MINER, load("horizontal_miner"));
 
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));
