@@ -12,6 +12,7 @@ import io.github.craftorio.model.Player;
 import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.generator.ResourceType;
+import io.github.craftorio.model.generator.TerrainType;
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.renderer.BeltRenderer;
 
@@ -74,6 +75,7 @@ public class WorldRenderer {
 
         drawVisibleMap(bounds);
         drawVisibleBuildings(bounds);
+        drawItems(bounds);
         drawPlayer();
 
         drawBuildPreviewTextures();
@@ -81,11 +83,24 @@ public class WorldRenderer {
         batch.end();
     }
 
+    private void drawItems(VisibleBounds bounds) {
+        for (int x = bounds.startX; x < bounds.endX; x++) {
+            for (int y = bounds.endY - 1; y >= bounds.startY; y--) {
+                Building current = registry.getBuildingAt(new Point(x, y));
+                if (current instanceof Belt belt) {
+                    BeltRenderer.drawItems(batch, Textures, belt, Belt.getAnimationOffset(), 1f);
+                }
+            }
+        }
+    }
+
     private void drawVisibleMap(VisibleBounds bounds) {
         for (int x = bounds.startX; x < bounds.endX; x++) {
             for (int y = bounds.startY; y < bounds.endY; y++) {
+                TerrainType terrainType = worldMap.getCell(x, y).getTerrainType();
+                TextureRenderer.draw(batch, Textures.get(terrainType), x, y, 1, 1, 0, null, stateTime);
                 ResourceType type = worldMap.getCell(x, y).getResourceType();
-                if (Textures.get(type) != null) {
+                if (type != ResourceType.NONE) {
                     TextureRenderer.draw(batch, Textures.get(type), x, y, 1, 1, 0, null, stateTime);
                 }
             }

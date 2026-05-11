@@ -126,7 +126,6 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
     }
 
     private void updateType() {
-        System.out.println("TryUpdate");
         Building u = getUpperBuilding();
         Building l = getLeftBuilding();
         Building r = getRightBuilding();

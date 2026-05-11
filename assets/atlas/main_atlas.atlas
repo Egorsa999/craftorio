@@ -1,89 +1,131 @@
 
 main_atlas.png
-size: 512, 64
+size: 256, 128
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 blank
   rotate: false
-  xy: 2, 2
+  xy: 2, 4
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor0
   rotate: false
-  xy: 36, 2
+  xy: 68, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor1
   rotate: false
-  xy: 70, 2
+  xy: 102, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor2
   rotate: false
-  xy: 104, 2
+  xy: 136, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor3
   rotate: false
-  xy: 138, 2
+  xy: 170, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 conveyor4
   rotate: false
-  xy: 172, 2
+  xy: 204, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-copper
+grass
   rotate: false
-  xy: 206, 2
+  xy: 36, 4
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-ground
+item-coal
   rotate: false
-  xy: 240, 2
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-iron
-  rotate: false
-  xy: 274, 2
+  xy: 70, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 item-copper
   rotate: false
-  xy: 308, 2
+  xy: 104, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 item-iron
   rotate: false
-  xy: 342, 2
+  xy: 138, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+miner
+  rotate: false
+  xy: 2, 38
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+ore-coal
+  rotate: false
+  xy: 172, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+ore-copper
+  rotate: false
+  xy: 70, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+ore-iron
+  rotate: false
+  xy: 104, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 player
   rotate: false
-  xy: 376, 2
+  xy: 138, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+sand
+  rotate: false
+  xy: 172, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+wall
+  rotate: false
+  xy: 206, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+water
+  rotate: false
+  xy: 206, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
