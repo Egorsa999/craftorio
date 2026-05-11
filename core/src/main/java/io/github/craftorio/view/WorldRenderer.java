@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import io.github.craftorio.model.BuildingManager;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.Player;
 import io.github.craftorio.model.WorldMap;
@@ -16,6 +17,7 @@ import io.github.craftorio.model.generator.TerrainType;
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.renderer.BeltRenderer;
 
+import javax.swing.*;
 import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
@@ -121,11 +123,14 @@ public class WorldRenderer {
                     continue;
                 }
 
-                TextureRenderer.draw(
+                float width = current.type.getWidth();
+                float height = current.type.getHeight();
+
+                TextureRenderer.drawBuilding(
                     batch, Textures.get(current.type),
-                    x, y,
-                    current.getWidth(), current.getHeight(),
-                    current.direction.to_degrees(),
+                    (float)current.anchor.x, (float)current.anchor.y,
+                    width, height,
+                    current.direction,
                     null, stateTime
                 );
             }
@@ -163,6 +168,7 @@ public class WorldRenderer {
             drawWidth = -PLAYER_SIZE;
         }
 
+
         TextureRenderer.draw(
             batch, Textures.get(baseName),
             x, y,
@@ -179,19 +185,22 @@ public class WorldRenderer {
         BuildingType type = buildTool.getSelectedType();
         Direction rotation = buildTool.getCurrentRotation();
 
-        float width = factory.calculateOccupiedWidth(type, rotation);
-        float height = factory.calculateOccupiedHeight(type, rotation);
+        float width = type.getWidth();
+        float height = type.getHeight();
 
         if (type == BuildingType.BELT) {
             BeltRenderer.drawBackground(batch, Textures.getConveyorTextures(), (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), stateTime, 0.5f);
             return;
         }
 
-        TextureRenderer.draw(
+        Color colorFilter = new Color(1f, 1f, 1f, 0.5f);
+        if (!buildTool.isValidPlace())colorFilter = new Color(1f, 0f, 0f, 0.5f);
+
+        TextureRenderer.drawBuilding(
             batch, Textures.get(type),
             (float)pos.getX(), (float)pos.getY(),
-            width, height,
-            rotation.to_degrees(), new Color(1f, 1f, 1f, 0.5f),
+            type.getWidth(), type.getHeight(),
+            rotation, colorFilter,
             0f
         );
     }

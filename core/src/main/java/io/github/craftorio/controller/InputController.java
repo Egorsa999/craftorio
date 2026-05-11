@@ -73,6 +73,11 @@ public class InputController extends InputAdapter {
             mouseMoved(lastMouseX, lastMouseY);
             return true;
         }
+        if (keycode == Input.Keys.NUM_3) {
+            buildTool.selectBuilding(BuildingType.HORIZONTAL_MINER);
+            mouseMoved(lastMouseX, lastMouseY);
+            return true;
+        }
         if (keycode == Input.Keys.ESCAPE) {
             buildTool.clearSelection();
             return true;
@@ -93,6 +98,7 @@ public class InputController extends InputAdapter {
         lastMouseX = screenX;
         lastMouseY = screenY;
 
+
         if (buildTool.isActive()) {
             updateHoveredGrid();
         }
@@ -108,11 +114,6 @@ public class InputController extends InputAdapter {
                 buildTool.getCurrentRotation()
             );
 
-            if (success) {
-                System.out.println("Building placed!");
-            } else {
-                System.out.println("Cannot build here!");
-            }
             return true;
         }
         return false;
@@ -125,11 +126,12 @@ public class InputController extends InputAdapter {
         tempCoords.set(lastMouseX, lastMouseY, 0);
         camera.unproject(tempCoords);
 
+
         BuildingType type = buildTool.getSelectedType();
         Direction rotation = buildTool.getCurrentRotation();
 
-        int width = factory.calculateOccupiedWidth(type, rotation);
-        int height = factory.calculateOccupiedHeight(type, rotation);
+        int width = factory.calculateRenderWidth(type, rotation);
+        int height = factory.calculateRenderHeight(type, rotation);
 
         float halfWidth = (width) / 2f;
         float halfHeight = (height) / 2f;

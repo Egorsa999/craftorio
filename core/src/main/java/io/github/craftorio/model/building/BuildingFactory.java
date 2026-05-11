@@ -19,28 +19,69 @@ public class BuildingFactory {
 
     public int calculateOccupiedWidth(BuildingType type, Direction rotation){
         boolean isRotated90 = (rotation == Direction.LEFT || rotation == Direction.RIGHT);
-        return isRotated90 ? type.getHeight() : type.getWidth();
+        return isRotated90 ? type.getCollisionHeight() : type.getCollisionWidth();
     }
 
     public int calculateOccupiedHeight(BuildingType type, Direction rotation){
         boolean isRotated90 = (rotation == Direction.LEFT || rotation == Direction.RIGHT);
+        return isRotated90 ? type.getCollisionWidth() : type.getCollisionHeight();
+    }
+
+    public int calculateRenderWidth(BuildingType type, Direction rotation){
+        boolean isRotated90 = (rotation == Direction.LEFT || rotation == Direction.RIGHT);
+        return isRotated90 ? type.getHeight() : type.getWidth();
+    }
+
+    public int calculateRenderHeight(BuildingType type, Direction rotation){
+        boolean isRotated90 = (rotation == Direction.LEFT || rotation == Direction.RIGHT);
         return isRotated90 ? type.getWidth() : type.getHeight();
     }
 
-    public List<Point> calculateOccupiedTiles(BuildingType type, Point anchor, Direction rotation) {
+    public List<Point> calculateOccupiedTiles(BuildingType type, Point anchor, Direction direction) {
         List<Point> tiles = new ArrayList<>();
-
-
-        int currentWidth = calculateOccupiedWidth(type, rotation);
-        int currentHeight = calculateOccupiedHeight(type, rotation);
-
-        for (int x = 0; x < currentWidth; x++) {
-            for (int y = 0; y < currentHeight; y++) {
-                tiles.add(new Point(anchor.x + x, anchor.y + y));
+        for (int x = 0; x < type.getCollisionWidth(); x++) {
+            for (int y = 0; y < type.getCollisionHeight(); y++) {
+                tiles.add(getRealCoordinates(new Point(x, y), anchor, direction,
+                    type));
             }
         }
 
         return tiles;
+    }
+
+    public Point getRealCoordinates(Point relativePoint, Point anchor, Direction direction, BuildingType type) {
+        int realX = anchor.x;
+        int realY = anchor.y;
+
+        int rx = relativePoint.x;
+        int ry = relativePoint.y;
+
+        int baseWidth = type.getWidth();
+        int baseHeight = type.getHeight();
+
+        switch (direction) {
+            case UP:
+                realX += rx;
+                realY += ry;
+                break;
+
+            case RIGHT:
+                realX += ry;
+                realY += (baseWidth - 1) - rx;
+                break;
+
+            case DOWN:
+                realX += (baseWidth - 1) - rx;
+                realY += (baseHeight - 1) - ry;
+                break;
+
+            case LEFT:
+                realX += (baseHeight - 1) - ry;
+                realY += rx;
+                break;
+        }
+
+        return new Point(realX, realY);
     }
 
     public Building createBuilding(BuildingType type, Point unSafeAnchor, Direction rotation) {
@@ -51,10 +92,11 @@ public class BuildingFactory {
         int width = calculateOccupiedWidth(type, rotation);
         int height = calculateOccupiedHeight(type, rotation);
 
+
         return switch (type) {
-            case MINER -> new Miner(registry, worldMap, anchor,
-                width, height, rotation);
+            case MINER -> new Miner(registry, worldMap, anchor, rotation);
             case BELT -> new Belt(registry, anchor, rotation);
+            case HORIZONTAL_MINER -> new HorizontalMiner(worldMap, registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }

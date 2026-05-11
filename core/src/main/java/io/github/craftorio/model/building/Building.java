@@ -13,30 +13,60 @@ public abstract class Building {
     public Point anchor;
     public Direction direction;
     // size of object
-    private final int width;
-    private final int height;
     private final List<Point> occupiedTiles;
+    private final List<Point> collisionTiles;
     public final BuildingType type;
 
-    public Building(BuildingRegistry registry, Point anchor, int width, int height, Direction direction, BuildingType type) {
+    public Building(BuildingRegistry registry, Point anchor, Direction direction, BuildingType type) {
         this.registry = registry;
         this.anchor = anchor;
-        this.width = width;
-        this.height = height;
         this.direction = direction;
         this.type = type;
 
-        occupiedTiles = new ArrayList<>();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                occupiedTiles.add(new Point(anchor.x + x, anchor.y + y));
-            }
-        }
+        this.occupiedTiles = generateTiles(type.getWidth(), type.getHeight());
+        this.collisionTiles = generateTiles(type.getCollisionWidth(), type.getCollisionHeight());
     }
 
-    public List<Point> getOccupiedTiles() {
-        return occupiedTiles;
+    private List<Point> generateTiles(int baseW, int baseH) {
+        List<Point> tiles = new ArrayList<>();
+        for (int x = 0; x < baseW; x++) {
+            for (int y = 0; y < baseH; y++) {
+                tiles.add(rotatePoint(x, y));
+            }
+        }
+        return tiles;
     }
+
+    private Point rotatePoint(int rx, int ry) {
+        int realX = anchor.x;
+        int realY = anchor.y;
+
+        int totalBaseW = type.getWidth();
+        int totalBaseH = type.getHeight();
+
+        switch (direction) {
+            case UP:
+                realX += rx;
+                realY += ry;
+                break;
+            case RIGHT:
+                realX += ry;
+                realY += (totalBaseW - 1) - rx;
+                break;
+            case DOWN:
+                realX += (totalBaseW - 1) - rx;
+                realY += (totalBaseH - 1) - ry;
+                break;
+            case LEFT:
+                realX += (totalBaseH - 1) - ry;
+                realY += rx;
+                break;
+        }
+        return new Point(realX, realY);
+    }
+
+    public List<Point> getOccupiedTiles() { return occupiedTiles; }
+    public List<Point> getCollisionTiles() { return collisionTiles; }
 
     public abstract void update();
 
@@ -49,10 +79,12 @@ public abstract class Building {
     }
 
     public int getHeight() {
-        return this.height;
+        boolean isRotated90 = (direction == Direction.LEFT || direction == Direction.RIGHT);
+        return isRotated90 ? type.getWidth() : type.getHeight();
     }
 
     public int getWidth() {
-        return this.width;
+        boolean isRotated90 = (direction == Direction.LEFT || direction == Direction.RIGHT);
+        return isRotated90 ? type.getHeight() : type.getWidth();
     }
 }

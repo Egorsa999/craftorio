@@ -11,10 +11,10 @@ public enum Direction {
 
     public float to_degrees() {
         return switch (this) {
-            case UP -> 90f;
-            case RIGHT -> 0f;
-            case DOWN -> 270f;
-            case LEFT -> 180f;
+            case UP -> 0f;
+            case RIGHT -> -90f;
+            case DOWN -> -180f;
+            case LEFT -> -270f;
         };
     }
 }
