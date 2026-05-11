@@ -192,4 +192,5 @@ Thumbs.db
 **/resource-config.json
 
 !gradle/wrapper/gradle-wrapper.jar
-/assets/atlas/
+assets/atlas/main_atlas.atlas
+assets/atlas/main_atlas.png
