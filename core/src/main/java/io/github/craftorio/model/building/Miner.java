@@ -21,6 +21,9 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
 
     private final int BASE_TICKS_PER_ITEM = 120;
 
+    private final ArrayList<Point> throughDelta = new ArrayList<>();
+    private int lastThrough = 0;
+
     public Miner(BuildingRegistry registry, WorldMap worldMap, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.MINER);
         this.worldMap = worldMap;
@@ -30,6 +33,14 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
             oreCoverage.put(resource, oreCoverage.getOrDefault(resource, 0) + 1);
             oreProgress.putIfAbsent(resource, 0);
         }
+        throughDelta.add(new Point(+0, +2));
+        throughDelta.add(new Point(+1, +2));
+        throughDelta.add(new Point(+2, +1));
+        throughDelta.add(new Point(+2, +0));
+        throughDelta.add(new Point(+1, -1));
+        throughDelta.add(new Point(+0, -1));
+        throughDelta.add(new Point(-1, +0));
+        throughDelta.add(new Point(-1, +1));
     }
 
     @Override
@@ -79,10 +90,17 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
 
     @Override
     public boolean throughItem(ItemType type, Float progress) {
-        Building nextBuilding = getNextBuilding();
-        if (nextBuilding instanceof ReceiveItem building) {
-//            System.out.println("try");
-            return building.receiveItem(type, progress);
+        for (int iterate = 0; iterate <= throughDelta.size(); iterate++) {
+            lastThrough++;
+            lastThrough %= throughDelta.size();
+            int x = getX() + throughDelta.get(lastThrough).x;
+            int y = getY() + throughDelta.get(lastThrough).y;
+            Building nextBuilding = registry.getBuildingAt(new Point(x, y));
+            if (nextBuilding instanceof ReceiveItem building) {
+                if (building.receiveItem(type, progress)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
