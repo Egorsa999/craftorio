@@ -62,7 +62,8 @@ public class WorldMap {
     public List<ResourceType> getResources (List<Point> tiles){
         List<ResourceType> resources = new ArrayList<>();
         for (Point tile : tiles){
-            resources.add(getCell(tile.x, tile.y).getResourceType());
+            var resource = getCell(tile.x, tile.y).getResourceType();
+            if (resource != ResourceType.NONE)resources.add(resource);
         }
         return resources;
     }

@@ -37,7 +37,7 @@ public abstract class Building {
         return tiles;
     }
 
-    private Point rotatePoint(int rx, int ry) {
+    public Point rotatePoint(int rx, int ry) {
         int realX = anchor.x;
         int realY = anchor.y;
 

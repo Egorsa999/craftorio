@@ -24,8 +24,8 @@ public class HorizontalMiner extends Building implements ThroughItem{
 
 
     private Building getNextBuilding() {
-        int nextCol = getX();
-        int nextRow = getY() - 1;
+        int nextCol = rotatePoint(0, -1).x;
+        int nextRow = rotatePoint(0, -1).y;
 
         return registry.getBuildingAt(new Point(nextCol, nextRow));
     }
@@ -60,6 +60,6 @@ public class HorizontalMiner extends Building implements ThroughItem{
 
     @Override
     public boolean canThroughInMe(Point point) {
-        return false;
+        return point.equals(rotatePoint(0, -1));
     }
 }
