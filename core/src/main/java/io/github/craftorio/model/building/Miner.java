@@ -24,9 +24,9 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
     public Miner(BuildingRegistry registry, WorldMap worldMap, Point anchor, int width, int height, Direction direction) {
         super(registry, anchor, width, height, direction, BuildingType.MINER);
         this.worldMap = worldMap;
-
         List<ResourceType> occupiedOres = worldMap.getResources(getOccupiedTiles());
         for (ResourceType resource : occupiedOres){
+            if (resource == ResourceType.NONE || resource == null) continue;
             oreCoverage.put(resource, oreCoverage.getOrDefault(resource, 0) + 1);
             oreProgress.putIfAbsent(resource, 0);
         }

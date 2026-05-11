@@ -62,12 +62,7 @@ public class WorldMap {
     public List<ResourceType> getResources (List<Point> tiles){
         List<ResourceType> resources = new ArrayList<>();
         for (Point tile : tiles){
-            if (getCell(tile.x, tile.y).getResourceType() == ResourceType.COPPER){
-                resources.add(ResourceType.COPPER);
-            }
-            if (getCell(tile.x, tile.y).getResourceType() == ResourceType.IRON){
-                resources.add(ResourceType.IRON);
-            }
+            resources.add(getCell(tile.x, tile.y).getResourceType());
         }
         return resources;
     }
