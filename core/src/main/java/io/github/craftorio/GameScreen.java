@@ -51,12 +51,12 @@ public class GameScreen implements Screen {
         worldMap = new WorldMap(worldWidth, worldHeight);
 
         Point spawnPoint = worldMap.findSpawnPoint();
-        Player player = new Player(worldMap, spawnPoint);
 
         buildingRegistry = new BuildingRegistry();
         simulationEngine = new SimulationEngine(buildingRegistry);
         factory = new BuildingFactory(worldMap, buildingRegistry, inventory);
 
+        Player player = new Player(worldMap, buildingRegistry, spawnPoint);
         playerCamera = new CameraManager(player, worldMap);
         buildingManager = new BuildingManager(buildingRegistry, worldMap, factory);
         buildTool = new BuildTool(buildingManager);
