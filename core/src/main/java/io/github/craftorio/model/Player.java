@@ -38,16 +38,12 @@ public class Player {
         this.playerY = spawnPoint.y;
     }
     public void updatePosition(float delta, float dx, float dy){
-        if(!isWalkable((int)playerX, (int)playerY)) return;
-
         isMoving = true;
         float newPlayerX = playerX + (float) (dx * speed * delta / (!(dx == 0 || dy == 0) ? Math.sqrt(2) : 1));
         float newPlayerY = playerY + (float) (dy * speed * delta / (!(dx == 0 || dy == 0) ? Math.sqrt(2) : 1));
 
-        if(!isWalkable((int)newPlayerX, (int)newPlayerY)) return;
-
-        playerX = newPlayerX;
-        playerY = newPlayerY;
+        if (isWalkable((int)playerX, (int)newPlayerY)) playerY = newPlayerY;
+        if (isWalkable((int)newPlayerX, (int)playerY)) playerX = newPlayerX;
         //System.out.println(playerX + " " + playerY);
 
 
