@@ -6,5 +6,5 @@ import java.awt.*;
 
 public interface ReceiveItem {
     public boolean receiveItem(ItemType type, Float progress);
-    public boolean canReceiveFromMe(Point point);
+    public boolean canReceiveFrom(Point point);
 }

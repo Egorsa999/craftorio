@@ -4,7 +4,6 @@ import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.ItemType;
 
-import javax.accessibility.Accessible;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -133,7 +132,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
 
         // type 3
         if (d instanceof ThroughItem dd && l instanceof ThroughItem ll && r instanceof ThroughItem rr) {
-            if (ll.canThroughInMe(new Point(getX(), getY())) && rr.canThroughInMe(new Point(getX(), getY())) && dd.canThroughInMe(new Point(getX(), getY()))) {
+            if (ll.canThroughIn(new Point(getX(), getY())) && rr.canThroughIn(new Point(getX(), getY())) && dd.canThroughIn(new Point(getX(), getY()))) {
                 beltType = 3;
                 rotation = dirToInt(direction) * 90f;
                 reflection = 1f;
@@ -142,9 +141,9 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
         }
 
         // type 2
-        if (d instanceof ThroughItem dd && dd.canThroughInMe(new Point(getX(), getY()))) {
+        if (d instanceof ThroughItem dd && dd.canThroughIn(new Point(getX(), getY()))) {
             if (r instanceof ThroughItem rr) {
-                if (rr.canThroughInMe(new Point(getX(), getY()))) {
+                if (rr.canThroughIn(new Point(getX(), getY()))) {
                     beltType = 2;
                     rotation = dirToInt(direction) * 90f;
                     reflection = 1f;
@@ -152,7 +151,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
                 }
             }
             if (l instanceof ThroughItem ll) {
-                if (ll.canThroughInMe(new Point(getX(), getY()))) {
+                if (ll.canThroughIn(new Point(getX(), getY()))) {
                     beltType = 2;
                     rotation = dirToInt(direction) * 90f;
                     reflection = -1f;
@@ -163,7 +162,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
 
         // type 4
         if (l instanceof ThroughItem ll && r instanceof ThroughItem rr) {
-            if (ll.canThroughInMe(new Point(getX(), getY())) && rr.canThroughInMe(new Point(getX(), getY()))) {
+            if (ll.canThroughIn(new Point(getX(), getY())) && rr.canThroughIn(new Point(getX(), getY()))) {
                 beltType = 4;
                 rotation = dirToInt(direction) * 90f;
                 reflection = 1f;
@@ -173,7 +172,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
 
         // type 1
         if (l instanceof ThroughItem ll) {
-            if (ll.canThroughInMe(new Point(getX(), getY()))) {
+            if (ll.canThroughIn(new Point(getX(), getY()))) {
                 beltType = 1;
                 rotation = dirToInt(direction) * 90f;
                 reflection = 1f;
@@ -181,7 +180,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
             }
         }
         if (r instanceof ThroughItem rr) {
-            if (rr.canThroughInMe(new Point(getX(), getY()))) {
+            if (rr.canThroughIn(new Point(getX(), getY()))) {
                 beltType = 1;
                 rotation = dirToInt(direction) * 90f;
                 reflection = -1f;
@@ -250,7 +249,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
     public boolean throughItem(ItemType id, Float progress) { return false; }
 
     @Override
-    public boolean canThroughInMe(Point point) {
+    public boolean canThroughIn(Point point) {
         int nextCol = getX();
         int nextRow = getY();
 
@@ -270,7 +269,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
     }
 
     @Override
-    public boolean canReceiveFromMe(Point point) {
+    public boolean canReceiveFrom(Point point) {
         return true;
     }
 

@@ -2,6 +2,7 @@ package io.github.craftorio.model.building;
 
 import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.BuildingRegistry;
+import io.github.craftorio.model.ui.Inventory;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -11,10 +12,12 @@ public class BuildingFactory {
 
     private final WorldMap worldMap;
     private final BuildingRegistry registry;
+    private final Inventory inventory;
 
-    public BuildingFactory(WorldMap worldMap, BuildingRegistry registry) {
+    public BuildingFactory(WorldMap worldMap, BuildingRegistry registry, Inventory inventory) {
         this.worldMap = worldMap;
         this.registry = registry;
+        this.inventory = inventory;
     }
 
     public int calculateOccupiedWidth(BuildingType type, Direction rotation){
@@ -97,6 +100,7 @@ public class BuildingFactory {
             case MINER -> new Miner(registry, worldMap, anchor, rotation);
             case BELT -> new Belt(registry, anchor, rotation);
             case HORIZONTAL_MINER -> new HorizontalMiner(worldMap, registry, anchor, rotation);
+            case CORE -> new Core(inventory, registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }

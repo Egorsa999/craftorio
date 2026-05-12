@@ -13,6 +13,8 @@ import io.github.craftorio.model.building.Direction; // Замените на в
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.CameraManager;
 
+import java.awt.Point;
+
 public class InputController extends InputAdapter {
     private final Player player;
     private final CameraManager camera;
@@ -109,6 +111,10 @@ public class InputController extends InputAdapter {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT && buildTool.isActive()) {
             buildTool.tryBuild();
+        }
+        if (button == Input.Buttons.RIGHT){
+            buildingManager.tryRemoveBuilding(new Point(MathUtils.floor(tempCoords.x),
+                MathUtils.floor(tempCoords.y)));
         }
         return true;
     }

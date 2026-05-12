@@ -21,7 +21,23 @@ public class BuildingManager {
         this.factory = factory;
     }
 
+    public boolean tryRemoveBuilding(Point pos){
+        Building toDelete = registry.getBuildingAt(pos);
+        System.out.println(pos + " " + toDelete);
+        if (toDelete == null || toDelete.type == BuildingType.CORE)return false;
+
+        registry.removeBuilding(toDelete);
+        return true;
+    }
+
     public boolean tryPlaceBuilding(BuildingType type, Point anchor, Direction direction){
+        System.out.println(anchor);
+        if (type == BuildingType.CORE){
+            Building newBuilding = factory.createBuilding(type, anchor, direction);
+            registry.addBuilding(newBuilding);
+            return true;
+        }
+
         if (!isValidPlace(type, anchor, direction)){
             return false;
         }

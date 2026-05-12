@@ -77,7 +77,7 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
     }
 
     @Override
-    public boolean canReceiveFromMe(Point point) {
+    public boolean canReceiveFrom(Point point) {
         return true;
     }
 
@@ -106,7 +106,7 @@ public class Miner extends Building implements ThroughItem, ReceiveItem {
     }
 
     @Override
-    public boolean canThroughInMe(Point point) {
+    public boolean canThroughIn(Point point) {
         return true;
     }
 }
