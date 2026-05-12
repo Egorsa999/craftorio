@@ -34,7 +34,6 @@ public class WorldRenderer {
 
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
-    private final TextureAtlas atlas;
 
     private final TextureLoad Textures;
 
@@ -42,7 +41,7 @@ public class WorldRenderer {
 
     private final Set<Building> renderedBuildingsThisFrame = new HashSet<>();
 
-    public WorldRenderer(CameraManager cameraManager, Player player, WorldMap worldMap,
+    public WorldRenderer(TextureLoad Textures, CameraManager cameraManager, Player player, WorldMap worldMap,
                          BuildTool buildTool, BuildingFactory factory, BuildingRegistry registry) {
         this.cameraManager = cameraManager;
         this.player = player;
@@ -54,8 +53,7 @@ public class WorldRenderer {
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
 
-        this.atlas = new TextureAtlas(Gdx.files.internal("atlas/main_atlas.atlas"));
-        Textures = new TextureLoad(atlas);
+        this.Textures = Textures;
 
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
     }
@@ -220,7 +218,6 @@ public class WorldRenderer {
     public void dispose() {
         batch.dispose();
         shapeRenderer.dispose();
-        atlas.dispose();
     }
 
     private record VisibleBounds(int startX, int endX, int startY, int endY) {}

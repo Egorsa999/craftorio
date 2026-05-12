@@ -26,6 +26,10 @@ public class Inventory {
         return true;
     }
 
+    public Map<ItemType, Integer> getItems(){
+        return items;
+    }
+
     @Override
     public String toString() {
         return items.toString();
