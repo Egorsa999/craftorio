@@ -1,11 +1,14 @@
 package io.github.craftorio.model;
 
+import com.badlogic.gdx.graphics.g3d.particles.influencers.ParticleControllerInfluencer;
+import com.badlogic.gdx.math.MathUtils;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.generator.Cell;
 import io.github.craftorio.model.generator.MapGenerator;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.generator.TerrainType;
+import org.w3c.dom.ranges.Range;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -57,6 +60,27 @@ public class WorldMap {
     public void setTerrainType(int col, int row, TerrainType terrainType) {
         checkBound(col, row);
         map[row][col].updateTerrainType(terrainType);
+    }
+
+    public Point findSpawnPoint(){
+        int counter = 0;
+        while (true){
+            int x = MathUtils.random(width / 2 - 200, width / 2 + 200);
+            int y = MathUtils.random(height / 2 - 200, height / 2 + 200);
+            boolean isGood = true;
+            for (int dx = 0; dx <= 7; dx++){
+                for (int dy = 0; dy <= 7; dy++){
+                    Cell current = getCell(x + dx, y + dy);
+                    isGood &= current.getTerrainType() == TerrainType.GRASS ||
+                        current.getTerrainType() == TerrainType.SAND;
+                    isGood &= current.getResourceType() == ResourceType.NONE;
+                }
+            }
+            if (counter++ == 10000)break;
+            if (isGood)return new Point(x + 1, y + 3);
+            }
+        System.err.println("Can't find spawnPoint!");
+        return new Point(10, 10);
     }
 
     public List<ResourceType> getResources (List<Point> tiles){

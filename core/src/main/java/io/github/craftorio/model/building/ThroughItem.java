@@ -6,5 +6,5 @@ import java.awt.*;
 
 public interface ThroughItem {
     public boolean throughItem(ItemType type, Float progress);
-    public boolean canThroughInMe(Point point);
+    public boolean canThroughIn(Point point);
 }

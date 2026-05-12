@@ -3,7 +3,8 @@ package io.github.craftorio.model.building;
 public enum BuildingType {
     BELT(1, 1),
     MINER(2, 2),
-    HORIZONTAL_MINER(1, 3, 1, 2);
+    HORIZONTAL_MINER(1, 3, 1, 2),
+    CORE(3, 3);
 
 
     private final int width;

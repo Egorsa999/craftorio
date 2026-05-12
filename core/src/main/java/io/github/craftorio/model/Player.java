@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.MathUtils;
 import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.building.Direction;
 
+import java.awt.*;
+
 public class Player {
 
     WorldMap worldMap;
@@ -17,10 +19,10 @@ public class Player {
 
     public static final float speed = GameConfig.PLAYER_SPEED;
 
-    public Player(WorldMap worldMap){
+    public Player(WorldMap worldMap, Point spawnPoint){
         this.worldMap = worldMap;
-        playerX = worldMap.getWidth() / 2f;
-        playerY = worldMap.getHeight() / 2f;
+        this.playerX = spawnPoint.x;
+        this.playerY = spawnPoint.y;
     }
 
     public void updatePosition(float delta, float dx, float dy){
@@ -28,6 +30,8 @@ public class Player {
         playerX += (float) (dx * speed * delta / (!(dx == 0 || dy == 0) ? Math.sqrt(2) : 1));
         playerY += (float) (dy * speed * delta / (!(dx == 0 || dy == 0) ? Math.sqrt(2) : 1));
 
+
+        //System.out.println(playerX + " " + playerY);
 
 
         if (dx > 0) {
