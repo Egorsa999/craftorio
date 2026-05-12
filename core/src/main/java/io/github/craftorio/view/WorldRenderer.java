@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Array;
 import io.github.craftorio.model.BuildingManager;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.Player;
@@ -179,7 +180,7 @@ public class WorldRenderer {
     private void drawBuildPreviewTextures() {
         if (!buildTool.isActive()) return;
 
-        Point pos = buildTool.getHoverPosition();
+        Array<Point> positions = buildTool.getHoverPositions();
         BuildingType type = buildTool.getSelectedType();
         Direction rotation = buildTool.getCurrentRotation();
 
@@ -189,18 +190,19 @@ public class WorldRenderer {
 
         Color colorFilter = new Color(1f, 1f, 1f, 0.5f);
         if (!buildTool.isValidPlace())colorFilter = new Color(1f, 0f, 0f, 0.5f);
-
-        if (type == BuildingType.BELT) {
-            BeltRenderer.drawBackground(colorFilter, batch, Textures.getConveyorTextures(), (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), stateTime, 0.5f);
-            return;
+        for (Point pos : positions){
+            if (type == BuildingType.BELT) {
+                BeltRenderer.drawBackground(colorFilter, batch, Textures.getConveyorTextures(), (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), stateTime, 0.5f);
+                continue;
+            }
+            TextureRenderer.drawBuilding(
+                batch, Textures.get(type),
+                (float)pos.getX(), (float)pos.getY(),
+                type.getWidth(), type.getHeight(),
+                rotation, colorFilter,
+                0f
+            );
         }
-        TextureRenderer.drawBuilding(
-            batch, Textures.get(type),
-            (float)pos.getX(), (float)pos.getY(),
-            type.getWidth(), type.getHeight(),
-            rotation, colorFilter,
-            0f
-        );
     }
 
     private VisibleBounds calculateVisibleBounds(OrthographicCamera camera) {

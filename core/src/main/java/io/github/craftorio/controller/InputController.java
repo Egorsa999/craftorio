@@ -110,7 +110,9 @@ public class InputController extends InputAdapter {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT && buildTool.isActive()) {
-            buildTool.tryBuild();
+            buildTool.updateStartHoverPosition(MathUtils.floor(tempCoords.x),
+                MathUtils.floor(tempCoords.y));
+            //buildTool.tryBuild();
         }
         if (button == Input.Buttons.RIGHT){
             buildingManager.tryRemoveBuilding(new Point(MathUtils.floor(tempCoords.x),
@@ -118,19 +120,23 @@ public class InputController extends InputAdapter {
         }
         return true;
     }
-
-    @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-//        System.out.println(screenX + " " + screenY);
         mouseMoved(screenX, screenY);
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && buildTool.isActive()) {
-            buildTool.tryBuild();
-
-            return true;
-        }
-        return false;
+        return true;
     }
 
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT && buildTool.isActive()) {
+            buildTool.tryBuild();
+            buildTool.updateStartHoverPosition(-1, -1);
+        }
+        if (button == Input.Buttons.RIGHT){
+            buildingManager.tryRemoveBuilding(new Point(MathUtils.floor(tempCoords.x),
+                MathUtils.floor(tempCoords.y)));
+        }
+        return true;
+    }
 
     private void updateHoveredGrid() {
         if (!buildTool.isActive()) return;
