@@ -7,8 +7,7 @@ import io.github.craftorio.model.building.Direction;
 
 import java.awt.Point;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 public class BuildTool {
     private BuildingType selectedType = null;
@@ -70,10 +69,13 @@ public class BuildTool {
             positions.add(hoverPosition);
             return positions;
         }
-        int dx = selectedType.getCollisionWidth() * (startHoverPosition.x <= hoverPosition.x ? 1 : -1);
-        int dy = selectedType.getCollisionHeight() * (startHoverPosition.y <= hoverPosition.y ? 1 : -1);
-        for(int i = startHoverPosition.x; (startHoverPosition.x <= hoverPosition.x) == (i <= hoverPosition.x); i += dx)
-            for(int j = startHoverPosition.y; (startHoverPosition.y <= hoverPosition.y) == (j <= hoverPosition.y); j += dy)
+        int fin_x = hoverPosition.x, fin_y = hoverPosition.y;
+        if(abs(startHoverPosition.x - fin_x) <= abs(startHoverPosition.y - fin_y)) fin_x = startHoverPosition.x;
+        else fin_y = startHoverPosition.y;
+        int dx = selectedType.getCollisionWidth() * (startHoverPosition.x <= fin_x ? 1 : -1);
+        int dy = selectedType.getCollisionHeight() * (startHoverPosition.y <= fin_y ? 1 : -1);
+        for(int i = startHoverPosition.x; (startHoverPosition.x <= fin_x) == (i <= fin_x); i += dx)
+            for(int j = startHoverPosition.y; (startHoverPosition.y <= fin_y) == (j <= fin_y); j += dy)
                 positions.add(new Point(i, j));
         return positions;
     }
