@@ -15,6 +15,7 @@ public abstract class Building {
     // size of object
     private final List<Point> occupiedTiles;
     private final List<Point> collisionTiles;
+    private final boolean walkable;
     public final BuildingType type;
 
     public Building(BuildingRegistry registry, Point anchor, Direction direction, BuildingType type) {
@@ -25,6 +26,7 @@ public abstract class Building {
 
         this.occupiedTiles = generateTiles(type.getWidth(), type.getHeight());
         this.collisionTiles = generateTiles(type.getCollisionWidth(), type.getCollisionHeight());
+        this.walkable = type.getWalkable();
     }
 
     private List<Point> generateTiles(int baseW, int baseH) {
@@ -86,5 +88,9 @@ public abstract class Building {
     public int getWidth() {
         boolean isRotated90 = (direction == Direction.LEFT || direction == Direction.RIGHT);
         return isRotated90 ? type.getHeight() : type.getWidth();
+    }
+
+    public boolean getWalkable() {
+        return this.walkable;
     }
 }

@@ -8,7 +8,6 @@ public class GameSprite {
     private final TextureRegion staticRegion;
     private final Animation<TextureRegion> animation;
     private final boolean isAnimated;
-
     public GameSprite(TextureRegion region) {
         this.staticRegion = region;
         this.animation = null;

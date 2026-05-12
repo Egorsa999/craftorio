@@ -1,5 +1,16 @@
 package io.github.craftorio.model.generator;
 
+import io.github.craftorio.model.ItemType;
+
 public enum TerrainType {
-    WALL, GRASS, SAND, WATER;
+    WALL(false),
+    GRASS(true),
+    SAND(true),
+    WATER(false);
+    private final boolean walkable;
+    TerrainType(boolean walkable) {
+        this.walkable = walkable;
+    }
+    public boolean getWalkability() {return this.walkable;}
+
 }
