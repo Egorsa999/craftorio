@@ -20,6 +20,10 @@ public class Lwjgl3Launcher {
             TexturePacker.Settings settings = new TexturePacker.Settings();
             settings.maxWidth = 4096;
             settings.maxHeight = 4096;
+            settings.paddingX = 2;
+            settings.paddingY = 2;
+            settings.edgePadding = true;
+            settings.duplicatePadding = true;
 
             TexturePacker.process(settings, "assets/raw", "assets/atlas", "main_atlas");
         }
