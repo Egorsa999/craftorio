@@ -179,6 +179,23 @@ public class WorldRenderer {
 
     private void drawBuildPreviewTextures() {
         if (!buildTool.isActive()) return;
+        if (buildTool.eraseMode) {
+            float xl = Math.min(buildTool.getStartHoverPosition().x, buildTool.getHoverPosition().x);
+            float xr = Math.max(buildTool.getStartHoverPosition().x, buildTool.getHoverPosition().x);
+            float yl = Math.min(buildTool.getStartHoverPosition().y, buildTool.getHoverPosition().y);
+            float yr = Math.max(buildTool.getStartHoverPosition().y, buildTool.getHoverPosition().y);
+            if (xl == -1) return;
+//            System.out.println("ERASE: " + buildTool.getStartHoverPosition() + " " + buildTool.getHoverPosition());
+            Color colorFilter = new Color(1f, 0f, 0f, 0.5f);
+            batch.setColor(colorFilter);
+            batch.draw(
+                Textures.getBlank().getFirstFrame(),
+                xl, yl,
+                xr - xl + 1, yr - yl + 1
+            );
+            batch.setColor(Color.WHITE);
+            return;
+        }
 
         Array<Point> positions = buildTool.getHoverPositions();
         BuildingType type = buildTool.getSelectedType();

@@ -31,7 +31,6 @@ public class BuildingManager {
     }
 
     public boolean tryPlaceBuilding(BuildingType type, Point anchor, Direction direction){
-        System.out.println(anchor);
         if (type == BuildingType.CORE){
             Building newBuilding = factory.createBuilding(type, anchor, direction);
             registry.addBuilding(newBuilding);
