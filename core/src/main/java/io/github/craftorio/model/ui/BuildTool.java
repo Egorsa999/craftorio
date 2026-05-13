@@ -110,9 +110,12 @@ public class BuildTool {
             if (startHoverPosition.y > fin_y) currentRotation = Direction.DOWN;
         }
 
-        for(int i = startHoverPosition.x; (startHoverPosition.x <= fin_x) == (i <= fin_x); i += dx)
-            for(int j = startHoverPosition.y; (startHoverPosition.y <= fin_y) == (j <= fin_y); j += dy)
+        for(int i = startHoverPosition.x; (dx > 0 ? i <= fin_x : i >= fin_x); i += dx)
+            for(int j = startHoverPosition.y; (dy > 0 ? j <= fin_y : j >= fin_y); j += dy) {
                 positions.add(new Point(i, j));
+            }
+//        System.out.println(startHoverPosition + " " + hoverPosition + " " + positions.size);
+//        System.out.println(abs(startHoverPosition.x - fin_x) + " " + abs(startHoverPosition.y - fin_y) + " " + positions.size);
         return positions;
     }
     public Direction getCurrentRotation() { return currentRotation; }

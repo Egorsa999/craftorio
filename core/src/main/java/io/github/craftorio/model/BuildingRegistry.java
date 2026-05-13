@@ -10,6 +10,7 @@ public class BuildingRegistry {
 
 
     Map<Point, Building> spatialGrid = new HashMap<>();
+    Map<Point, Building> collisionGrid = new HashMap<>();
 
     private final List<Building> activeBuildings = new ArrayList<>();
 
@@ -19,6 +20,9 @@ public class BuildingRegistry {
     public void addBuilding(Building building) {
         for (Point p : building.getOccupiedTiles()) {
             spatialGrid.put(p, building);
+        }
+        for (Point p : building.getCollisionTiles()) {
+            collisionGrid.put(p, building);
         }
         pendingAdds.add(building);
     }
@@ -32,6 +36,10 @@ public class BuildingRegistry {
 
     public Building getBuildingAt(Point position) {
         return spatialGrid.get(position);
+    }
+
+    public Building getBuildingAtRemove(Point position) {
+        return collisionGrid.get(position);
     }
 
     //call before and after ticks
