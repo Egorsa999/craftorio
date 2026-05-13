@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
 
         Player player = new Player(worldMap, buildingRegistry, spawnPoint);
         playerCamera = new CameraManager(player, worldMap);
-        buildingManager = new BuildingManager(buildingRegistry, worldMap, factory);
+        buildingManager = new BuildingManager(buildingRegistry, worldMap, factory, player);
         buildTool = new BuildTool(buildingManager);
         WorldRender = new WorldRenderer(textures, playerCamera, player, worldMap, buildTool, factory, buildingRegistry);
 

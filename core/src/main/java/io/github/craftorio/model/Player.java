@@ -22,6 +22,10 @@ public class Player {
 
 
     public static final float speed = GameConfig.PLAYER_SPEED;
+
+    Point getLocation() {
+        return new Point((int)playerX, (int)playerY);
+    }
     private boolean isWalkable(int x, int y){
         TerrainType terrainType = worldMap.getCell(x, y).getTerrainType();
         if(terrainType != null && !terrainType.getWalkability()) return false;
