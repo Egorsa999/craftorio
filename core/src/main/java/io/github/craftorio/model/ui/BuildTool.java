@@ -103,10 +103,12 @@ public class BuildTool {
         int dx = buildingWidth * (startHoverPosition.x <= fin_x ? 1 : -1);
         int dy = buildingHeight * (startHoverPosition.y <= fin_y ? 1 : -1);
 
-        if (startHoverPosition.x < fin_x) currentRotation = Direction.RIGHT;
-        if (startHoverPosition.x > fin_x) currentRotation = Direction.LEFT;
-        if (startHoverPosition.y < fin_y) currentRotation = Direction.UP;
-        if (startHoverPosition.y > fin_y) currentRotation = Direction.DOWN;
+        if(selectedType == BuildingType.BELT){
+            if (startHoverPosition.x < fin_x) currentRotation = Direction.RIGHT;
+            if (startHoverPosition.x > fin_x) currentRotation = Direction.LEFT;
+            if (startHoverPosition.y < fin_y) currentRotation = Direction.UP;
+            if (startHoverPosition.y > fin_y) currentRotation = Direction.DOWN;
+        }
 
         for(int i = startHoverPosition.x; (startHoverPosition.x <= fin_x) == (i <= fin_x); i += dx)
             for(int j = startHoverPosition.y; (startHoverPosition.y <= fin_y) == (j <= fin_y); j += dy)
