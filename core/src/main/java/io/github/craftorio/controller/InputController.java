@@ -107,6 +107,7 @@ public class InputController extends InputAdapter {
         if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
             buildTool.eraseMode = false;
             buildTool.updSelectedType(null);
+            buildTool.updateStartHoverPosition(new Point(-1, -1));
         }
         return false;
     }
