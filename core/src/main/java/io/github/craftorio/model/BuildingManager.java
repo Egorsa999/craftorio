@@ -13,12 +13,13 @@ public class BuildingManager {
     private final BuildingRegistry registry;
     private final WorldMap worldMap;
     private final BuildingFactory factory;
+    private final Player player;
 
-
-    public BuildingManager(BuildingRegistry registry, WorldMap worldMap, BuildingFactory factory) {
+    public BuildingManager(BuildingRegistry registry, WorldMap worldMap, BuildingFactory factory, Player player) {
         this.registry = registry;
         this.worldMap = worldMap;
         this.factory = factory;
+        this.player = player;
     }
 
     public boolean tryRemoveBuilding(Point pos){
@@ -49,16 +50,21 @@ public class BuildingManager {
 
     public boolean isValidPlace(BuildingType type, Point anchor, Direction direction){
         List<Point> requiredTiles = factory.calculateOccupiedTiles(type, anchor, direction);
-        if (!isAreaFree(requiredTiles)) {
-            return false;
-        }
-        if (!isValidTerrainFor(type, requiredTiles, anchor, direction)) {
+        if (!isAreaFree(requiredTiles) || !isValidTerrainFor(type, requiredTiles, anchor, direction) || !playerNotStuck(requiredTiles, type)) {
             return false;
         }
         return true;
     }
 
-
+    private boolean playerNotStuck(List<Point> requiredTiles, BuildingType type){
+        if(type.getWalkable() == true) return true;
+        Point playerLocation = player.getLocation();
+        for (Point p : requiredTiles){
+            if(p.equals(playerLocation))
+                return false;
+        }
+        return true;
+    }
     private boolean isAreaFree(List<Point> tiles) {
         for (Point p : tiles) {
             if (registry.getBuildingAt(p) != null) {
