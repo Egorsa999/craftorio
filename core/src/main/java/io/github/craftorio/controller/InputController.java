@@ -110,8 +110,7 @@ public class InputController extends InputAdapter {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT && buildTool.isActive()) {
-            buildTool.updateStartHoverPosition(MathUtils.floor(tempCoords.x),
-                MathUtils.floor(tempCoords.y));
+            buildTool.updateStartHoverPosition(getCurrentHoveredCoords());
             //buildTool.tryBuild();
         }
         if (button == Input.Buttons.RIGHT){
@@ -138,13 +137,7 @@ public class InputController extends InputAdapter {
         return true;
     }
 
-    private void updateHoveredGrid() {
-        if (!buildTool.isActive()) return;
-
-        tempCoords.set(lastMouseX, lastMouseY, 0);
-        camera.unproject(tempCoords);
-
-
+    private Point getCurrentHoveredCoords(){
         BuildingType type = buildTool.getSelectedType();
         Direction rotation = buildTool.getCurrentRotation();
 
@@ -157,7 +150,14 @@ public class InputController extends InputAdapter {
         int gridX = MathUtils.round((tempCoords.x - halfWidth));
         int gridY = MathUtils.round((tempCoords.y - halfHeight));
 
-        buildTool.updateHoverPosition(gridX, gridY);
+        return new Point(gridX, gridY);
     }
+    private void updateHoveredGrid() {
+        if (!buildTool.isActive()) return;
 
+        tempCoords.set(lastMouseX, lastMouseY, 0);
+        camera.unproject(tempCoords);
+
+        buildTool.updateHoverPosition(getCurrentHoveredCoords());
+    }
 }

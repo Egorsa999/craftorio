@@ -27,7 +27,7 @@ public class BuildTool {
     }
 
     public boolean tryBuild(){
-        if (!isActive())return false;
+        if (!isValidPlace())return false;
 
         for(Point point : getHoverPositions()){
             if(!buildingManager.tryPlaceBuilding(selectedType, point, currentRotation))
@@ -55,6 +55,8 @@ public class BuildTool {
 
     public void updateStartHoverPosition(int gridX, int gridY) {startHoverPosition.setLocation(gridX, gridY);}
     public void updateHoverPosition(int gridX, int gridY) {hoverPosition.setLocation(gridX, gridY);}
+    public void updateStartHoverPosition(Point p) {startHoverPosition.setLocation(p);}
+    public void updateHoverPosition(Point p) {hoverPosition.setLocation(p);}
 
     public void rotateRight() {
         if (isActive()) {
@@ -72,12 +74,24 @@ public class BuildTool {
         int fin_x = hoverPosition.x, fin_y = hoverPosition.y;
         if(abs(startHoverPosition.x - fin_x) <= abs(startHoverPosition.y - fin_y)) fin_x = startHoverPosition.x;
         else fin_y = startHoverPosition.y;
-        int dx = selectedType.getCollisionWidth() * (startHoverPosition.x <= fin_x ? 1 : -1);
-        int dy = selectedType.getCollisionHeight() * (startHoverPosition.y <= fin_y ? 1 : -1);
+
+        int buildingWidth = selectedType.getWidth();
+        int buildingHeight = selectedType.getHeight();
+
+        if(currentRotation.to_degrees() % 180 != 0){
+            int temp = buildingHeight;
+            buildingHeight = buildingWidth;
+            buildingWidth = temp;
+        }
+
+        int dx = buildingWidth * (startHoverPosition.x <= fin_x ? 1 : -1);
+        int dy = buildingHeight * (startHoverPosition.y <= fin_y ? 1 : -1);
+
         for(int i = startHoverPosition.x; (startHoverPosition.x <= fin_x) == (i <= fin_x); i += dx)
             for(int j = startHoverPosition.y; (startHoverPosition.y <= fin_y) == (j <= fin_y); j += dy)
                 positions.add(new Point(i, j));
         return positions;
     }
     public Direction getCurrentRotation() { return currentRotation; }
+
 }
