@@ -66,6 +66,12 @@ public class InputController extends InputAdapter {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
+            buildTool.eraseMode = true;
+            buildTool.selectBuilding(BuildingType.BELT);
+            mouseMoved(lastMouseX, lastMouseY);
+            return true;
+        }
         if (keycode == Input.Keys.NUM_1) {
             buildTool.selectBuilding(BuildingType.MINER);
             mouseMoved(lastMouseX, lastMouseY);
@@ -97,6 +103,16 @@ public class InputController extends InputAdapter {
     }
 
     @Override
+    public boolean keyUp(int keycode) {
+        if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
+            buildTool.eraseMode = false;
+            buildTool.updSelectedType(null);
+            buildTool.updateStartHoverPosition(new Point(-1, -1));
+        }
+        return false;
+    }
+
+    @Override
     public boolean mouseMoved(int screenX, int screenY) {
         lastMouseX = screenX;
         lastMouseY = screenY;
@@ -110,35 +126,30 @@ public class InputController extends InputAdapter {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT && buildTool.isActive()) {
-            buildTool.tryBuild();
+            buildTool.updateStartHoverPosition(getCurrentHoveredCoords());
+            //buildTool.tryBuild();
         }
-        if (button == Input.Buttons.RIGHT){
-            buildingManager.tryRemoveBuilding(new Point(MathUtils.floor(tempCoords.x),
-                MathUtils.floor(tempCoords.y)));
-        }
+        return true;
+    }
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        mouseMoved(screenX, screenY);
         return true;
     }
 
     @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-//        System.out.println(screenX + " " + screenY);
-        mouseMoved(screenX, screenY);
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && buildTool.isActive()) {
-            buildTool.tryBuild();
-
-            return true;
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT && buildTool.isActive()) {
+            if (buildTool.eraseMode) {
+                buildTool.tryErase();
+            } else {
+                buildTool.tryBuild();
+            }
+            buildTool.updateStartHoverPosition(-1, -1);
         }
-        return false;
+        return true;
     }
 
-
-    private void updateHoveredGrid() {
-        if (!buildTool.isActive()) return;
-
-        tempCoords.set(lastMouseX, lastMouseY, 0);
-        camera.unproject(tempCoords);
-
-
+    private Point getCurrentHoveredCoords(){
         BuildingType type = buildTool.getSelectedType();
         Direction rotation = buildTool.getCurrentRotation();
 
@@ -151,7 +162,13 @@ public class InputController extends InputAdapter {
         int gridX = MathUtils.round((tempCoords.x - halfWidth));
         int gridY = MathUtils.round((tempCoords.y - halfHeight));
 
-        buildTool.updateHoverPosition(gridX, gridY);
+        return new Point(gridX, gridY);
     }
+    private void updateHoveredGrid() {
+        if (!buildTool.isActive()) return;
 
+        tempCoords.set(lastMouseX, lastMouseY, 0);
+        camera.unproject(tempCoords);
+        buildTool.updateHoverPosition(getCurrentHoveredCoords());
+    }
 }

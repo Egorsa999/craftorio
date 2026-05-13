@@ -23,7 +23,7 @@ public class BuildingManager {
     }
 
     public boolean tryRemoveBuilding(Point pos){
-        Building toDelete = registry.getBuildingAt(pos);
+        Building toDelete = registry.getBuildingAtRemove(pos);
         System.out.println(pos + " " + toDelete);
         if (toDelete == null || toDelete.type == BuildingType.CORE)return false;
 
@@ -32,7 +32,6 @@ public class BuildingManager {
     }
 
     public boolean tryPlaceBuilding(BuildingType type, Point anchor, Direction direction){
-        System.out.println(anchor);
         if (type == BuildingType.CORE){
             Building newBuilding = factory.createBuilding(type, anchor, direction);
             registry.addBuilding(newBuilding);

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TextureLoad {
+    private GameSprite blank;
     private final Map<ResourceType, GameSprite> resourceSprites = new EnumMap<>(ResourceType.class);
     private final Map<BuildingType, GameSprite> buildingSprites = new EnumMap<>(BuildingType.class);
     private final HashMap<String, GameSprite> StringSprites = new HashMap<>();
@@ -33,6 +34,8 @@ public class TextureLoad {
         resourceSprites.put(ResourceType.COPPER, load("ore-copper"));
         resourceSprites.put(ResourceType.COAL, load("ore-coal"));
         resourceSprites.put(ResourceType.NONE, load("blank"));
+
+        blank = load("blank");
 
         terrarianSprites.put(TerrainType.GRASS, load("grass"));
         terrarianSprites.put(TerrainType.SAND, load("sand"));
@@ -102,5 +105,9 @@ public class TextureLoad {
 
     public GameSprite get(String type) {
         return StringSprites.get(type);
+    }
+
+    public GameSprite getBlank() {
+        return blank;
     }
 }
