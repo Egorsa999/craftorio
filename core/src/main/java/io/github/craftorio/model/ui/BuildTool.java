@@ -49,6 +49,7 @@ public class BuildTool {
 
     public void clearSelection() {
         this.selectedType = null;
+        updateStartHoverPosition(new Point(-1, -1));
     }
 
     public boolean isActive() {
