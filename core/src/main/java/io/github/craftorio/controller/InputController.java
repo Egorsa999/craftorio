@@ -5,13 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.Player;
 import io.github.craftorio.model.BuildingManager;
-import io.github.craftorio.model.building.BuildingFactory;
-import io.github.craftorio.model.building.BuildingType; // Замените на ваш импорт
-import io.github.craftorio.model.building.Direction; // Замените на ваш импорт
+import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.CameraManager;
+import io.github.craftorio.view.ui.AssemblerUI;
 
 import java.awt.Point;
 
@@ -21,6 +21,7 @@ public class InputController extends InputAdapter {
     private final BuildTool buildTool;
     private final BuildingManager buildingManager;
     private final BuildingFactory factory;
+    private AssemblerUI assemblerUI;
 
     private final Vector3 tempCoords = new Vector3();
 
@@ -29,12 +30,13 @@ public class InputController extends InputAdapter {
     private int lastMouseY = 0;
 
     public InputController(Player player, CameraManager camera, BuildTool buildTool, BuildingManager buildingManager,
-                           BuildingFactory factory) {
+                           BuildingFactory factory, AssemblerUI assemblerUI) {
         this.player = player;
         this.camera = camera;
         this.buildTool = buildTool;
         this.buildingManager = buildingManager;
         this.factory = factory;
+        this.assemblerUI = assemblerUI;
     }
 
     public void update(float delta) {
@@ -132,7 +134,24 @@ public class InputController extends InputAdapter {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT && buildTool.isActive()) {
             buildTool.updateStartHoverPosition(getCurrentHoveredCoords());
-            //buildTool.tryBuild();
+            return true;
+        }
+        if (button == Input.Buttons.LEFT) {
+            Vector3 worldCoords = camera.getCamera().unproject(new Vector3(screenX, screenY, 0));
+
+            int gridX = (int) (worldCoords.x);
+            int gridY = (int) (worldCoords.y);
+
+            System.out.println(gridX + " " + gridY);
+
+            Building clickedBuilding = buildingManager.getRegistry().getBuildingAt(new Point(gridX, gridY));
+
+            if (clickedBuilding instanceof Assembler) {
+                assemblerUI.show((Assembler) clickedBuilding);
+                return true;
+            }
+
+            return false;
         }
         return true;
     }
