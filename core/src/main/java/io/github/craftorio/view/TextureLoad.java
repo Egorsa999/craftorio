@@ -45,6 +45,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.MINER, load("miner"));
         buildingSprites.put(BuildingType.HORIZONTAL_MINER, load("horizontal_miner"));
         buildingSprites.put(BuildingType.CORE, load("core"));
+        buildingSprites.put(BuildingType.ASSEMBLER, load("assembler"));
 
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));

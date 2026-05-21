@@ -101,6 +101,7 @@ public class BuildingFactory {
             case BELT -> new Belt(registry, anchor, rotation);
             case HORIZONTAL_MINER -> new HorizontalMiner(worldMap, registry, anchor, rotation);
             case CORE -> new Core(inventory, registry, anchor, rotation);
+            case ASSEMBLER -> new Assembler(registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }
