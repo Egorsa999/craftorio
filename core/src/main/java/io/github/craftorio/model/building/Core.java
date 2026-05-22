@@ -6,7 +6,7 @@ import io.github.craftorio.model.ui.Inventory;
 
 import java.awt.*;
 
-public class Core extends Building implements ReceiveItem{
+public class Core extends DamageableBuilding implements ReceiveItem {
 
     private final Inventory inventory;
 

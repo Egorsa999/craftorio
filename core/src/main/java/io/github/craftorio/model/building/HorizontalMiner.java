@@ -6,7 +6,7 @@ import io.github.craftorio.model.WorldMap;
 
 import java.awt.*;
 
-public class HorizontalMiner extends Building implements ThroughItem{
+public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
 
     private final int BASE_TICKS_PER_ITEM = 240;
     private final int MAX_BUFFER_SIZE = 10;
