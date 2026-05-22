@@ -2,15 +2,16 @@ package io.github.craftorio.model.building;
 
 public enum BuildingType {
     BELT(1, 1, true),
-    MINER(2, 2, false),
-    HORIZONTAL_MINER(1, 3, 1, 2, false),
-    CORE(3, 3, false);
+    MINER(2, 2, false, 100),
+    HORIZONTAL_MINER(1, 3, 1, 2, false, 100),
+    CORE(3, 3, false, 500);
 
 
     private final int width;
     private final int height;
     private final int collisionWidth;
     private final int collisionHeight;
+    private final int maxHP;
     private final boolean walkable;
 
     BuildingType(int width, int height, boolean walkable) {
@@ -19,6 +20,16 @@ public enum BuildingType {
         this.walkable = walkable;
         this.collisionHeight = height;
         this.collisionWidth = width;
+        this.maxHP = -1;
+    }
+
+    BuildingType(int width, int height, boolean walkable, int maxHP) {
+        this.width = width;
+        this.height = height;
+        this.walkable = walkable;
+        this.collisionHeight = height;
+        this.collisionWidth = width;
+        this.maxHP = maxHP;
     }
 
     BuildingType(int width, int height, int collisionWidth, int collisionHeight, boolean walkable){
@@ -27,6 +38,16 @@ public enum BuildingType {
         this.walkable = walkable;
         this.collisionHeight = collisionHeight;
         this.collisionWidth = collisionWidth;
+        this.maxHP = -1;
+    }
+
+    BuildingType(int width, int height, int collisionWidth, int collisionHeight, boolean walkable, int maxHP){
+        this.width = width;
+        this.height = height;
+        this.walkable = walkable;
+        this.collisionHeight = collisionHeight;
+        this.collisionWidth = collisionWidth;
+        this.maxHP = maxHP;
     }
 
     public int getWidth() { return width; }
@@ -38,5 +59,9 @@ public enum BuildingType {
 
     public int getCollisionWidth() {
         return collisionWidth;
+    }
+
+    public int getMaxHP() {
+        return maxHP;
     }
 }
