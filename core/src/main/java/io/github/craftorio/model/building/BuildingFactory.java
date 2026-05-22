@@ -105,6 +105,9 @@ public class BuildingFactory {
             case HORIZONTAL_MINER -> new HorizontalMiner(worldMap, registry, anchor, rotation);
             case CORE -> new Core(inventory, registry, anchor, rotation);
             case TURRET -> new Turret(registry, anchor, rotation, BuildingType.TURRET, engine);
+            case JUNCTION -> new Junction(registry, anchor, rotation, BuildingType.JUNCTION);
+            case ROUTER -> new Router(registry, anchor, rotation, BuildingType.ROUTER);
+            case ASSEMBLER -> new Assembler(registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }

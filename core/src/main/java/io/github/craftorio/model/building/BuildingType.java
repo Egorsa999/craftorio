@@ -5,7 +5,9 @@ public enum BuildingType {
     MINER(2, 2, false, 100),
     HORIZONTAL_MINER(1, 3, 1, 2, false, 100),
     CORE(3, 3, false, 500),
-    TURRET(1, 1, false);
+    JUNCTION(1, 1, false, 100),
+    ROUTER(1, 1, false, 100),
+    ASSEMBLER(2, 2, false, 100);
 
 
     private final int width;

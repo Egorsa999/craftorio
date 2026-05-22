@@ -85,8 +85,9 @@ public class WorldRenderer {
         batch.enableBlending();
 
         drawVisibleMap(bounds);
-        drawVisibleBuildings(bounds);
+        drawBelts(bounds);
         drawItems(bounds);
+        drawVisibleBuildings(bounds);
         drawVisibleEnemies(bounds);
         drawPlayer();
         drawBullets();
@@ -106,6 +107,22 @@ public class WorldRenderer {
                 b.getRotationDeg(),
                 null, stateTime
             );
+        }
+    }
+
+    private void drawBelts(VisibleBounds bounds) {
+        renderedBuildingsThisFrame.clear();
+
+        for (int x = bounds.startX; x < bounds.endX; x++) {
+            for (int y = bounds.startY; y < bounds.endY; y++) {
+                Building current = registry.getBuildingAt(new Point(x, y));
+
+                if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
+
+                if (current instanceof Belt belt) {
+                    BeltRenderer.drawBackground(null, batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
+                }
+            }
         }
     }
 
@@ -142,6 +159,7 @@ public class WorldRenderer {
 
                 if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
 
+                if (current instanceof Belt) {
 
 
                 Color colorFilter = new Color(1f, 1f, 1f, 1f);

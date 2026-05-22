@@ -240,6 +240,10 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
         Building nextBuilding = getUpperBuilding();
         if (nextBuilding instanceof Belt nextBelt) {
             return nextBelt.receiveItem(id, progress, this.direction);
+        } else if (nextBuilding instanceof Junction nextJunc) {
+            return nextJunc.receiveItem(id, progress, this.direction);
+        } else if (nextBuilding instanceof Router nextRouter) {
+            return nextRouter.receiveItem(id, progress, this.direction);
         } else if (nextBuilding instanceof ReceiveItem building) {
             return building.receiveItem(id, progress);
         }
@@ -271,7 +275,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
 
     @Override
     public boolean canReceiveFrom(Point point) {
-        return true;
+        return !(registry.getBuildingAt(point).equals(getUpperBuilding()));
     }
 
     public boolean receiveItem(ItemType id, Float progress, Direction from) {

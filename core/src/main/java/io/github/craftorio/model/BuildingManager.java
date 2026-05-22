@@ -90,4 +90,7 @@ public class BuildingManager {
         return true;
     }
 
+    public BuildingRegistry getRegistry() {
+        return this.registry;
+    }
 }

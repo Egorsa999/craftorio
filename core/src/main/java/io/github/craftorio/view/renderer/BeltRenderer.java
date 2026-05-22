@@ -2,7 +2,6 @@ package io.github.craftorio.view.renderer;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.building.Belt;
 import io.github.craftorio.model.building.Direction;
@@ -12,10 +11,10 @@ import io.github.craftorio.view.TextureLoad;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 public class BeltRenderer {
     private static final float ITEM_SIZE = 0.6f;
+    private static final float HALF_LOGIC_SIZE = 1f / 6f;
 
     private static float[] getEntry(Direction fromDir) {
         switch(fromDir) {
@@ -55,16 +54,17 @@ public class BeltRenderer {
             order.add(i);
         }
 
-
-        if (belt.direction == Direction.RIGHT) Collections.reverse(order);
-        if (belt.direction == Direction.DOWN) Collections.reverse(order);
+        if (belt.direction == Direction.RIGHT || belt.direction == Direction.DOWN) {
+            Collections.reverse(order);
+        }
 
         for (int i : order) {
             ItemType type = belt.getItemId().get(i);
             float p = belt.getItemProgress().get(i);
             Direction fromDir = belt.getItemFrom().get(i);
 
-            float center_p = p + (ITEM_SIZE / 2f);
+            float center_p = p + HALF_LOGIC_SIZE;
+
             float[] En = getEntry(fromDir);
             float[] Ex = getExit(belt.direction);
 
@@ -83,7 +83,6 @@ public class BeltRenderer {
             float drawX = x + cx - (ITEM_SIZE / 2f);
             float drawY = y + cy - (ITEM_SIZE / 2f);
             batch.setColor(Color.WHITE);
-
             batch.draw(textureLoad.get(type).getFirstFrame(), drawX, drawY, ITEM_SIZE, ITEM_SIZE);
         }
 

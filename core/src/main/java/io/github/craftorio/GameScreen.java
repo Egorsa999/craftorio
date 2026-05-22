@@ -16,6 +16,7 @@ import io.github.craftorio.model.ui.Inventory;
 import io.github.craftorio.view.CameraManager;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.WorldRenderer;
+import io.github.craftorio.view.ui.AssemblerUI;
 import io.github.craftorio.view.ui.InventoryUI;
 
 import java.awt.*;
@@ -34,6 +35,7 @@ public class GameScreen implements Screen {
     private SimulationEngine simulationEngine;
     private Inventory inventory;
     private InventoryUI inventoryUI;
+    private AssemblerUI assemblerUI;
     private TextureLoad textures;
     private TextureAtlas atlas;
     private PathFinder pathFinder;
@@ -79,6 +81,15 @@ public class GameScreen implements Screen {
         controller = new InputController(player, playerCamera, buildTool, buildingManager, factory, waveSpawner);
         simulationEngine = new SimulationEngine(buildingRegistry, waveSpawner);
         inventoryUI = new InventoryUI(textures, inventory);
+        assemblerUI = new AssemblerUI(textures);
+
+        controller = new InputController(player, playerCamera, buildTool, buildingManager, factory, assemblerUI);
+
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(assemblerUI.getStage());
+        multiplexer.addProcessor(controller);
+
+        Gdx.input.setInputProcessor(multiplexer);
 
         factory.setSimulationEngine(simulationEngine);
 
@@ -90,6 +101,7 @@ public class GameScreen implements Screen {
         InputMultiplexer multiplexer = new InputMultiplexer();
 
         multiplexer.addProcessor(inventoryUI.getStage());
+        multiplexer.addProcessor(assemblerUI.getStage());
         multiplexer.addProcessor(controller);
 
         Gdx.input.setInputProcessor(multiplexer);
@@ -128,6 +140,7 @@ public class GameScreen implements Screen {
         WorldRender.render();
 
         inventoryUI.render();
+        assemblerUI.render();
     }
 
     @Override
@@ -135,6 +148,7 @@ public class GameScreen implements Screen {
         playerCamera.resize(width, height);
 
         inventoryUI.resize(width, height);
+        assemblerUI.resize(width, height);
     }
 
     @Override
@@ -156,6 +170,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         WorldRender.dispose();
         inventoryUI.dispose();
+        assemblerUI.dispose();
         atlas.dispose();
     }
 
