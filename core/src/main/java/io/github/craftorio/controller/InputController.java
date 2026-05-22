@@ -87,6 +87,11 @@ public class InputController extends InputAdapter {
             mouseMoved(lastMouseX, lastMouseY);
             return true;
         }
+        if (keycode == Input.Keys.NUM_5) {
+            buildTool.selectBuilding(BuildingType.TURRET);
+            mouseMoved(lastMouseX, lastMouseY);
+            return true;
+        }
         if (keycode == Input.Keys.ESCAPE) {
             buildTool.clearSelection();
             return true;
