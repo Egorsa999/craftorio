@@ -241,6 +241,8 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
             return nextBelt.receiveItem(id, progress, this.direction);
         } else if (nextBuilding instanceof Junction nextJunc) {
             return nextJunc.receiveItem(id, progress, this.direction);
+        } else if (nextBuilding instanceof Router nextRouter) {
+            return nextRouter.receiveItem(id, progress, this.direction);
         } else if (nextBuilding instanceof ReceiveItem building) {
             return building.receiveItem(id, progress);
         }

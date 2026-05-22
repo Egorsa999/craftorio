@@ -3,26 +3,96 @@ package io.github.craftorio.model.building;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.ItemType;
 
-import java.awt.*;
+import java.awt.Point;
 
 public class Router extends Building implements ReceiveItem, ThroughItem {
+    private static final int PROCESS_TIME = 15;
+
+    private ItemType currentItem = null;
+    private int timer = 0;
+
+    private int outputIndex = 0;
+
+    private static final Direction[] DIRS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
+
     public Router(BuildingRegistry registry, Point anchor, Direction direction, BuildingType type) {
         super(registry, anchor, direction, type);
     }
 
-    @Override
-    public void update() {
+    private Building getNeighbor(Direction dir) {
+        int nextCol = getX();
+        int nextRow = getY();
 
+        switch (dir) {
+            case RIGHT: nextCol++; break;
+            case LEFT:  nextCol--; break;
+            case UP:    nextRow++; break;
+            case DOWN:  nextRow--; break;
+        }
+        return registry.getBuildingAt(new Point(nextCol, nextRow));
     }
 
     @Override
-    public boolean receiveItem(ItemType type, Float progress) {
+    public void update() {
+        if (currentItem != null) {
+            if (timer > 0) {
+                timer--;
+            } else {
+                for (int i = 0; i < 4; i++) {
+                    int checkIdx = (outputIndex + i) % 4;
+                    Direction checkDir = DIRS[checkIdx];
+
+                    if (pushToNeighbor(checkDir, currentItem)) {
+                        currentItem = null;
+                        outputIndex = (checkIdx + 1) % 4;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean pushToNeighbor(Direction dir, ItemType id) {
+        Building nextBuilding = getNeighbor(dir);
+
+        if (nextBuilding instanceof ReceiveItem rItem && !rItem.canReceiveFrom(this.getAnchor())) {
+            return false;
+        }
+
+        if (nextBuilding instanceof Belt nextBelt) {
+            return nextBelt.receiveItem(id, 0.0f, dir);
+        } else if (nextBuilding instanceof Junction nextJunc) {
+            return nextJunc.receiveItem(id, 0.0f, dir);
+        } else if (nextBuilding instanceof Router nextRouter) {
+            return nextRouter.receiveItem(id, 0.0f, dir);
+        } else if (nextBuilding instanceof ReceiveItem building) {
+            return building.receiveItem(id, 0.0f);
+        }
+        return false;
+    }
+
+    public boolean receiveItem(ItemType id, Float progress, Direction travelingDir) {
+        if (currentItem == null) {
+            currentItem = id;
+            timer = PROCESS_TIME;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean receiveItem(ItemType id, Float progress) {
+        if (currentItem == null) {
+            currentItem = id;
+            timer = PROCESS_TIME;
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean canReceiveFrom(Point point) {
-        return false;
+        return true;
     }
 
     @Override
@@ -32,6 +102,6 @@ public class Router extends Building implements ReceiveItem, ThroughItem {
 
     @Override
     public boolean canThroughIn(Point point) {
-        return false;
+        return true;
     }
 }

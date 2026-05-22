@@ -75,10 +75,16 @@ public class Junction extends Building implements ReceiveItem, ThroughItem {
     private boolean pushToNeighbor(Direction dir, ItemType id) {
         Building nextBuilding = getNeighbor(dir);
 
+        if (nextBuilding instanceof ReceiveItem rItem && !rItem.canReceiveFrom(this.getAnchor())) {
+            return false;
+        }
+
         if (nextBuilding instanceof Belt nextBelt) {
             return nextBelt.receiveItem(id, 0.0f, dir);
         } else if (nextBuilding instanceof Junction nextJunc) {
             return nextJunc.receiveItem(id, 0.0f, dir);
+        } else if (nextBuilding instanceof Router nextRouter) {
+            return nextRouter.receiveItem(id, 0.0f, dir);
         } else if (nextBuilding instanceof ReceiveItem building) {
             return building.receiveItem(id, 0.0f);
         }
