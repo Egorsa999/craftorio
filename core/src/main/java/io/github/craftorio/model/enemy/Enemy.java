@@ -229,4 +229,11 @@ public class Enemy {
             }
         }
     }
+
+    public void receiveDamage(int damage) {
+    }
+
+    public boolean isDead() {
+        return false;
+    }
 }

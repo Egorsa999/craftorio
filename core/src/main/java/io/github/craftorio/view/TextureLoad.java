@@ -45,9 +45,11 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.MINER, load("miner"));
         buildingSprites.put(BuildingType.HORIZONTAL_MINER, load("horizontal_miner"));
         buildingSprites.put(BuildingType.CORE, load("core"));
+        buildingSprites.put(BuildingType.TURRET, load("turret"));
 
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));
+        StringSprites.put("bullet", load("bullet"));
 
         StringSprites.put("player_idle_side", loadAnimated("player_idle_side", 0.15f));
         StringSprites.put("player_idle_up", loadAnimated("player_idle_up", 0.15f));
