@@ -80,6 +80,10 @@ public abstract class Building {
         return this.anchor.y;
     }
 
+    public Point getAnchor() {
+        return this.anchor;
+    }
+
     public int getHeight() {
         boolean isRotated90 = (direction == Direction.LEFT || direction == Direction.RIGHT);
         return isRotated90 ? type.getWidth() : type.getHeight();

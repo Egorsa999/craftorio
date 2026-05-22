@@ -270,7 +270,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
 
     @Override
     public boolean canReceiveFrom(Point point) {
-        return true;
+        return !(registry.getBuildingAt(point).equals(getUpperBuilding()));
     }
 
     public boolean receiveItem(ItemType id, Float progress, Direction from) {

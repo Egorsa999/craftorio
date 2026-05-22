@@ -1,6 +1,5 @@
 package io.github.craftorio.model.building;
 
-import io.github.craftorio.model.ItemType;
 import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.ui.Inventory;
@@ -104,6 +103,7 @@ public class BuildingFactory {
             case CORE -> new Core(inventory, registry, anchor, rotation);
             case JUNCTION -> new Junction(registry, anchor, rotation, BuildingType.JUNCTION);
             case ROUTER -> new Router(registry, anchor, rotation, BuildingType.ROUTER);
+            case ASSEMBLER -> new Assembler(registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }
