@@ -93,7 +93,7 @@ public class Assembler extends Building implements ThroughItem, ReceiveItem {
             lastThrough %= throughDelta.size();
             int x = getX() + throughDelta.get(lastThrough).x;
             int y = getY() + throughDelta.get(lastThrough).y;
-            Building nextBuilding = registry.getBuildingAt(new Point(x, y));
+            Building nextBuilding = registry.getBuildingAt(x, y);
             if (nextBuilding instanceof ReceiveItem building) {
                 if (building.canReceiveFrom(this.getAnchor()) && building.receiveItem(type, progress)) {
                     return true;

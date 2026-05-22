@@ -78,12 +78,10 @@ public class GameScreen implements Screen {
         WorldRender = new WorldRenderer(textures, playerCamera, player, worldMap, buildTool, factory, buildingRegistry, waveSpawner, pathFinder);
 
 
-        controller = new InputController(player, playerCamera, buildTool, buildingManager, factory, waveSpawner);
         simulationEngine = new SimulationEngine(buildingRegistry, waveSpawner);
         inventoryUI = new InventoryUI(textures, inventory);
         assemblerUI = new AssemblerUI(textures);
-
-        controller = new InputController(player, playerCamera, buildTool, buildingManager, factory, assemblerUI);
+        controller = new InputController(player, playerCamera, buildTool, buildingManager, factory, waveSpawner, assemblerUI);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(assemblerUI.getStage());

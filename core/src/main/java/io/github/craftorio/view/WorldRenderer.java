@@ -115,12 +115,26 @@ public class WorldRenderer {
 
         for (int x = bounds.startX; x < bounds.endX; x++) {
             for (int y = bounds.startY; y < bounds.endY; y++) {
-                Building current = registry.getBuildingAt(new Point(x, y));
+                Building current = registry.getBuildingAt(x, y);
 
                 if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
 
                 if (current instanceof Belt belt) {
-                    BeltRenderer.drawBackground(null, batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
+                    Color colorFilter = new Color(1f, 1f, 1f, 1f);
+
+                    if (current instanceof DamageableBuilding damageableCurrent){
+                        if (damageableCurrent.isReceivingDamage())
+                            colorFilter = new Color(1.0f, 0.3f, 0.3f, 1.0f);
+                        else{
+                            float hpPercent = (float) damageableCurrent.getHP() / damageableCurrent.type.getMaxHP();
+
+                            float brightness = 0.3f + (0.7f * hpPercent);
+
+                            colorFilter = new Color(brightness, brightness, brightness, 1.0f);
+                        }
+                    }
+
+                    BeltRenderer.drawBackground(colorFilter, batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
                 }
             }
         }
@@ -160,6 +174,8 @@ public class WorldRenderer {
                 if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
 
                 if (current instanceof Belt) {
+                    continue;
+                }
 
 
                 Color colorFilter = new Color(1f, 1f, 1f, 1f);
@@ -174,11 +190,6 @@ public class WorldRenderer {
 
                         colorFilter = new Color(brightness, brightness, brightness, 1.0f);
                     }
-                }
-
-                if (current instanceof Belt belt) {
-                    BeltRenderer.drawBackground(colorFilter, batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
-                    continue;
                 }
 
                 if (current instanceof Turret turret) {

@@ -7,7 +7,8 @@ public enum BuildingType {
     CORE(3, 3, false, 500),
     JUNCTION(1, 1, false, 100),
     ROUTER(1, 1, false, 100),
-    ASSEMBLER(2, 2, false, 100);
+    ASSEMBLER(2, 2, false, 100),
+    TURRET(1, 1, false, 100);
 
 
     private final int width;

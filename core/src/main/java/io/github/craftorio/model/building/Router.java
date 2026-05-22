@@ -29,7 +29,7 @@ public class Router extends Building implements ReceiveItem, ThroughItem {
             case UP:    nextRow++; break;
             case DOWN:  nextRow--; break;
         }
-        return registry.getBuildingAt(new Point(nextCol, nextRow));
+        return registry.getBuildingAt(nextCol, nextRow);
     }
 
     @Override

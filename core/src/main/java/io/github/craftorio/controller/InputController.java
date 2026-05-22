@@ -35,8 +35,7 @@ public class InputController extends InputAdapter {
     private int lastMouseY = 0;
 
     public InputController(Player player, CameraManager camera, BuildTool buildTool, BuildingManager buildingManager,
-                           BuildingFactory factory, WaveSpawner waveSpawner,
-                           BuildingFactory factory, AssemblerUI assemblerUI) {
+                           BuildingFactory factory, WaveSpawner waveSpawner, AssemblerUI assemblerUI) {
         this.player = player;
         this.camera = camera;
         this.buildTool = buildTool;
@@ -159,6 +158,9 @@ public class InputController extends InputAdapter {
             return true;
         }
         if (button == Input.Buttons.LEFT) {
+            updateHoveredGrid();
+            waveSpawner.addEnemy(tempCoords.x, tempCoords.y);
+
             Vector3 worldCoords = camera.getCamera().unproject(new Vector3(screenX, screenY, 0));
 
             int gridX = (int) (worldCoords.x);
@@ -166,7 +168,7 @@ public class InputController extends InputAdapter {
 
             System.out.println(gridX + " " + gridY);
 
-            Building clickedBuilding = buildingManager.getRegistry().getBuildingAt(new Point(gridX, gridY));
+            Building clickedBuilding = buildingManager.getRegistry().getBuildingAt(gridX, gridY);
 
             if (clickedBuilding instanceof Assembler) {
                 assemblerUI.show((Assembler) clickedBuilding);
@@ -174,11 +176,6 @@ public class InputController extends InputAdapter {
             }
 
             return false;
-        }
-        else if (button == Input.Buttons.LEFT) {
-            updateHoveredGrid();
-            waveSpawner.addEnemy(tempCoords.x, tempCoords.y);
-            //System.out.println("Enemy added!" + tempCoords.x + " " + tempCoords.y);
         }
         return true;
     }

@@ -275,7 +275,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
 
     @Override
     public boolean canReceiveFrom(Point point) {
-        return !(registry.getBuildingAt(point).equals(getUpperBuilding()));
+        return !(registry.getBuildingAt((int) point.getX(), (int) point.getY()).equals(getUpperBuilding()));
     }
 
     public boolean receiveItem(ItemType id, Float progress, Direction from) {
