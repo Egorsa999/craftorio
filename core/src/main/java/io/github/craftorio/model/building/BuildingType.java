@@ -1,7 +1,7 @@
 package io.github.craftorio.model.building;
 
 public enum BuildingType {
-    BELT(1, 1, true),
+    BELT(1, 1, true, 50),
     MINER(2, 2, false, 100),
     HORIZONTAL_MINER(1, 3, 1, 2, false, 100),
     CORE(3, 3, false, 500);

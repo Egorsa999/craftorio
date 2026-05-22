@@ -45,6 +45,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
 
     @Override
     public void update() {
+        super.update();
         if (!outputBuffer.isEmpty()) {
 //            System.out.println("TRY THROUGH " + outputBuffer.element());
             if (throughItem(outputBuffer.element(), 0.0f)) {

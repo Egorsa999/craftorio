@@ -18,7 +18,7 @@ public class Core extends DamageableBuilding implements ReceiveItem {
 
     @Override
     public void update() {
-
+        super.update();
     }
 
     @Override

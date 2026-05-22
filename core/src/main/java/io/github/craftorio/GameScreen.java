@@ -102,7 +102,7 @@ public class GameScreen implements Screen {
 
         accumulator += delta;
         counter++;
-        if (counter == 240){
+        if (counter == 120){
             if (!isCalculating) {
                 isCalculating = true;
 

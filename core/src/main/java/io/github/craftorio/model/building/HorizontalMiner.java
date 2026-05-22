@@ -35,6 +35,7 @@ public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
 
     @Override
     public void update(){
+        super.update();
         if (bufferCounter != 0) {
             if (throughItem(ItemType.IRON_ORE, 0.0f)) {
                 System.out.println("NEW ITEM");

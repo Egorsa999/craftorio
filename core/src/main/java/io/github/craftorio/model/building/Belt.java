@@ -7,7 +7,7 @@ import io.github.craftorio.model.ItemType;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Belt extends Building implements ThroughItem, ReceiveItem {
+public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem {
     private static final float speed = 1f * GameConfig.TICK_TIME;
     private static final float ItemSize = 1f / 3f;
     private static float animationOffset = 0.0f;
@@ -196,6 +196,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
 
     @Override
     public void update() {
+        super.update();
         updateType();
         for (int i = 0; i < itemId.size(); i++) {
             float progressWill = itemProgress.get(i) + speed;

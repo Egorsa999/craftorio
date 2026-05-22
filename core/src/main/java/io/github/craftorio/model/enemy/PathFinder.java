@@ -3,6 +3,8 @@ package io.github.craftorio.model.enemy;
 import com.badlogic.gdx.utils.Pool;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.building.Building;
+import io.github.craftorio.model.building.DamageableBuilding;
 
 import java.awt.*;
 import java.util.PriorityQueue;
@@ -131,8 +133,9 @@ public class PathFinder {
 
                     int moveCost = COST[i];
 
-                    if (registry.getBuildingAt(nx, ny) != null) {
-                        moveCost += BUILDING_PENALTY;
+                    Building building = registry.getBuildingAt(nx, ny);
+                    if (building instanceof DamageableBuilding dBuilding) {
+                        moveCost += dBuilding.getHP();
                     }
 
                     int newCost = current.cost + moveCost;
@@ -159,19 +162,40 @@ public class PathFinder {
                     continue;
                 }
 
-                int minDistance = data.distances[x][y];
+                int h1 = x * 0x85ebca6b ^ y * 0xc2b2ae35;
+                h1 ^= h1 >>> 13;
+                h1 *= 0xc2b2ae35;
+                h1 ^= h1 >>> 16;
+                int cellHash = Math.abs(h1);
+
+                int startIndex = cellHash % 8;
+                int currentDist = data.distances[x][y];
+
+                int minPerceivedDist = Integer.MAX_VALUE;
                 byte bestDx = 0;
                 byte bestDy = 0;
 
                 for (int i = 0; i < 8; i++) {
-                    int nx = x + DX[i];
-                    int ny = y + DY[i];
+                    int dirIndex = (startIndex + i) % 8;
+                    int nx = x + DX[dirIndex];
+                    int ny = y + DY[dirIndex];
 
                     if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
-                        if (data.distances[nx][ny] < minDistance) {
-                            minDistance = data.distances[nx][ny];
-                            bestDx = (byte) DX[i];
-                            bestDy = (byte) DY[i];
+                        int neighborDist = data.distances[nx][ny];
+
+                        if (neighborDist < currentDist) {
+
+                            int dirHash = Math.abs(cellHash ^ (dirIndex * 0x9E3779B9));
+
+                            int noise = dirHash % 24;
+
+                            int perceivedDist = neighborDist + noise;
+
+                            if (perceivedDist < minPerceivedDist) {
+                                minPerceivedDist = perceivedDist;
+                                bestDx = (byte) DX[dirIndex];
+                                bestDy = (byte) DY[dirIndex];
+                            }
                         }
                     }
                 }

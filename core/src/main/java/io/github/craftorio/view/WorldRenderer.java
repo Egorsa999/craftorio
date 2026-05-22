@@ -126,8 +126,24 @@ public class WorldRenderer {
 
                 if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
 
+
+
+                Color colorFilter = new Color(1f, 1f, 1f, 1f);
+
+                if (current instanceof DamageableBuilding damageableCurrent){
+                    if (damageableCurrent.isReceivingDamage())
+                        colorFilter = new Color(1.0f, 0.3f, 0.3f, 1.0f);
+                    else{
+                        float hpPercent = (float) damageableCurrent.getHP() / damageableCurrent.type.getMaxHP();
+
+                        float brightness = 0.3f + (0.7f * hpPercent);
+
+                        colorFilter = new Color(brightness, brightness, brightness, 1.0f);
+                    }
+                }
+
                 if (current instanceof Belt belt) {
-                    BeltRenderer.drawBackground(null, batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
+                    BeltRenderer.drawBackground(colorFilter, batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
                     continue;
                 }
 
@@ -139,7 +155,7 @@ public class WorldRenderer {
                     (float)current.anchor.x, (float)current.anchor.y,
                     width, height,
                     current.direction,
-                    null, stateTime
+                    colorFilter, stateTime
                 );
             }
         }
@@ -160,35 +176,35 @@ public class WorldRenderer {
                 0, null, stateTime);
         }
 
-        Color colorFilter = new Color(1f, 1f, 1f, 0.2f);
-
-        for (int x = bounds.startX; x < bounds.endX; x++) {
-            for (int y = bounds.startY; y < bounds.endY; y++) {
-
-                float rotaion = 1000;
-
-                int dx = pathFinder.getFlowDirection(x, y).x;
-                int dy =pathFinder.getFlowDirection(x, y).y;
-
-                if (dx == 1 && dy == 0)rotaion = 0;
-                else if (dx == 1 && dy == 1)rotaion = 45;
-                else if (dx == 1 && dy == -1)rotaion = -45;
-                else if (dx == -1 && dy == 0)rotaion = 180;
-                else if (dx == -1 && dy == 1)rotaion = 135;
-                else if (dx == -1 && dy == -1)rotaion = 225;
-                else if (dx == 0 && dy == 1)rotaion = 90;
-                else if (dx == 0 && dy == -1)rotaion = 270;
-
-                if (rotaion == 1000)continue;
-
-                TextureRenderer.draw(
-                    batch, Textures.get("arrow"),
-                    x, y,
-                    1f, 1f,
-                    rotaion,
-                    colorFilter, 0f);
-            }
-        }
+//        Color colorFilter = new Color(1f, 1f, 1f, 0.2f);
+//
+//        for (int x = bounds.startX; x < bounds.endX; x++) {
+//            for (int y = bounds.startY; y < bounds.endY; y++) {
+//
+//                float rotaion = 1000;
+//
+//                int dx = pathFinder.getFlowDirection(x, y).x;
+//                int dy =pathFinder.getFlowDirection(x, y).y;
+//
+//                if (dx == 1 && dy == 0)rotaion = 0;
+//                else if (dx == 1 && dy == 1)rotaion = 45;
+//                else if (dx == 1 && dy == -1)rotaion = -45;
+//                else if (dx == -1 && dy == 0)rotaion = 180;
+//                else if (dx == -1 && dy == 1)rotaion = 135;
+//                else if (dx == -1 && dy == -1)rotaion = 225;
+//                else if (dx == 0 && dy == 1)rotaion = 90;
+//                else if (dx == 0 && dy == -1)rotaion = 270;
+//
+//                if (rotaion == 1000)continue;
+//
+//                TextureRenderer.draw(
+//                    batch, Textures.get("arrow"),
+//                    x, y,
+//                    1f, 1f,
+//                    rotaion,
+//                    colorFilter, 0f);
+//            }
+//        }
     }
 
     private void drawPlayer() {

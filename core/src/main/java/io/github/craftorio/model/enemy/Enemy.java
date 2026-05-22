@@ -3,6 +3,7 @@ package io.github.craftorio.model.enemy;
 import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.building.Building;
+import io.github.craftorio.model.building.DamageableBuilding;
 import io.github.craftorio.model.building.Direction;
 
 import java.awt.Point;
@@ -13,7 +14,10 @@ public class Enemy {
     private float x, y;
     private float speed;
     private int coolDown = 60;
+    private int damage = 30;
     private int attackTimer = 0;
+
+    private int directionChangeCounter = 0;
 
     public Direction getDirection() {
         return direction;
@@ -47,37 +51,74 @@ public class Enemy {
             attackTimer--;
         }
 
-        applySeparation();
+        float[] flowDir = getAverageFlowDirection();
+        float fdx = flowDir[0];
+        float fdy = flowDir[1];
 
-        float[] dir = getAverageFlowDirection();
-        float dx = dir[0];
-        float dy = dir[1];
+        float moveX = 0;
+        float moveY = 0;
+        float flowLen = (float) Math.sqrt(fdx * fdx + fdy * fdy);
+        if (flowLen > 0) {
+            moveX = (fdx / flowLen) * speed;
+            moveY = (fdy / flowLen) * speed;
+        }
 
-        if (dx > 0)direction = Direction.RIGHT;
-        else direction = Direction.LEFT;
+        float[] sep = getSeparationVector();
 
-        if (dx == 0 && dy == 0) {
+        float finalX = moveX + sep[0];
+        float finalY = moveY + sep[1];
+
+
+        if (moveX > 0 && directionChangeCounter >= 30){
+            direction = Direction.RIGHT;
+            directionChangeCounter = 0;
+        }
+        else if (moveX < 0 && directionChangeCounter >= 30) {
+            direction = Direction.LEFT;
+            directionChangeCounter = 0;
+        }
+
+        directionChangeCounter++;
+
+        if (finalX == 0 && finalY == 0) {
             return;
         }
 
-        float length = (float) Math.sqrt(dx * dx + dy * dy);
-        float moveX = (dx / length) * speed;
-        float moveY = (dy / length) * speed;
-
-        boolean moved = tryMove(moveX, moveY);
+        boolean moved = tryMove(finalX, finalY);
 
         if (!moved) {
-            boolean movedX = tryMove(moveX, 0);
-            boolean movedY = tryMove(0, moveY);
+            attackObstacle(finalX, finalY);
 
-            if (movedX){
-               attackObstacle(0, dy);
+            boolean movedX = tryMove(finalX, 0);
+
+            if (!movedX) {
+                tryMove(0, finalY);
             }
-            else if (movedY){
-                attackObstacle(dx, 0);
-            }
-            else attackObstacle(dx, dy);
         }
+    }
+
+
+    private float[] getSeparationVector() {
+        float pushX = 0;
+        float pushY = 0;
+
+        for (Enemy other : allEnemies) {
+            if (other == this) continue;
+
+            float distX = this.x - other.x;
+            float distY = this.y - other.y;
+            float distSq = distX * distX + distY * distY;
+
+            if (distSq > 0 && distSq < 1.0f) {
+                float dist = (float) Math.sqrt(distSq);
+                float overlap = 1.0f - dist;
+
+                pushX += (distX / dist) * overlap * 0.2f;
+                pushY += (distY / dist) * overlap * 0.2f;
+            }
+        }
+
+        return new float[]{pushX, pushY};
     }
 
     private float[] getAverageFlowDirection() {
@@ -106,28 +147,6 @@ public class Enemy {
         return new float[]{sumX, sumY};
     }
 
-    private void applySeparation() {
-        float pushX = 0;
-        float pushY = 0;
-
-        for (Enemy other : allEnemies) {
-            if (other == this) continue;
-
-            float distX = this.x - other.x;
-            float distY = this.y - other.y;
-            float distSq = distX * distX + distY * distY;
-
-            if (distSq > 0 && distSq < 1.0f) {
-                float dist = (float) Math.sqrt(distSq);
-                float overlap = 1.0f - dist;
-
-                pushX += (distX / dist) * overlap * 0.1f;
-                pushY += (distY / dist) * overlap * 0.1f;
-            }
-        }
-
-        tryMove(pushX, pushY);
-    }
 
     private boolean tryMove(float mx, float my) {
         if (mx == 0 && my == 0) return false;
@@ -173,15 +192,41 @@ public class Enemy {
 
     private void attackObstacle(float dirX, float dirY) {
         if (attackTimer > 0) return;
+        if (dirX == 0 && dirY == 0) return;
 
-        int targetX = (int) (this.x + Math.signum(dirX));
-        int targetY = (int) (this.y + Math.signum(dirY));
 
-        Building targetBuilding = registry.getBuildingAt(targetX, targetY);
+        float len = (float) Math.sqrt(dirX * dirX + dirY * dirY);
+        float normX = dirX / len;
+        float normY = dirY / len;
 
-        if (targetBuilding != null) {
-            System.out.println("Enemy attacks building at: " + targetX + ", " + targetY + " " + targetBuilding.type);
-            attackTimer = coolDown;
+
+        float attackReach = 0.35f;
+        float attackCenterX = this.x + (normX * attackReach);
+        float attackCenterY = this.y + (normY * attackReach);
+
+
+        float half = HITBOX_SIZE / 2f;
+
+        int minX = (int) Math.floor(attackCenterX - half);
+        int maxX = (int) Math.floor(attackCenterX + half);
+        int minY = (int) Math.floor(attackCenterY - half);
+        int maxY = (int) Math.floor(attackCenterY + half);
+
+
+        for (int gx = minX; gx <= maxX; gx++) {
+            for (int gy = minY; gy <= maxY; gy++) {
+
+                if (gx >= 0 && gx < worldMap.getWidth() && gy >= 0 && gy < worldMap.getHeight()) {
+                    Building targetBuilding = registry.getBuildingAt(gx, gy);
+
+
+                    if (targetBuilding instanceof DamageableBuilding building) {
+                        building.receiveDamage(damage);
+                        attackTimer = coolDown;
+                        return;
+                    }
+                }
+            }
         }
     }
 }
