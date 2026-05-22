@@ -80,6 +80,9 @@ public class GameScreen implements Screen {
         simulationEngine = new SimulationEngine(buildingRegistry, waveSpawner);
         inventoryUI = new InventoryUI(textures, inventory);
 
+        factory.setSimulationEngine(simulationEngine);
+
+        WorldRender.setSimulationEngine(simulationEngine);
     }
 
     @Override

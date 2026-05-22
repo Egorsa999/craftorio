@@ -8,10 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
-import io.github.craftorio.model.BuildingManager;
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.Player;
-import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.*;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.enemy.Enemy;
 import io.github.craftorio.model.enemy.PathFinder;
@@ -37,6 +34,7 @@ public class WorldRenderer {
     private final BuildingRegistry registry;
     private final WaveSpawner waveSpawner;
     private final PathFinder pathFinder;
+    private SimulationEngine engine;
 
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
@@ -67,6 +65,10 @@ public class WorldRenderer {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
     }
 
+    public void setSimulationEngine(SimulationEngine simulationEngine) {
+        this.engine = simulationEngine;
+    }
+
     public void render() {
         stateTime += Gdx.graphics.getDeltaTime();
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -87,10 +89,24 @@ public class WorldRenderer {
         drawItems(bounds);
         drawVisibleEnemies(bounds);
         drawPlayer();
+        drawBullets();
 
         drawBuildPreviewTextures();
 
         batch.end();
+    }
+
+    private void drawBullets() {
+        for (io.github.craftorio.model.Bullet b : engine.getBullets()) {
+            float bulletSize = 0.5f;
+            TextureRenderer.draw(
+                batch, Textures.get("bullet"),
+                b.getX() - (bulletSize / 2f), b.getY() - (bulletSize / 2f),
+                bulletSize, bulletSize,
+                b.getRotationDeg(),
+                null, stateTime
+            );
+        }
     }
 
     private void drawItems(VisibleBounds bounds) {
@@ -128,6 +144,16 @@ public class WorldRenderer {
 
                 if (current instanceof Belt belt) {
                     BeltRenderer.drawBackground(null, batch, Textures.getConveyorTextures(), belt, stateTime, 1f);
+                    continue;
+                }
+
+                if (current instanceof Turret turret) {
+                    TextureRenderer.draw(
+                        batch, Textures.get(current.type),
+                        (float)current.anchor.x, (float)current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        turret.getRotationDeg(), null, stateTime
+                    );
                     continue;
                 }
 
@@ -181,12 +207,12 @@ public class WorldRenderer {
 
                 if (rotaion == 1000)continue;
 
-                TextureRenderer.draw(
-                    batch, Textures.get("arrow"),
-                    x, y,
-                    1f, 1f,
-                    rotaion,
-                    colorFilter, 0f);
+//                TextureRenderer.draw(
+//                    batch, Textures.get("arrow"),
+//                    x, y,
+//                    1f, 1f,
+//                    rotaion,
+//                    colorFilter, 0f);
             }
         }
     }

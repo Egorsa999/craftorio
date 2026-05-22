@@ -184,4 +184,11 @@ public class Enemy {
             attackTimer = coolDown;
         }
     }
+
+    public void receiveDamage(int damage) {
+    }
+
+    public boolean isDead() {
+        return false;
+    }
 }

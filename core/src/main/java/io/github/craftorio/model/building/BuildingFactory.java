@@ -1,7 +1,9 @@
 package io.github.craftorio.model.building;
 
+import io.github.craftorio.model.SimulationEngine;
 import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.BuildingRegistry;
+import io.github.craftorio.model.enemy.Enemy;
 import io.github.craftorio.model.ui.Inventory;
 
 import java.awt.Point;
@@ -13,6 +15,7 @@ public class BuildingFactory {
     private final WorldMap worldMap;
     private final BuildingRegistry registry;
     private final Inventory inventory;
+    private SimulationEngine engine;
 
     public BuildingFactory(WorldMap worldMap, BuildingRegistry registry, Inventory inventory) {
         this.worldMap = worldMap;
@@ -101,8 +104,12 @@ public class BuildingFactory {
             case BELT -> new Belt(registry, anchor, rotation);
             case HORIZONTAL_MINER -> new HorizontalMiner(worldMap, registry, anchor, rotation);
             case CORE -> new Core(inventory, registry, anchor, rotation);
-            case TURRET -> new Turret(registry, anchor, rotation, BuildingType.TURRET);
+            case TURRET -> new Turret(registry, anchor, rotation, BuildingType.TURRET, engine);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
+    }
+
+    public void setSimulationEngine(SimulationEngine simulationEngine) {
+        engine = simulationEngine;
     }
 }
