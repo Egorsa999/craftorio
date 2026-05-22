@@ -67,6 +67,10 @@ public abstract class Building {
         return new Point(realX, realY);
     }
 
+    protected void removeSelf() {
+        registry.removeBuilding(this);
+    }
+
     public List<Point> getOccupiedTiles() { return occupiedTiles; }
     public List<Point> getCollisionTiles() { return collisionTiles; }
 

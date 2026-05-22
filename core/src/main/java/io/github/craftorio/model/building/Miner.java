@@ -9,7 +9,7 @@ import io.github.craftorio.model.generator.ResourceType;
 import java.awt.Point;
 import java.util.*;
 
-public class Miner extends Building implements ThroughItem, ReceiveItem {
+public class Miner extends DamageableBuilding implements ThroughItem, ReceiveItem {
 
     private final WorldMap worldMap;
 
