@@ -13,6 +13,9 @@ import io.github.craftorio.model.BuildingRegistry;
 import io.github.craftorio.model.Player;
 import io.github.craftorio.model.WorldMap;
 import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.enemy.Enemy;
+import io.github.craftorio.model.enemy.PathFinder;
+import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.generator.TerrainType;
 import io.github.craftorio.model.ui.BuildTool;
@@ -32,9 +35,12 @@ public class WorldRenderer {
     private final BuildTool buildTool;
     private final BuildingFactory factory;
     private final BuildingRegistry registry;
+    private final WaveSpawner waveSpawner;
+    private final PathFinder pathFinder;
 
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
+
 
     private final TextureLoad Textures;
 
@@ -43,13 +49,15 @@ public class WorldRenderer {
     private final Set<Building> renderedBuildingsThisFrame = new HashSet<>();
 
     public WorldRenderer(TextureLoad Textures, CameraManager cameraManager, Player player, WorldMap worldMap,
-                         BuildTool buildTool, BuildingFactory factory, BuildingRegistry registry) {
+                         BuildTool buildTool, BuildingFactory factory, BuildingRegistry registry, WaveSpawner waveSpawner, PathFinder pathFinder) {
         this.cameraManager = cameraManager;
         this.player = player;
         this.worldMap = worldMap;
         this.buildTool = buildTool;
         this.factory = factory;
         this.registry = registry;
+        this.waveSpawner = waveSpawner;
+        this.pathFinder = pathFinder;
 
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
@@ -77,6 +85,7 @@ public class WorldRenderer {
         drawVisibleMap(bounds);
         drawVisibleBuildings(bounds);
         drawItems(bounds);
+        drawVisibleEnemies(bounds);
         drawPlayer();
 
         drawBuildPreviewTextures();
@@ -87,7 +96,7 @@ public class WorldRenderer {
     private void drawItems(VisibleBounds bounds) {
         for (int x = bounds.startX; x < bounds.endX; x++) {
             for (int y = bounds.endY - 1; y >= bounds.startY; y--) {
-                Building current = registry.getBuildingAt(new Point(x, y));
+                Building current = registry.getBuildingAt(x, y);
                 if (current instanceof Belt belt) {
                     BeltRenderer.drawItems(batch, Textures, belt, Belt.getAnimationOffset(), 1f);
                 }
@@ -113,7 +122,7 @@ public class WorldRenderer {
 
         for (int x = bounds.startX; x < bounds.endX; x++) {
             for (int y = bounds.startY; y < bounds.endY; y++) {
-                Building current = registry.getBuildingAt(new Point(x, y));
+                Building current = registry.getBuildingAt(x, y);
 
                 if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
 
@@ -132,6 +141,52 @@ public class WorldRenderer {
                     current.direction,
                     null, stateTime
                 );
+            }
+        }
+    }
+
+    public void drawVisibleEnemies(VisibleBounds bounds) {
+        for (Enemy enemy : waveSpawner.getEnemies()){
+            float x = enemy.getX() - 1/2f;
+            float y = enemy.getY() - 1/2f;
+
+            float drawWidth = PLAYER_SIZE;
+
+            if (enemy.getDirection() == Direction.LEFT) {
+                x += 1f;
+                drawWidth *= -1f;
+            }
+            TextureRenderer.draw(batch, Textures.get("slime"), x, y, drawWidth, PLAYER_SIZE,
+                0, null, stateTime);
+        }
+
+        Color colorFilter = new Color(1f, 1f, 1f, 0.2f);
+
+        for (int x = bounds.startX; x < bounds.endX; x++) {
+            for (int y = bounds.startY; y < bounds.endY; y++) {
+
+                float rotaion = 1000;
+
+                int dx = pathFinder.getFlowDirection(x, y).x;
+                int dy =pathFinder.getFlowDirection(x, y).y;
+
+                if (dx == 1 && dy == 0)rotaion = 0;
+                else if (dx == 1 && dy == 1)rotaion = 45;
+                else if (dx == 1 && dy == -1)rotaion = -45;
+                else if (dx == -1 && dy == 0)rotaion = 180;
+                else if (dx == -1 && dy == 1)rotaion = 135;
+                else if (dx == -1 && dy == -1)rotaion = 225;
+                else if (dx == 0 && dy == 1)rotaion = 90;
+                else if (dx == 0 && dy == -1)rotaion = 270;
+
+                if (rotaion == 1000)continue;
+
+                TextureRenderer.draw(
+                    batch, Textures.get("arrow"),
+                    x, y,
+                    1f, 1f,
+                    rotaion,
+                    colorFilter, 0f);
             }
         }
     }

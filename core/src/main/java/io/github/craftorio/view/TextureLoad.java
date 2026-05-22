@@ -55,6 +55,8 @@ public class TextureLoad {
         StringSprites.put("player_run_side", loadAnimated("player_run_side", 0.1f));
         StringSprites.put("player_run_up", loadAnimated("player_run_up", 0.1f));
         StringSprites.put("player_run_down", loadAnimated("player_run_down", 0.1f));
+        StringSprites.put("slime", loadAnimated("slime",  0.12f));
+        StringSprites.put("arrow", load("arrow"));
 
         conveyorTextures.put(0, loadAnimated("conveyor-0", 0.1f));
         conveyorTextures.put(1, loadAnimated("conveyor-1", 0.1f));

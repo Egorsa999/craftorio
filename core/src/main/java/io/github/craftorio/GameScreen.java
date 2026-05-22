@@ -9,6 +9,8 @@ import io.github.craftorio.model.*;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.enemy.PathFinder;
+import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.model.ui.Inventory;
 import io.github.craftorio.view.CameraManager;
@@ -34,6 +36,9 @@ public class GameScreen implements Screen {
     private InventoryUI inventoryUI;
     private TextureLoad textures;
     private TextureAtlas atlas;
+    private PathFinder pathFinder;
+    private WaveSpawner waveSpawner;
+
 
     private int worldWidth = GameConfig.WORLD_SIZE_WIDTH;
     private int worldHeight = GameConfig.WORLD_SIZE_HEIGHT;
@@ -53,21 +58,28 @@ public class GameScreen implements Screen {
         Point spawnPoint = worldMap.findSpawnPoint();
 
         buildingRegistry = new BuildingRegistry();
-        simulationEngine = new SimulationEngine(buildingRegistry);
+
         factory = new BuildingFactory(worldMap, buildingRegistry, inventory);
 
         Player player = new Player(worldMap, buildingRegistry, spawnPoint);
         playerCamera = new CameraManager(player, worldMap);
         buildingManager = new BuildingManager(buildingRegistry, worldMap, factory, player);
         buildTool = new BuildTool(buildingManager);
-        WorldRender = new WorldRenderer(textures, playerCamera, player, worldMap, buildTool, factory, buildingRegistry);
 
         Point corePoint = new Point(spawnPoint.x - 1, spawnPoint.y + 1);
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
 
-        controller = new InputController(player, playerCamera, buildTool, buildingManager, factory);
 
+        pathFinder = new PathFinder(corePoint.x + 1, corePoint.y + 1, worldMap, buildingRegistry);
+        pathFinder.updateFlowField();
+        waveSpawner = new WaveSpawner(pathFinder, buildingRegistry, worldMap);
+        WorldRender = new WorldRenderer(textures, playerCamera, player, worldMap, buildTool, factory, buildingRegistry, waveSpawner, pathFinder);
+
+
+        controller = new InputController(player, playerCamera, buildTool, buildingManager, factory, waveSpawner);
+        simulationEngine = new SimulationEngine(buildingRegistry, waveSpawner);
         inventoryUI = new InventoryUI(textures, inventory);
+
     }
 
     @Override
@@ -80,12 +92,30 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(multiplexer);
     }
 
+    int counter = 0;
+    boolean isCalculating = false;
+
+
     @Override
     public void render(float v) {
         float delta = Gdx.graphics.getDeltaTime();
 
         accumulator += delta;
+        counter++;
+        if (counter == 240){
+            if (!isCalculating) {
+                isCalculating = true;
 
+                new Thread(() -> {
+                    try {
+                        pathFinder.updateFlowField();
+                    } finally {
+                        isCalculating = false;
+                    }
+                }).start();
+                counter = 0;
+            }
+        }
         while (accumulator >= TIME_STEP) {
             controller.update(TIME_STEP);
             simulationEngine.update();

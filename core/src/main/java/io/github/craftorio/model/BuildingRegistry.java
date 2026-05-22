@@ -34,8 +34,8 @@ public class BuildingRegistry {
         pendingRemoves.add(building);
     }
 
-    public Building getBuildingAt(Point position) {
-        return spatialGrid.get(position);
+    public Building getBuildingAt(int x, int y) {
+        return spatialGrid.get(new Point(x, y));
     }
 
     public Building getBuildingAtRemove(Point position) {

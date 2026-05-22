@@ -66,7 +66,7 @@ public class BuildingManager {
     }
     private boolean isAreaFree(List<Point> tiles) {
         for (Point p : tiles) {
-            if (registry.getBuildingAt(p) != null) {
+            if (registry.getBuildingAt(p.x, p.y) != null) {
                 return false;
             }
         }

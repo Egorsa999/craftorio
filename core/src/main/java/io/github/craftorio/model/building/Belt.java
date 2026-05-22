@@ -54,7 +54,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
             case DOWN:  nextRow--; break;
         }
 
-        return registry.getBuildingAt(new Point(nextCol, nextRow));
+        return registry.getBuildingAt(nextCol, nextRow);
     }
 
     private Building getDownBuilding() {
@@ -68,7 +68,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
             case DOWN:  nextRow++; break;
         }
 
-        return registry.getBuildingAt(new Point(nextCol, nextRow));
+        return registry.getBuildingAt(nextCol, nextRow);
     }
 
     private Building getLeftBuilding() {
@@ -82,7 +82,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
             case DOWN:  nextCol++; break;
         }
 
-        return registry.getBuildingAt(new Point(nextCol, nextRow));
+        return registry.getBuildingAt(nextCol, nextRow);
     }
 
     private Building getRightBuilding() {
@@ -96,7 +96,7 @@ public class Belt extends Building implements ThroughItem, ReceiveItem {
             case DOWN:  nextCol--; break;
         }
 
-        return registry.getBuildingAt(new Point(nextCol, nextRow));
+        return registry.getBuildingAt(nextCol, nextRow);
     }
 
     private int dirToInt(Direction dir) {
