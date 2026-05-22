@@ -18,7 +18,7 @@ public class Player {
     public float playerY;
 
     private boolean isMoving = false;
-    public Direction direction = Direction.DOWN;
+    private Direction direction = Direction.DOWN;
 
 
     public static final float speed = GameConfig.PLAYER_SPEED;
@@ -30,7 +30,7 @@ public class Player {
         TerrainType terrainType = worldMap.getCell(x, y).getTerrainType();
         if(terrainType != null && !terrainType.getWalkability()) return false;
 
-        Building current = registry.getBuildingAt(new Point(x, y));
+        Building current = registry.getBuildingAt(x, y);
         if(current != null && !current.getWalkable()) return false;
 
         return true;

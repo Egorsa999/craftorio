@@ -10,6 +10,7 @@ import io.github.craftorio.model.BuildingManager;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType; // Замените на ваш импорт
 import io.github.craftorio.model.building.Direction; // Замените на ваш импорт
+import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.CameraManager;
 
@@ -21,6 +22,7 @@ public class InputController extends InputAdapter {
     private final BuildTool buildTool;
     private final BuildingManager buildingManager;
     private final BuildingFactory factory;
+    private final WaveSpawner waveSpawner; //TODO delete this
 
     private final Vector3 tempCoords = new Vector3();
 
@@ -29,12 +31,13 @@ public class InputController extends InputAdapter {
     private int lastMouseY = 0;
 
     public InputController(Player player, CameraManager camera, BuildTool buildTool, BuildingManager buildingManager,
-                           BuildingFactory factory) {
+                           BuildingFactory factory, WaveSpawner waveSpawner) {
         this.player = player;
         this.camera = camera;
         this.buildTool = buildTool;
         this.buildingManager = buildingManager;
         this.factory = factory;
+        this.waveSpawner = waveSpawner;
     }
 
     public void update(float delta) {
@@ -134,6 +137,11 @@ public class InputController extends InputAdapter {
             buildTool.updateStartHoverPosition(getCurrentHoveredCoords());
             //buildTool.tryBuild();
         }
+        else if (button == Input.Buttons.LEFT) {
+            updateHoveredGrid();
+            waveSpawner.addEnemy(tempCoords.x, tempCoords.y);
+            //System.out.println("Enemy added!" + tempCoords.x + " " + tempCoords.y);
+        }
         return true;
     }
     public boolean touchDragged(int screenX, int screenY, int pointer) {
@@ -170,10 +178,11 @@ public class InputController extends InputAdapter {
         return new Point(gridX, gridY);
     }
     private void updateHoveredGrid() {
-        if (!buildTool.isActive()) return;
+
 
         tempCoords.set(lastMouseX, lastMouseY, 0);
         camera.unproject(tempCoords);
+        if (!buildTool.isActive()) return;
         buildTool.updateHoverPosition(getCurrentHoveredCoords());
     }
 }

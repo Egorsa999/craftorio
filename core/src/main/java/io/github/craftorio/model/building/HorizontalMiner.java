@@ -27,7 +27,7 @@ public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
         int nextCol = rotatePoint(0, -1).x;
         int nextRow = rotatePoint(0, -1).y;
 
-        return registry.getBuildingAt(new Point(nextCol, nextRow));
+        return registry.getBuildingAt(nextCol, nextRow);
     }
 
 
