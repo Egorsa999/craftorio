@@ -14,8 +14,8 @@ public class Junction extends DamageableBuilding implements ReceiveItem, Through
     private final ArrayList<ItemType>[] buffers;
     private final ArrayList<Integer>[] timers;
 
-    public Junction(BuildingRegistry registry, Point anchor, Direction direction, BuildingType type) {
-        super(registry, anchor, direction, type);
+    public Junction(BuildingRegistry registry, Point anchor, Direction direction) {
+        super(registry, anchor, direction, BuildingType.JUNCTION);
 
         buffers = new ArrayList[4];
         timers = new ArrayList[4];

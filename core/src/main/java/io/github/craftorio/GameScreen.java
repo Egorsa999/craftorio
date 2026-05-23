@@ -8,10 +8,7 @@ import io.github.craftorio.controller.InputController;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
-import io.github.craftorio.model.core.BuildingManager;
-import io.github.craftorio.model.core.BuildingRegistry;
-import io.github.craftorio.model.core.SimulationEngine;
-import io.github.craftorio.model.core.WorldMap;
+import io.github.craftorio.model.core.*;
 import io.github.craftorio.model.enemy.PathFinder;
 import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.entity.Player;
@@ -30,25 +27,16 @@ public class GameScreen implements Screen {
 
     private CameraManager playerCamera;
     private WorldRenderer WorldRender;
-    private WorldMap worldMap;
     private InputController controller;
     private BuildingManager buildingManager;
     private BuildTool buildTool;
-    private BuildingFactory factory;
-    private BuildingRegistry buildingRegistry;
-    private SimulationEngine simulationEngine;
-    private Inventory inventory;
+
     private InventoryUI inventoryUI;
     private AssemblerUI assemblerUI;
-    private TextureLoad textures;
     private TextureAtlas atlas;
-    private PathFinder pathFinder;
-    private WaveSpawner waveSpawner;
-
 
     private int worldWidth = GameConfig.WORLD_SIZE_WIDTH;
     private int worldHeight = GameConfig.WORLD_SIZE_HEIGHT;
-    // constants for 60TPS(Tick Per Second)
     private static final float TIME_STEP = GameConfig.TICK_TIME;
     private float accumulator = 0f;
 
@@ -56,76 +44,67 @@ public class GameScreen implements Screen {
         this.game = game;
 
         this.atlas = new TextureAtlas(Gdx.files.internal("atlas/main_atlas.atlas"));
-        textures = new TextureLoad(atlas);
+        TextureLoad textures = new TextureLoad(atlas);
+        Inventory inventory = new Inventory();
+        WorldMap worldMap = new WorldMap(worldWidth, worldHeight);
+        BuildingRegistry buildingRegistry = new BuildingRegistry();
 
-        inventory = new Inventory();
-        worldMap = new WorldMap(worldWidth, worldHeight);
+        GameContext context = new GameContext(worldMap, buildingRegistry, inventory, textures);
 
         Point spawnPoint = worldMap.findSpawnPoint();
-
-        buildingRegistry = new BuildingRegistry();
-
-        factory = new BuildingFactory(worldMap, buildingRegistry, inventory);
-
-        Player player = new Player(worldMap, buildingRegistry, spawnPoint);
-        playerCamera = new CameraManager(player, worldMap);
-        buildingManager = new BuildingManager(buildingRegistry, worldMap, factory, player);
-        buildTool = new BuildTool(buildingManager);
+        context.player = new Player(worldMap, buildingRegistry, spawnPoint);
 
         Point corePoint = new Point(spawnPoint.x - 1, spawnPoint.y + 1);
+        context.pathFinder = new PathFinder(corePoint.x + 1, corePoint.y + 1, worldMap, buildingRegistry);
+        context.pathFinder.updateFlowField();
+        context.waveSpawner = new WaveSpawner(context.pathFinder, buildingRegistry, worldMap);
+
+        context.engine = new SimulationEngine();
+        BuildingFactory factory = new BuildingFactory();
+
+        this.buildingManager = new BuildingManager(buildingRegistry, worldMap, factory, context.player);
+        this.buildTool = new BuildTool(buildingManager);
+
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
 
+        this.playerCamera = new CameraManager(context.player, worldMap);
+        this.WorldRender = new WorldRenderer(textures, playerCamera, context.player, worldMap, buildTool, factory, buildingRegistry, context.waveSpawner, context.pathFinder);
 
-        pathFinder = new PathFinder(corePoint.x + 1, corePoint.y + 1, worldMap, buildingRegistry);
-        pathFinder.updateFlowField();
-        waveSpawner = new WaveSpawner(pathFinder, buildingRegistry, worldMap);
-        WorldRender = new WorldRenderer(textures, playerCamera, player, worldMap, buildTool, factory, buildingRegistry, waveSpawner, pathFinder);
+        this.inventoryUI = new InventoryUI(textures, inventory);
+        this.assemblerUI = new AssemblerUI(textures);
 
-
-        simulationEngine = new SimulationEngine(buildingRegistry, waveSpawner);
-        inventoryUI = new InventoryUI(textures, inventory);
-        assemblerUI = new AssemblerUI(textures);
-        controller = new InputController(player, playerCamera, buildTool, buildingManager, factory, waveSpawner, assemblerUI);
+        this.controller = new InputController(context.player, playerCamera, buildTool, buildingManager, factory, context.waveSpawner, assemblerUI);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(assemblerUI.getStage());
         multiplexer.addProcessor(controller);
-
         Gdx.input.setInputProcessor(multiplexer);
-
-        factory.setSimulationEngine(simulationEngine);
-
-        WorldRender.setSimulationEngine(simulationEngine);
     }
 
     @Override
     public void show() {
         InputMultiplexer multiplexer = new InputMultiplexer();
-
         multiplexer.addProcessor(inventoryUI.getStage());
         multiplexer.addProcessor(assemblerUI.getStage());
         multiplexer.addProcessor(controller);
-
         Gdx.input.setInputProcessor(multiplexer);
     }
 
     int counter = 0;
     boolean isCalculating = false;
 
-
     @Override
     public void render(float v) {
         float delta = Gdx.graphics.getDeltaTime();
-
         accumulator += delta;
         counter++;
+
         if (counter == 120){
             if (!isCalculating) {
                 isCalculating = true;
-
                 new Thread(() -> {
                     try {
-                        pathFinder.updateFlowField();
+                        GameContext.current.pathFinder.updateFlowField();
                     } finally {
                         isCalculating = false;
                     }
@@ -133,14 +112,14 @@ public class GameScreen implements Screen {
                 counter = 0;
             }
         }
+
         while (accumulator >= TIME_STEP) {
             controller.update(TIME_STEP);
-            simulationEngine.update();
+            GameContext.current.engine.update();
             accumulator -= TIME_STEP;
         }
 
         WorldRender.render();
-
         inventoryUI.render();
         assemblerUI.render();
     }
@@ -148,20 +127,15 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         playerCamera.resize(width, height);
-
         inventoryUI.resize(width, height);
         assemblerUI.resize(width, height);
     }
 
     @Override
-    public void pause() {
-
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-
-    }
+    public void resume() {}
 
     @Override
     public void hide() {
@@ -175,5 +149,4 @@ public class GameScreen implements Screen {
         assemblerUI.dispose();
         atlas.dispose();
     }
-
 }

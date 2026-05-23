@@ -16,8 +16,8 @@ public class Router extends DamageableBuilding implements ReceiveItem, ThroughIt
 
     private static final Direction[] DIRS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
 
-    public Router(BuildingRegistry registry, Point anchor, Direction direction, BuildingType type) {
-        super(registry, anchor, direction, type);
+    public Router(BuildingRegistry registry, Point anchor, Direction direction) {
+        super(registry, anchor, direction, BuildingType.ROUTER);
     }
 
     private Building getNeighbor(Direction dir) {

@@ -11,6 +11,7 @@ import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.building.defense.Turret;
 import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.core.GameContext;
 import io.github.craftorio.model.core.SimulationEngine;
 import io.github.craftorio.model.core.WorldMap;
 import io.github.craftorio.model.enemy.Enemy;
@@ -102,7 +103,7 @@ public class WorldRenderer {
     }
 
     private void drawBullets() {
-        for (Bullet b : engine.getBullets()) {
+        for (Bullet b : GameContext.current.engine.getBullets()) {
             float bulletSize = 0.5f;
             TextureRenderer.draw(
                 batch, Textures.get("bullet"),
