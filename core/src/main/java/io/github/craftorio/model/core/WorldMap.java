@@ -1,14 +1,10 @@
-package io.github.craftorio.model;
+package io.github.craftorio.model.core;
 
-import com.badlogic.gdx.graphics.g3d.particles.influencers.ParticleControllerInfluencer;
 import com.badlogic.gdx.math.MathUtils;
-import io.github.craftorio.model.building.Building;
-import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.generator.Cell;
 import io.github.craftorio.model.generator.MapGenerator;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.generator.TerrainType;
-import org.w3c.dom.ranges.Range;
 
 import java.awt.Point;
 import java.util.ArrayList;

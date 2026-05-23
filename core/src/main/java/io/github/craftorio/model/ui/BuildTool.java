@@ -1,7 +1,7 @@
 package io.github.craftorio.model.ui;
 
 import com.badlogic.gdx.utils.Array;
-import io.github.craftorio.model.BuildingManager;
+import io.github.craftorio.model.core.BuildingManager;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
 

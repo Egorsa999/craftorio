@@ -1,6 +1,6 @@
-package io.github.craftorio.model;
+package io.github.craftorio.model.core;
 
-import io.github.craftorio.model.building.Belt;
+import io.github.craftorio.model.entity.Bullet;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.enemy.Enemy;
 import io.github.craftorio.model.enemy.WaveSpawner;

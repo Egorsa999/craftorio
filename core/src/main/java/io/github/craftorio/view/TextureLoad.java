@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
-import io.github.craftorio.model.ItemType;
+import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.generator.TerrainType;

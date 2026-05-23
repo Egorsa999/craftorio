@@ -1,9 +1,16 @@
 package io.github.craftorio.model.building;
 
-import io.github.craftorio.model.SimulationEngine;
-import io.github.craftorio.model.WorldMap;
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.enemy.Enemy;
+import io.github.craftorio.model.building.defense.Turret;
+import io.github.craftorio.model.building.logistics.Belt;
+import io.github.craftorio.model.building.logistics.Junction;
+import io.github.craftorio.model.building.logistics.Router;
+import io.github.craftorio.model.building.production.Assembler;
+import io.github.craftorio.model.building.production.HorizontalMiner;
+import io.github.craftorio.model.building.production.Miner;
+import io.github.craftorio.model.building.storage.Core;
+import io.github.craftorio.model.core.SimulationEngine;
+import io.github.craftorio.model.core.WorldMap;
+import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.ui.Inventory;
 
 import java.awt.Point;

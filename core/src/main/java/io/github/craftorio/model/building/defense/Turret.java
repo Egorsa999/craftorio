@@ -1,10 +1,11 @@
-package io.github.craftorio.model.building;
+package io.github.craftorio.model.building.defense;
 
 import com.badlogic.gdx.math.MathUtils;
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.Bullet;
-import io.github.craftorio.model.ItemType;
-import io.github.craftorio.model.SimulationEngine;
+import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.entity.Bullet;
+import io.github.craftorio.model.item.ItemType;
+import io.github.craftorio.model.core.SimulationEngine;
 import io.github.craftorio.model.enemy.Enemy;
 
 import java.awt.Point;

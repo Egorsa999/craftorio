@@ -16,9 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import io.github.craftorio.model.ItemType;
-import io.github.craftorio.model.Recipe;
-import io.github.craftorio.model.building.Assembler;
+import io.github.craftorio.model.item.ItemType;
+import io.github.craftorio.model.item.Recipe;
+import io.github.craftorio.model.building.production.Assembler;
 import io.github.craftorio.view.TextureLoad;
 
 import java.util.Map;

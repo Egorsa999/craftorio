@@ -1,12 +1,13 @@
-package io.github.craftorio.model.building;
+package io.github.craftorio.model.building.production;
 
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.ItemType;
-import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.item.ItemType;
+import io.github.craftorio.model.core.WorldMap;
 
 import java.awt.*;
 
-public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
+public class HorizontalMiner extends DamageableBuilding implements ThroughItem {
 
     private final int BASE_TICKS_PER_ITEM = 240;
     private final int MAX_BUFFER_SIZE = 10;

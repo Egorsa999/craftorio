@@ -1,7 +1,7 @@
 package io.github.craftorio.model.generator;
 
 import com.badlogic.gdx.math.MathUtils;
-import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.core.WorldMap;
 import java.util.ArrayList;
 import java.util.List;
 

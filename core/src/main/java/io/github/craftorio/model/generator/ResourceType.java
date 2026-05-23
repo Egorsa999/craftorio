@@ -1,6 +1,6 @@
 package io.github.craftorio.model.generator;
 
-import io.github.craftorio.model.ItemType;
+import io.github.craftorio.model.item.ItemType;
 
 public enum ResourceType {
     IRON(ItemType.IRON_ORE, 1.2f),   // Выдает предмет IRON_ORE

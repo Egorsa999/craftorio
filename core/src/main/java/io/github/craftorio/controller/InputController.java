@@ -5,9 +5,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import io.github.craftorio.GameConfig;
-import io.github.craftorio.model.Player;
-import io.github.craftorio.model.BuildingManager;
+import io.github.craftorio.model.building.production.Assembler;
+import io.github.craftorio.model.entity.Player;
+import io.github.craftorio.model.core.BuildingManager;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType; // Замените на ваш импорт

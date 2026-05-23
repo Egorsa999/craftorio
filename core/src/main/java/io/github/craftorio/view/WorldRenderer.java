@@ -5,20 +5,24 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
-import io.github.craftorio.model.*;
 import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.building.defense.Turret;
+import io.github.craftorio.model.building.logistics.Belt;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.core.SimulationEngine;
+import io.github.craftorio.model.core.WorldMap;
 import io.github.craftorio.model.enemy.Enemy;
 import io.github.craftorio.model.enemy.PathFinder;
 import io.github.craftorio.model.enemy.WaveSpawner;
+import io.github.craftorio.model.entity.Bullet;
+import io.github.craftorio.model.entity.Player;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.generator.TerrainType;
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.renderer.BeltRenderer;
 
-import javax.swing.*;
 import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
@@ -98,7 +102,7 @@ public class WorldRenderer {
     }
 
     private void drawBullets() {
-        for (io.github.craftorio.model.Bullet b : engine.getBullets()) {
+        for (Bullet b : engine.getBullets()) {
             float bulletSize = 0.5f;
             TextureRenderer.draw(
                 batch, Textures.get("bullet"),

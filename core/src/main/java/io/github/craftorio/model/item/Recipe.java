@@ -1,4 +1,4 @@
-package io.github.craftorio.model;
+package io.github.craftorio.model.item;
 
 import java.util.Map;
 

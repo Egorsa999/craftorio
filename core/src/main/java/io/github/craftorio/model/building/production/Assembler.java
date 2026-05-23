@@ -1,8 +1,9 @@
-package io.github.craftorio.model.building;
+package io.github.craftorio.model.building.production;
 
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.ItemType;
-import io.github.craftorio.model.Recipe;
+import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.item.ItemType;
+import io.github.craftorio.model.item.Recipe;
 
 import java.awt.*;
 import java.util.ArrayList;
