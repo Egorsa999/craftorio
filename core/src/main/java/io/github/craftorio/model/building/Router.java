@@ -5,7 +5,7 @@ import io.github.craftorio.model.ItemType;
 
 import java.awt.Point;
 
-public class Router extends Building implements ReceiveItem, ThroughItem {
+public class Router extends DamageableBuilding implements ReceiveItem, ThroughItem {
     private static final int PROCESS_TIME = 15;
 
     private ItemType currentItem = null;
@@ -34,6 +34,7 @@ public class Router extends Building implements ReceiveItem, ThroughItem {
 
     @Override
     public void update() {
+        super.update();
         if (currentItem != null) {
             if (timer > 0) {
                 timer--;

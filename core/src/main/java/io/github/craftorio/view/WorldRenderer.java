@@ -181,6 +181,7 @@ public class WorldRenderer {
                 Color colorFilter = new Color(1f, 1f, 1f, 1f);
 
                 if (current instanceof DamageableBuilding damageableCurrent){
+                    System.out.println(damageableCurrent.getHP() + " " + damageableCurrent.isReceivingDamage());
                     if (damageableCurrent.isReceivingDamage())
                         colorFilter = new Color(1.0f, 0.3f, 0.3f, 1.0f);
                     else{
@@ -197,14 +198,13 @@ public class WorldRenderer {
                         batch, Textures.get(current.type),
                         (float)current.anchor.x, (float)current.anchor.y,
                         current.type.getWidth(), current.type.getHeight(),
-                        turret.getRotationDeg(), null, stateTime
+                        turret.getRotationDeg(), colorFilter, stateTime
                     );
                     continue;
                 }
 
                 float width = current.type.getWidth();
                 float height = current.type.getHeight();
-
                 TextureRenderer.drawBuilding(
                     batch, Textures.get(current.type),
                     (float)current.anchor.x, (float)current.anchor.y,

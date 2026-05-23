@@ -6,7 +6,7 @@ import io.github.craftorio.model.ItemType;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class Junction extends Building implements ReceiveItem, ThroughItem {
+public class Junction extends DamageableBuilding implements ReceiveItem, ThroughItem {
     private static final int CAPACITY = 3;
     private static final int TRAVEL_TIME = 60;
 
@@ -60,6 +60,7 @@ public class Junction extends Building implements ReceiveItem, ThroughItem {
 
     @Override
     public void update() {
+        super.update();
         for (Direction dir : Direction.values()) {
             int index = dirToIndex(dir);
             ArrayList<ItemType> buffer = buffers[index];

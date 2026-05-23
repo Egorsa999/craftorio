@@ -29,6 +29,7 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
 
     @Override
     public void update() {
+        super.update();
         if (currentCooldown > 0) currentCooldown--;
 
         Enemy target = findNearestEnemy();

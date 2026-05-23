@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Assembler extends Building implements ThroughItem, ReceiveItem {
+public class Assembler extends DamageableBuilding implements ThroughItem, ReceiveItem {
     private final Map<ItemType, Integer> inputInventory = new HashMap<>();
     private final Map<ItemType, Integer> outputInventory = new HashMap<>();
 
@@ -36,6 +36,7 @@ public class Assembler extends Building implements ThroughItem, ReceiveItem {
 
     @Override
     public void update() {
+        super.update();
         if (currentRecipe == null) return;
 
         for (Map.Entry<ItemType, Integer> entry : outputInventory.entrySet()) {
