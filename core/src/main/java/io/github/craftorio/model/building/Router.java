@@ -55,25 +55,16 @@ public class Router extends Building implements ReceiveItem, ThroughItem {
     private boolean pushToNeighbor(Direction dir, ItemType id) {
         Building nextBuilding = getNeighbor(dir);
 
-        if (nextBuilding instanceof ReceiveItem rItem && !rItem.canReceiveFrom(this.getAnchor())) {
-            return false;
-        }
-
-        if (nextBuilding instanceof Belt nextBelt) {
-            return nextBelt.receiveItem(id, 0.0f, dir);
-        } else if (nextBuilding instanceof Junction nextJunc) {
-            return nextJunc.receiveItem(id, 0.0f, dir);
-        } else if (nextBuilding instanceof Router nextRouter) {
-            return nextRouter.receiveItem(id, 0.0f, dir);
-        } else if (nextBuilding instanceof ReceiveItem building) {
-            return building.receiveItem(id, 0.0f);
+        if (nextBuilding instanceof ReceiveItem building) {
+            return building.receiveItem(this, id);
         }
         return false;
     }
 
-    public boolean receiveItem(ItemType id, Float progress, Direction travelingDir) {
+    @Override
+    public boolean receiveItem(Building building, ItemType item) {
         if (currentItem == null) {
-            currentItem = id;
+            currentItem = item;
             timer = PROCESS_TIME;
             return true;
         }
@@ -81,22 +72,12 @@ public class Router extends Building implements ReceiveItem, ThroughItem {
     }
 
     @Override
-    public boolean receiveItem(ItemType id, Float progress) {
-        if (currentItem == null) {
-            currentItem = id;
-            timer = PROCESS_TIME;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean canReceiveFrom(Point point) {
+    public boolean canReceiveFrom(Building building, Point point) {
         return true;
     }
 
     @Override
-    public boolean throughItem(ItemType type, Float progress) {
+    public boolean throughItem(ItemType type) {
         return false;
     }
 

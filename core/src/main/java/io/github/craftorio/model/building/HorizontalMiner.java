@@ -37,7 +37,7 @@ public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
     public void update(){
         super.update();
         if (bufferCounter != 0) {
-            if (throughItem(ItemType.IRON_ORE, 0.0f)) {
+            if (throughItem(ItemType.IRON_ORE)) {
                 System.out.println("NEW ITEM");
             }
             bufferCounter--;
@@ -51,10 +51,10 @@ public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
     }
 
     @Override
-    public boolean throughItem(ItemType type, Float progress) {
+    public boolean throughItem(ItemType type) {
         Building nextBuilding = getNextBuilding();
         if (nextBuilding instanceof ReceiveItem building) {
-            return building.receiveItem(type, progress);
+            return building.receiveItem(this, type);
         }
         return false;
     }

@@ -87,14 +87,14 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
     public float getRotationDeg() { return rotationDeg; }
 
     @Override
-    public boolean receiveItem(ItemType type, Float progress) {
+    public boolean receiveItem(Building building, ItemType type) {
         if (type != ammoType) return false;
         ammoAmount++;
         return true;
     }
 
     @Override
-    public boolean canReceiveFrom(Point point) {
+    public boolean canReceiveFrom(Building building, Point point) {
         return true;
     }
 }

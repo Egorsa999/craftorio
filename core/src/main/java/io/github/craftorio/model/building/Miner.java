@@ -48,7 +48,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
         super.update();
         if (!outputBuffer.isEmpty()) {
 //            System.out.println("TRY THROUGH " + outputBuffer.element());
-            if (throughItem(outputBuffer.element(), 0.0f)) {
+            if (throughItem(outputBuffer.element())) {
                 System.out.println("NEW ITEM");
                 outputBuffer.remove();
             }
@@ -73,12 +73,12 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     }
 
     @Override
-    public boolean receiveItem(ItemType type, Float progress) {
+    public boolean receiveItem(Building building, ItemType type) {
         return false;
     }
 
     @Override
-    public boolean canReceiveFrom(Point point) {
+    public boolean canReceiveFrom(Building building, Point point) {
         return true;
     }
 
@@ -90,7 +90,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     }
 
     @Override
-    public boolean throughItem(ItemType type, Float progress) {
+    public boolean throughItem(ItemType type) {
         for (int iterate = 0; iterate <= throughDelta.size(); iterate++) {
             lastThrough++;
             lastThrough %= throughDelta.size();
@@ -98,7 +98,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
             int y = getY() + throughDelta.get(lastThrough).y;
             Building nextBuilding = registry.getBuildingAt(x, y);
             if (nextBuilding instanceof ReceiveItem building) {
-                if (building.receiveItem(type, progress)) {
+                if (building.receiveItem(this, type)) {
                     return true;
                 }
             }

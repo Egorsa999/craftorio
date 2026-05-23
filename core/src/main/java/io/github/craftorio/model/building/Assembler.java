@@ -40,7 +40,7 @@ public class Assembler extends Building implements ThroughItem, ReceiveItem {
 
         for (Map.Entry<ItemType, Integer> entry : outputInventory.entrySet()) {
             if (entry.getValue() > 0) {
-                if (throughItem(entry.getKey(), 0.0f)) {
+                if (throughItem(entry.getKey())) {
                     outputInventory.put(entry.getKey(), outputInventory.get(entry.getKey()) - 1);
                     if (outputInventory.get(entry.getKey()) == 0) {
                         outputInventory.remove(entry.getKey());
@@ -76,18 +76,18 @@ public class Assembler extends Building implements ThroughItem, ReceiveItem {
     }
 
     @Override
-    public boolean receiveItem(ItemType type, Float progress) {
-        inputInventory.put(type, inputInventory.getOrDefault(type, 0) + 1);
+    public boolean receiveItem(Building building, ItemType id) {
+        inputInventory.put(id, inputInventory.getOrDefault(id, 0) + 1);
         return true;
     }
 
     @Override
-    public boolean canReceiveFrom(Point point) {
+    public boolean canReceiveFrom(Building building, Point point) {
         return true;
     }
 
     @Override
-    public boolean throughItem(ItemType type, Float progress) {
+    public boolean throughItem(ItemType type) {
         for (int iterate = 0; iterate <= throughDelta.size(); iterate++) {
             lastThrough++;
             lastThrough %= throughDelta.size();
@@ -95,7 +95,7 @@ public class Assembler extends Building implements ThroughItem, ReceiveItem {
             int y = getY() + throughDelta.get(lastThrough).y;
             Building nextBuilding = registry.getBuildingAt(x, y);
             if (nextBuilding instanceof ReceiveItem building) {
-                if (building.canReceiveFrom(this.getAnchor()) && building.receiveItem(type, progress)) {
+                if (building.receiveItem(this, type)) {
                     return true;
                 }
             }

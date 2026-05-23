@@ -22,13 +22,13 @@ public class Core extends DamageableBuilding implements ReceiveItem {
     }
 
     @Override
-    public boolean receiveItem(ItemType type, Float progress) {
+    public boolean receiveItem(Building building, ItemType type) {
         inventory.add(type, 1);
         return true;
     }
 
     @Override
-    public boolean canReceiveFrom(Point point) {
+    public boolean canReceiveFrom(Building building, Point point) {
         return true;
     }
 }

@@ -109,19 +109,15 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
         return 0;
     }
 
-    private Direction getRelativeDir(Direction myDir, Direction otherDir) {
-        int myAngle = dirToInt(myDir);
-        int otherAngle = dirToInt(otherDir);
+    private Direction getDirectionFrom(Building sender) {
+        if (sender == null) return this.direction;
 
-        int diff = (otherAngle - myAngle + 4) % 4;
+        if (registry.getBuildingAt(getX() - 1, getY()) == sender) return Direction.RIGHT;
+        if (registry.getBuildingAt(getX() + 1, getY()) == sender) return Direction.LEFT;
+        if (registry.getBuildingAt(getX(), getY() - 1) == sender) return Direction.UP;
+        if (registry.getBuildingAt(getX(), getY() + 1) == sender) return Direction.DOWN;
 
-        switch (diff) {
-            case 0: return Direction.UP;
-            case 1: return Direction.RIGHT;
-            case 2: return Direction.DOWN;
-            case 3: return Direction.LEFT;
-        }
-        return Direction.UP;
+        return this.direction;
     }
 
     private void updateType() {
@@ -221,7 +217,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
             progressWill = Math.max(itemProgress.get(i), progressWill);
 
             if (progressWill >= 1.0f) {
-                if (throughItem(i, itemId.get(i), progressWill - 1.0f)) {
+                if (throughItem(itemId.get(i))) {
                     itemId.remove(i);
                     itemProgress.remove(i);
                     itemFrom.remove(i);
@@ -236,22 +232,14 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
         }
     }
 
-    public boolean throughItem(int index, ItemType id, Float progress) {
+    @Override
+    public boolean throughItem(ItemType item) {
         Building nextBuilding = getUpperBuilding();
-        if (nextBuilding instanceof Belt nextBelt) {
-            return nextBelt.receiveItem(id, progress, this.direction);
-        } else if (nextBuilding instanceof Junction nextJunc) {
-            return nextJunc.receiveItem(id, progress, this.direction);
-        } else if (nextBuilding instanceof Router nextRouter) {
-            return nextRouter.receiveItem(id, progress, this.direction);
-        } else if (nextBuilding instanceof ReceiveItem building) {
-            return building.receiveItem(id, progress);
+        if (nextBuilding instanceof ReceiveItem building) {
+            return building.receiveItem(this, item);
         }
         return false;
     }
-
-    @Override
-    public boolean throughItem(ItemType id, Float progress) { return false; }
 
     @Override
     public boolean canThroughIn(Point point) {
@@ -269,38 +257,39 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
     }
 
     @Override
-    public boolean receiveItem(ItemType id, Float progress) {
-        return receiveItem(id, progress, this.direction);
-    }
+    public boolean receiveItem(Building sender, ItemType id) {
+        if (sender != null && sender == getUpperBuilding()) return false;
 
-    @Override
-    public boolean canReceiveFrom(Point point) {
-        return !(registry.getBuildingAt((int) point.getX(), (int) point.getY()).equals(getUpperBuilding()));
-    }
+        Direction travelDir = getDirectionFrom(sender);
+        float startProgress = 0.0f;
 
-    public boolean receiveItem(ItemType id, Float progress, Direction from) {
         if (itemId.isEmpty()) {
             itemId.add(id);
-            itemProgress.add(progress);
-            itemFrom.add(from);
+            itemProgress.add(startProgress);
+            itemFrom.add(travelDir);
             return true;
         }
 
         int insertIdx = itemId.size();
         for (int i = 0; i < itemProgress.size(); i++) {
-            if (progress > itemProgress.get(i)) {
+            if (startProgress > itemProgress.get(i)) {
                 insertIdx = i;
                 break;
             }
         }
 
-        if (insertIdx > 0 && itemProgress.get(insertIdx - 1) - ItemSize < progress) return false;
-        if (insertIdx < itemProgress.size() && progress - ItemSize < itemProgress.get(insertIdx)) return false;
+        if (insertIdx > 0 && itemProgress.get(insertIdx - 1) - ItemSize < startProgress) return false;
+        if (insertIdx < itemProgress.size() && startProgress - ItemSize < itemProgress.get(insertIdx)) return false;
 
         itemId.add(insertIdx, id);
-        itemProgress.add(insertIdx, progress);
-        itemFrom.add(insertIdx, from);
+        itemProgress.add(insertIdx, startProgress);
+        itemFrom.add(insertIdx, travelDir);
         return true;
+    }
+
+    @Override
+    public boolean canReceiveFrom(Building building, Point point) {
+        return building != null && building != getUpperBuilding();
     }
 
     public ArrayList<ItemType> getItemId() { return this.itemId; }
