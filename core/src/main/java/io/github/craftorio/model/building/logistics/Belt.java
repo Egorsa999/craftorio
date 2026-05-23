@@ -17,9 +17,9 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
     private ArrayList<Float> itemProgress;
     private ArrayList<Direction> itemFrom;
 
-    public int beltType;
-    public float rotation;
-    public float reflection;
+    private int beltType;
+    private float rotation;
+    private float reflection;
 
     public Belt(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.BELT);
@@ -296,4 +296,16 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
     public ArrayList<ItemType> getItemId() { return this.itemId; }
     public ArrayList<Float> getItemProgress() { return this.itemProgress; }
     public ArrayList<Direction> getItemFrom() { return this.itemFrom; }
+
+    public Integer getBeltType() {
+        return beltType;
+    }
+
+    public Float getRotation() {
+        return rotation;
+    }
+
+    public Float getReflection() {
+        return reflection;
+    }
 }

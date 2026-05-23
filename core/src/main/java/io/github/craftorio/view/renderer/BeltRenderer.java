@@ -40,7 +40,7 @@ public class BeltRenderer {
         float x = belt.getX();
         float y = belt.getY();
         if (colorFilter != null) batch.setColor(colorFilter);
-        batch.draw(texture.get(belt.beltType).getKeyFrame(stateTime), x, y, 0.5f, 0.5f, 1f, 1f, belt.reflection, 1f, -belt.rotation);
+        batch.draw(texture.get(belt.getBeltType()).getKeyFrame(stateTime), x, y, 0.5f, 0.5f, 1f, 1f, belt.getReflection(), 1f, -belt.getRotation());
 
         batch.setColor(Color.WHITE);
     }
