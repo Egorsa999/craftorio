@@ -4,7 +4,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector3;
 import io.github.craftorio.model.building.BuildingType;
-import io.github.craftorio.model.core.GameContext;
 import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.view.CameraManager;

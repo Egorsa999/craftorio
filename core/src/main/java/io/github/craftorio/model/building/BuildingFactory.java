@@ -8,15 +8,27 @@ import io.github.craftorio.model.building.production.Assembler;
 import io.github.craftorio.model.building.production.HorizontalMiner;
 import io.github.craftorio.model.building.production.Miner;
 import io.github.craftorio.model.building.storage.Core;
-import io.github.craftorio.model.core.GameContext;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.core.SimulationEngine;
+import io.github.craftorio.model.core.WorldMap;
+import io.github.craftorio.model.ui.Inventory;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BuildingFactory {
+    private final BuildingRegistry registry;
+    private final Inventory inventory;
+    private final WorldMap worldMap;
+    private final SimulationEngine engine;
 
-    public BuildingFactory() {}
+    public BuildingFactory(BuildingRegistry registry, Inventory inventory, WorldMap worldMap, SimulationEngine engine) {
+        this.registry = registry;
+        this.inventory = inventory;
+        this.worldMap = worldMap;
+        this.engine = engine;
+    }
 
     public int calculateOccupiedWidth(BuildingType type, Direction rotation){
         boolean isRotated90 = (rotation == Direction.LEFT || rotation == Direction.RIGHT);
@@ -68,14 +80,12 @@ public class BuildingFactory {
     public Building createBuilding(BuildingType type, Point unSafeAnchor, Direction rotation) {
         Point anchor = new Point(unSafeAnchor);
 
-        var registry = GameContext.current.registry;
-
         return switch (type) {
-            case MINER -> new Miner(registry, anchor, rotation);
+            case MINER -> new Miner(registry, anchor, rotation, worldMap);
             case BELT -> new Belt(registry, anchor, rotation);
             case HORIZONTAL_MINER -> new HorizontalMiner(registry, anchor, rotation);
-            case CORE -> new Core(registry, anchor, rotation);
-            case TURRET -> new Turret(registry, anchor, rotation);
+            case CORE -> new Core(registry, anchor, rotation, inventory);
+            case TURRET -> new Turret(registry, anchor, rotation, engine);
             case JUNCTION -> new Junction(registry, anchor, rotation);
             case ROUTER -> new Router(registry, anchor, rotation);
             case ASSEMBLER -> new Assembler(registry, anchor, rotation);

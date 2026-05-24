@@ -3,7 +3,7 @@ package io.github.craftorio.model.building.defense;
 import com.badlogic.gdx.math.MathUtils;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
-import io.github.craftorio.model.core.GameContext;
+import io.github.craftorio.model.core.SimulationEngine;
 import io.github.craftorio.model.entity.Bullet;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.enemy.Enemy;
@@ -21,8 +21,11 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
     private int currentCooldown = 0;
     private int damage = 10;
 
-    public Turret(BuildingRegistry registry, Point anchor, Direction direction) {
+    private final SimulationEngine engine;
+
+    public Turret(BuildingRegistry registry, Point anchor, Direction direction, SimulationEngine engine) {
         super(registry, anchor, direction, BuildingType.TURRET);
+        this.engine = engine;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
                 float myY = getY() + 0.5f;
 
                 Bullet bullet = new Bullet(myX, myY, target.getX(), target.getY(), 0.4f, damage);
-                GameContext.current.engine.spawnBullet(bullet);
+                engine.spawnBullet(bullet);
 
                 currentCooldown = fireCooldown;
                 ammoAmount--;
@@ -54,7 +57,7 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
         float myX = getX() + 0.5f;
         float myY = getY() + 0.5f;
 
-        List<Enemy> enemies = GameContext.current.engine.getEnemies();
+        List<Enemy> enemies = engine.getEnemies();
         for (Enemy e : enemies) {
             if (e.isDead()) continue;
 

@@ -2,7 +2,7 @@ package io.github.craftorio.model.building.production;
 
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
-import io.github.craftorio.model.core.GameContext;
+import io.github.craftorio.model.core.WorldMap;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.generator.ResourceType;
 
@@ -22,10 +22,13 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     private final ArrayList<Point> throughDelta = new ArrayList<>();
     private int lastThrough = 0;
 
-    public Miner(BuildingRegistry registry, Point anchor, Direction direction) {
-        super(registry, anchor, direction, BuildingType.MINER);
+    private final WorldMap worldMap;
 
-        List<ResourceType> occupiedOres = GameContext.current.worldMap.getResources(getOccupiedTiles());
+    public Miner(BuildingRegistry registry, Point anchor, Direction direction, WorldMap worldMap) {
+        super(registry, anchor, direction, BuildingType.MINER);
+        this.worldMap = worldMap;
+
+        List<ResourceType> occupiedOres = worldMap.getResources(getOccupiedTiles());
         for (ResourceType resource : occupiedOres){
             if (resource == ResourceType.NONE || resource == null) continue;
             oreCoverage.put(resource, oreCoverage.getOrDefault(resource, 0) + 1);
