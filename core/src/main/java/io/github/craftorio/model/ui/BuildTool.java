@@ -134,14 +134,24 @@ public class BuildTool {
     }
 
     private void autoRotateBelt() {
-        Direction oldRotation = currentRotation;
         int dx = hoverPosition.x - startDragPosition.x;
         int dy = hoverPosition.y - startDragPosition.y;
 
-        if (Math.abs(dx) >= Math.abs(dy)) currentRotation = dx >= 0 ? Direction.RIGHT : Direction.LEFT;
-        else currentRotation = dy >= 0 ? Direction.UP : Direction.DOWN;
+        if (dx == 0 && dy == 0) {
+            return;
+        }
 
-        if (oldRotation != currentRotation) updateGhostBuilding();
+        Direction oldRotation = currentRotation;
+
+        if (Math.abs(dx) >= Math.abs(dy)) {
+            currentRotation = dx > 0 ? Direction.RIGHT : Direction.LEFT;
+        } else {
+            currentRotation = dy > 0 ? Direction.UP : Direction.DOWN;
+        }
+
+        if (oldRotation != currentRotation) {
+            updateGhostBuilding();
+        }
     }
 
     public PreviewState getPreviewState() {
