@@ -1,5 +1,7 @@
 package io.github.craftorio.model.item;
 
+import io.github.craftorio.model.entity.Bullet;
+
 import java.util.Map;
 
 public enum Recipe {
@@ -9,6 +11,10 @@ public enum Recipe {
     )),
     TEST2(ItemType.COPPER_ORE, 2, 90, Map.of(
                            ItemType.IRON_ORE, 2
+    )),
+    BULLET(ItemType.BULLET, 3, 60, Map.of(
+        ItemType.COPPER_ORE, 1,
+        ItemType.COAL, 1
     ));
 
     private final ItemType output;

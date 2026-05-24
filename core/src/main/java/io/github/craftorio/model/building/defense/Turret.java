@@ -12,7 +12,7 @@ import java.awt.Point;
 import java.util.List;
 
 public class Turret extends DamageableBuilding implements ReceiveItem {
-    private final ItemType ammoType = ItemType.COPPER_ORE;
+    private final ItemType ammoType = ItemType.BULLET;
     private int ammoAmount = 0;
 
     private float rotationDeg = 0f;
