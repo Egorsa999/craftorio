@@ -1,7 +1,6 @@
 package io.github.craftorio.view.layers;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import io.github.craftorio.model.core.GameContext;
 import io.github.craftorio.model.entity.Bullet;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.TextureRenderer;

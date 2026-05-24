@@ -1,7 +1,6 @@
 package io.github.craftorio.model.building;
 
 import io.github.craftorio.model.core.BuildingRegistry;
-import io.github.craftorio.model.core.GameContext;
 
 import java.awt.Point;
 import java.util.ArrayList;
