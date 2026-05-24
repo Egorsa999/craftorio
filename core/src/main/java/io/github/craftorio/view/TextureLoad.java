@@ -76,6 +76,7 @@ public class TextureLoad {
         itemSprites.put(ItemType.IRON_ORE, load("item-iron"));
         itemSprites.put(ItemType.COAL, load("item-coal"));
         itemSprites.put(ItemType.COPPER_ORE, load("item-copper"));
+        itemSprites.put(ItemType.BULLET, load("item-bullet"));
     }
 
     private GameSprite load(String regionName) {

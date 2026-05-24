@@ -3,7 +3,9 @@ package io.github.craftorio.model.item;
 public enum ItemType {
     IRON_ORE("Iron ore"),
     COPPER_ORE("Copper ore"),
-    COAL("Coal");
+    COAL("Coal"),
+    BULLET("Bullet"),
+    STONE("Stone");
 
     private final String name;
     ItemType(String name){
