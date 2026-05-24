@@ -71,9 +71,9 @@ public class GameScreen implements Screen {
 
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
 
-        this.playerCamera = new CameraManager(context.player, worldMap);
-        this.WorldRender = new WorldRenderer(playerCamera, worldMap, buildingRegistry, context.waveSpawner, textures,
-            context.player, context.engine.getBullets(), buildTool::getPreviewState);
+        this.playerCamera = new CameraManager(player, worldMap);
+        this.WorldRender = new WorldRenderer(playerCamera, worldMap, buildingRegistry, waveSpawner, textures,
+            player, engine.getBullets(), buildTool::getPreviewState);
 
         this.inventoryUI = new InventoryUI(textures, inventory);
         this.assemblerUI = new AssemblerUI(textures);
