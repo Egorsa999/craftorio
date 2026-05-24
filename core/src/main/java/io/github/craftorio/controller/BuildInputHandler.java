@@ -40,6 +40,7 @@ public class BuildInputHandler extends InputAdapter {
         if (keycode == Input.Keys.NUM_5) return select(BuildingType.TURRET);
         if (keycode == Input.Keys.NUM_6) return select(BuildingType.JUNCTION);
         if (keycode == Input.Keys.NUM_7) return select(BuildingType.ROUTER);
+        if (keycode == Input.Keys.NUM_8) return select(BuildingType.WALL);
 
         if (keycode == Input.Keys.ESCAPE && buildTool.isActive()) {
             buildTool.clearSelection();

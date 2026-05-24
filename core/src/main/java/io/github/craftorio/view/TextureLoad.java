@@ -52,6 +52,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.JUNCTION, load("junction"));
         buildingSprites.put(BuildingType.ROUTER, load("router"));
         buildingSprites.put(BuildingType.TURRET, load("turret"));
+        buildingSprites.put(BuildingType.WALL, load("defense-wall"));
 
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));

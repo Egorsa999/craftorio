@@ -1,6 +1,7 @@
 package io.github.craftorio.model.building;
 
 import io.github.craftorio.model.building.defense.Turret;
+import io.github.craftorio.model.building.defense.Wall;
 import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.building.logistics.Junction;
 import io.github.craftorio.model.building.logistics.Router;
@@ -89,6 +90,7 @@ public class BuildingFactory {
             case JUNCTION -> new Junction(registry, anchor, rotation);
             case ROUTER -> new Router(registry, anchor, rotation);
             case ASSEMBLER -> new Assembler(registry, anchor, rotation);
+            case WALL -> new Wall(registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }
