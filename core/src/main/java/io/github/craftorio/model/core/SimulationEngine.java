@@ -29,6 +29,7 @@ public class SimulationEngine {
     public void update() {
         registry.applyPendingChanges();
 
+
         for (Building building : registry.getBuildingsForTick()) {
             building.update();
         }
@@ -45,6 +46,8 @@ public class SimulationEngine {
                 bullets.remove(i);
             }
         }
+
+        waveSpawner.update();
     }
 
     public List<Enemy> getEnemies() {

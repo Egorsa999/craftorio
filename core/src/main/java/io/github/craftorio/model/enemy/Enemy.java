@@ -16,6 +16,7 @@ public class Enemy {
     private int coolDown = 60;
     private int damage = 30;
     private int attackTimer = 0;
+    private int hp = 20;
 
     private int directionChangeCounter = 0;
 
@@ -231,9 +232,10 @@ public class Enemy {
     }
 
     public void receiveDamage(int damage) {
+        this.hp -= damage;
     }
 
     public boolean isDead() {
-        return false;
+        return this.hp <= 0;
     }
 }

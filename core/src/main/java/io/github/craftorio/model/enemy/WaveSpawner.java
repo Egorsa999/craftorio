@@ -17,6 +17,10 @@ public class WaveSpawner {
         enemies.add(new Enemy(x, y, 1/20f, pathFinder, registry, enemies, worldMap));
     }
 
+    public void update(){
+        enemies.removeIf(Enemy::isDead);
+    }
+
     public List<Enemy> getEnemies(){
         return enemies;
     }
