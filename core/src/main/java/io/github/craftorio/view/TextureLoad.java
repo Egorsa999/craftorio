@@ -8,6 +8,9 @@ import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.generator.TerrainType;
+import io.github.craftorio.view.sprite.AnimatedSprite;
+import io.github.craftorio.view.sprite.GameSprite;
+import io.github.craftorio.view.sprite.StaticSprite;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -75,13 +78,13 @@ public class TextureLoad {
     }
 
     private GameSprite load(String regionName) {
-        return new GameSprite(atlas.findRegion(regionName));
+        return new StaticSprite(atlas.findRegion(regionName));
     }
 
     private GameSprite loadAnimated(String baseName, float frameDuration) {
         Array<TextureAtlas.AtlasRegion> frames = atlas.findRegions(baseName);
         if (frames.size == 0) return load(baseName);
-        return new GameSprite(new Animation<>(frameDuration, frames, Animation.PlayMode.LOOP));
+        return new AnimatedSprite(new Animation<>(frameDuration, frames, Animation.PlayMode.LOOP));
     }
 
     private Array<TextureRegion> loadFrames(String baseName) {

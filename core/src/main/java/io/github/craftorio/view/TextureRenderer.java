@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.view.sprite.GameSprite;
 
 public class TextureRenderer {
 
