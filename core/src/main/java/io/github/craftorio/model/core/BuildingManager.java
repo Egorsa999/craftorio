@@ -1,5 +1,6 @@
-package io.github.craftorio.model;
+package io.github.craftorio.model.core;
 
+import io.github.craftorio.model.entity.Player;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;

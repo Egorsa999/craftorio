@@ -2,8 +2,8 @@ package io.github.craftorio.view.renderer;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import io.github.craftorio.model.ItemType;
-import io.github.craftorio.model.building.Belt;
+import io.github.craftorio.model.item.ItemType;
+import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.view.GameSprite;
 import io.github.craftorio.view.TextureLoad;
@@ -40,7 +40,7 @@ public class BeltRenderer {
         float x = belt.getX();
         float y = belt.getY();
         if (colorFilter != null) batch.setColor(colorFilter);
-        batch.draw(texture.get(belt.beltType).getKeyFrame(stateTime), x, y, 0.5f, 0.5f, 1f, 1f, belt.reflection, 1f, -belt.rotation);
+        batch.draw(texture.get(belt.getBeltType()).getKeyFrame(stateTime), x, y, 0.5f, 0.5f, 1f, 1f, belt.getReflection(), 1f, -belt.getRotation());
 
         batch.setColor(Color.WHITE);
     }

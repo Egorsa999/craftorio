@@ -1,11 +1,11 @@
 package io.github.craftorio.model.building;
 
-import io.github.craftorio.model.BuildingRegistry;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.core.GameContext;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public abstract class Building {
     protected final BuildingRegistry registry;
@@ -47,22 +47,10 @@ public abstract class Building {
         int totalBaseH = type.getHeight();
 
         switch (direction) {
-            case UP:
-                realX += rx;
-                realY += ry;
-                break;
-            case RIGHT:
-                realX += ry;
-                realY += (totalBaseW - 1) - rx;
-                break;
-            case DOWN:
-                realX += (totalBaseW - 1) - rx;
-                realY += (totalBaseH - 1) - ry;
-                break;
-            case LEFT:
-                realX += (totalBaseH - 1) - ry;
-                realY += rx;
-                break;
+            case UP: realX += rx; realY += ry; break;
+            case RIGHT: realX += ry; realY += (totalBaseW - 1) - rx; break;
+            case DOWN: realX += (totalBaseW - 1) - rx; realY += (totalBaseH - 1) - ry; break;
+            case LEFT: realX += (totalBaseH - 1) - ry; realY += rx; break;
         }
         return new Point(realX, realY);
     }
@@ -76,17 +64,9 @@ public abstract class Building {
 
     public abstract void update();
 
-    public int getX() {
-        return this.anchor.x;
-    }
-
-    public int getY() {
-        return this.anchor.y;
-    }
-
-    public Point getAnchor() {
-        return this.anchor;
-    }
+    public int getX() { return this.anchor.x; }
+    public int getY() { return this.anchor.y; }
+    public Point getAnchor() { return this.anchor; }
 
     public int getHeight() {
         boolean isRotated90 = (direction == Direction.LEFT || direction == Direction.RIGHT);
@@ -98,7 +78,5 @@ public abstract class Building {
         return isRotated90 ? type.getHeight() : type.getWidth();
     }
 
-    public boolean getWalkable() {
-        return this.walkable;
-    }
+    public boolean getWalkable() { return this.walkable; }
 }

@@ -1,4 +1,4 @@
-package io.github.craftorio.model;
+package io.github.craftorio.model.entity;
 
 import com.badlogic.gdx.math.MathUtils;
 import io.github.craftorio.model.enemy.Enemy;

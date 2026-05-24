@@ -1,10 +1,11 @@
-package io.github.craftorio.model.building;
+package io.github.craftorio.model.building.defense;
 
 import com.badlogic.gdx.math.MathUtils;
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.Bullet;
-import io.github.craftorio.model.ItemType;
-import io.github.craftorio.model.SimulationEngine;
+import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.core.GameContext;
+import io.github.craftorio.model.entity.Bullet;
+import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.enemy.Enemy;
 
 import java.awt.Point;
@@ -14,21 +15,19 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
     private final ItemType ammoType = ItemType.COPPER_ORE;
     private int ammoAmount = 0;
 
-    private final SimulationEngine engine;
-
     private float rotationDeg = 0f;
     private float range = 8f;
     private int fireCooldown = 15;
     private int currentCooldown = 0;
     private int damage = 10;
 
-    public Turret(BuildingRegistry registry, Point anchor, Direction direction, BuildingType type, SimulationEngine engine) {
-        super(registry, anchor, direction, type);
-        this.engine = engine;
+    public Turret(BuildingRegistry registry, Point anchor, Direction direction) {
+        super(registry, anchor, direction, BuildingType.TURRET);
     }
 
     @Override
     public void update() {
+        super.update();
         if (currentCooldown > 0) currentCooldown--;
 
         Enemy target = findNearestEnemy();
@@ -41,7 +40,7 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
                 float myY = getY() + 0.5f;
 
                 Bullet bullet = new Bullet(myX, myY, target.getX(), target.getY(), 0.4f, damage);
-                engine.spawnBullet(bullet);
+                GameContext.current.engine.spawnBullet(bullet);
 
                 currentCooldown = fireCooldown;
                 ammoAmount--;
@@ -55,7 +54,7 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
         float myX = getX() + 0.5f;
         float myY = getY() + 0.5f;
 
-        List<Enemy> enemies = engine.getEnemies();
+        List<Enemy> enemies = GameContext.current.engine.getEnemies();
         for (Enemy e : enemies) {
             if (e.isDead()) continue;
 
@@ -87,14 +86,14 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
     public float getRotationDeg() { return rotationDeg; }
 
     @Override
-    public boolean receiveItem(ItemType type, Float progress) {
+    public boolean receiveItem(Building building, ItemType type) {
         if (type != ammoType) return false;
         ammoAmount++;
         return true;
     }
 
     @Override
-    public boolean canReceiveFrom(Point point) {
+    public boolean canReceiveFrom(Building building, Point point) {
         return true;
     }
 }

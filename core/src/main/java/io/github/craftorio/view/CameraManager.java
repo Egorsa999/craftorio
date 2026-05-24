@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import io.github.craftorio.model.Player;
-import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.entity.Player;
+import io.github.craftorio.model.core.WorldMap;
 
 public class CameraManager {
     private static final float MIN_WIDTH = 32;

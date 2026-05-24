@@ -1,12 +1,12 @@
-package io.github.craftorio.model.building;
+package io.github.craftorio.model.building.production;
 
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.ItemType;
-import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.item.ItemType;
 
 import java.awt.*;
 
-public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
+public class HorizontalMiner extends DamageableBuilding implements ThroughItem {
 
     private final int BASE_TICKS_PER_ITEM = 240;
     private final int MAX_BUFFER_SIZE = 10;
@@ -14,14 +14,11 @@ public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
     private int bufferCounter;
     private int currentProgress;
 
-    public HorizontalMiner(WorldMap worldMap, BuildingRegistry registry, Point anchor, Direction direction) {
+    public HorizontalMiner(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.HORIZONTAL_MINER);
         bufferCounter = 0;
         currentProgress = 0;
     }
-
-
-
 
     private Building getNextBuilding() {
         int nextCol = rotatePoint(0, -1).x;
@@ -30,14 +27,11 @@ public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
         return registry.getBuildingAt(nextCol, nextRow);
     }
 
-
-
-
     @Override
     public void update(){
         super.update();
         if (bufferCounter != 0) {
-            if (throughItem(ItemType.IRON_ORE, 0.0f)) {
+            if (throughItem(ItemType.IRON_ORE)) {
                 System.out.println("NEW ITEM");
             }
             bufferCounter--;
@@ -51,10 +45,10 @@ public class HorizontalMiner extends DamageableBuilding implements ThroughItem{
     }
 
     @Override
-    public boolean throughItem(ItemType type, Float progress) {
+    public boolean throughItem(ItemType type) {
         Building nextBuilding = getNextBuilding();
         if (nextBuilding instanceof ReceiveItem building) {
-            return building.receiveItem(type, progress);
+            return building.receiveItem(this, type);
         }
         return false;
     }

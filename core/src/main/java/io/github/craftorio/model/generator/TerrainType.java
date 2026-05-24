@@ -1,7 +1,5 @@
 package io.github.craftorio.model.generator;
 
-import io.github.craftorio.model.ItemType;
-
 public enum TerrainType {
     WALL(false),
     GRASS(true),

@@ -1,6 +1,6 @@
 package io.github.craftorio.model.building;
 
-import io.github.craftorio.model.BuildingRegistry;
+import io.github.craftorio.model.core.BuildingRegistry;
 
 import java.awt.*;
 

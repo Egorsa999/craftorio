@@ -1,20 +1,21 @@
-package io.github.craftorio.model.building;
+package io.github.craftorio.model.building.logistics;
 
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.ItemType;
+import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.item.ItemType;
 
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class Junction extends Building implements ReceiveItem, ThroughItem {
+public class Junction extends DamageableBuilding implements ReceiveItem, ThroughItem {
     private static final int CAPACITY = 3;
     private static final int TRAVEL_TIME = 60;
 
     private final ArrayList<ItemType>[] buffers;
     private final ArrayList<Integer>[] timers;
 
-    public Junction(BuildingRegistry registry, Point anchor, Direction direction, BuildingType type) {
-        super(registry, anchor, direction, type);
+    public Junction(BuildingRegistry registry, Point anchor, Direction direction) {
+        super(registry, anchor, direction, BuildingType.JUNCTION);
 
         buffers = new ArrayList[4];
         timers = new ArrayList[4];
@@ -47,8 +48,20 @@ public class Junction extends Building implements ReceiveItem, ThroughItem {
         return registry.getBuildingAt(nextCol, nextRow);
     }
 
+    private Direction getDirectionFrom(Building sender) {
+        if (sender == null) return Direction.UP;
+
+        if (registry.getBuildingAt(getX() - 1, getY()) == sender) return Direction.RIGHT;
+        if (registry.getBuildingAt(getX() + 1, getY()) == sender) return Direction.LEFT;
+        if (registry.getBuildingAt(getX(), getY() - 1) == sender) return Direction.UP;
+        if (registry.getBuildingAt(getX(), getY() + 1) == sender) return Direction.DOWN;
+
+        return Direction.UP;
+    }
+
     @Override
     public void update() {
+        super.update();
         for (Direction dir : Direction.values()) {
             int index = dirToIndex(dir);
             ArrayList<ItemType> buffer = buffers[index];
@@ -75,48 +88,37 @@ public class Junction extends Building implements ReceiveItem, ThroughItem {
     private boolean pushToNeighbor(Direction dir, ItemType id) {
         Building nextBuilding = getNeighbor(dir);
 
-        if (nextBuilding instanceof ReceiveItem rItem && !rItem.canReceiveFrom(this.getAnchor())) {
-            return false;
-        }
-
-        if (nextBuilding instanceof Belt nextBelt) {
-            return nextBelt.receiveItem(id, 0.0f, dir);
-        } else if (nextBuilding instanceof Junction nextJunc) {
-            return nextJunc.receiveItem(id, 0.0f, dir);
-        } else if (nextBuilding instanceof Router nextRouter) {
-            return nextRouter.receiveItem(id, 0.0f, dir);
-        } else if (nextBuilding instanceof ReceiveItem building) {
-            return building.receiveItem(id, 0.0f);
+        if (nextBuilding instanceof ReceiveItem building) {
+            return building.receiveItem(this, id);
         }
         return false;
     }
 
-    public boolean receiveItem(ItemType id, Float progress, Direction travelingDir) {
+    @Override
+    public boolean receiveItem(Building building, ItemType item) {
+        if (building == null) return false;
+
+        Direction travelingDir = getDirectionFrom(building);
         int index = dirToIndex(travelingDir);
+
         ArrayList<ItemType> buffer = buffers[index];
         ArrayList<Integer> timerList = timers[index];
 
         if (buffer.size() < CAPACITY) {
-            buffer.add(id);
+            buffer.add(item);
             timerList.add(TRAVEL_TIME);
             return true;
         }
         return false;
     }
 
-    // TODO fix it for all buildings
     @Override
-    public boolean receiveItem(ItemType id, Float progress) {
-        return false;
-    }
-
-    @Override
-    public boolean canReceiveFrom(Point point) {
+    public boolean canReceiveFrom(Building building, Point point) {
         return true;
     }
 
     @Override
-    public boolean throughItem(ItemType type, Float progress) {
+    public boolean throughItem(ItemType type) {
         return false;
     }
 

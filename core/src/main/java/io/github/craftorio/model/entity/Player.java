@@ -1,10 +1,12 @@
-package io.github.craftorio.model;
+package io.github.craftorio.model.entity;
 
 
 import com.badlogic.gdx.math.MathUtils;
 import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.core.WorldMap;
 import io.github.craftorio.model.generator.TerrainType;
 
 import java.awt.*;
@@ -23,7 +25,7 @@ public class Player {
 
     public static final float speed = GameConfig.PLAYER_SPEED;
 
-    Point getLocation() {
+    public Point getLocation() {
         return new Point((int)playerX, (int)playerY);
     }
     private boolean isWalkable(int x, int y){

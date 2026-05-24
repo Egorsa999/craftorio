@@ -1,7 +1,7 @@
 package io.github.craftorio.model.enemy;
 
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.core.WorldMap;
 
 import java.util.ArrayList;
 import java.util.List;

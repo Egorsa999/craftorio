@@ -1,17 +1,15 @@
-package io.github.craftorio.model.building;
+package io.github.craftorio.model.building.production;
 
-import io.github.craftorio.model.BuildingRegistry;
-import io.github.craftorio.model.ItemType;
-import io.github.craftorio.model.generator.Cell;
-import io.github.craftorio.model.WorldMap;
+import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.core.GameContext;
+import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.generator.ResourceType;
 
 import java.awt.Point;
 import java.util.*;
 
 public class Miner extends DamageableBuilding implements ThroughItem, ReceiveItem {
-
-    private final WorldMap worldMap;
 
     private final Queue<ItemType> outputBuffer = new LinkedList<>();
     private final int MAX_BUFFER_SIZE = 10;
@@ -24,10 +22,10 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     private final ArrayList<Point> throughDelta = new ArrayList<>();
     private int lastThrough = 0;
 
-    public Miner(BuildingRegistry registry, WorldMap worldMap, Point anchor, Direction direction) {
+    public Miner(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.MINER);
-        this.worldMap = worldMap;
-        List<ResourceType> occupiedOres = worldMap.getResources(getOccupiedTiles());
+
+        List<ResourceType> occupiedOres = GameContext.current.worldMap.getResources(getOccupiedTiles());
         for (ResourceType resource : occupiedOres){
             if (resource == ResourceType.NONE || resource == null) continue;
             oreCoverage.put(resource, oreCoverage.getOrDefault(resource, 0) + 1);
@@ -47,8 +45,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     public void update() {
         super.update();
         if (!outputBuffer.isEmpty()) {
-//            System.out.println("TRY THROUGH " + outputBuffer.element());
-            if (throughItem(outputBuffer.element(), 0.0f)) {
+            if (throughItem(outputBuffer.element())) {
                 System.out.println("NEW ITEM");
                 outputBuffer.remove();
             }
@@ -73,12 +70,12 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     }
 
     @Override
-    public boolean receiveItem(ItemType type, Float progress) {
+    public boolean receiveItem(Building building, ItemType type) {
         return false;
     }
 
     @Override
-    public boolean canReceiveFrom(Point point) {
+    public boolean canReceiveFrom(Building building, Point point) {
         return true;
     }
 
@@ -90,7 +87,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     }
 
     @Override
-    public boolean throughItem(ItemType type, Float progress) {
+    public boolean throughItem(ItemType type) {
         for (int iterate = 0; iterate <= throughDelta.size(); iterate++) {
             lastThrough++;
             lastThrough %= throughDelta.size();
@@ -98,7 +95,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
             int y = getY() + throughDelta.get(lastThrough).y;
             Building nextBuilding = registry.getBuildingAt(x, y);
             if (nextBuilding instanceof ReceiveItem building) {
-                if (building.receiveItem(type, progress)) {
+                if (building.receiveItem(this, type)) {
                     return true;
                 }
             }
