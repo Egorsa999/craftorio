@@ -67,15 +67,13 @@ public class GameScreen implements Screen {
         BuildingFactory factory = new BuildingFactory();
 
         this.buildingManager = new BuildingManager(buildingRegistry, worldMap, factory, context.player);
-        this.buildTool = new BuildTool(buildingManager);
+        this.buildTool = new BuildTool(buildingManager, factory);
 
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
 
         this.playerCamera = new CameraManager(context.player, worldMap);
         this.WorldRender = new WorldRenderer(playerCamera, worldMap, buildingRegistry, context.waveSpawner, textures,
-            context.player, context.engine.getBullets(), buildTool, factory);
-
-
+            context.player, context.engine.getBullets(), buildTool::getPreviewState);
 
         this.inventoryUI = new InventoryUI(textures, inventory);
         this.assemblerUI = new AssemblerUI(textures);

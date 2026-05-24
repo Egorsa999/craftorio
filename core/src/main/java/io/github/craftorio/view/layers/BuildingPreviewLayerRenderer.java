@@ -3,41 +3,42 @@ package io.github.craftorio.view.layers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.building.logistics.Belt;
-import io.github.craftorio.model.ui.BuildTool;
+import io.github.craftorio.model.ui.PreviewState;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.TextureRenderer;
 import io.github.craftorio.view.VisibleBounds;
 import io.github.craftorio.view.renderer.BeltRenderer;
 
-import java.awt.*;
+import java.awt.Point;
+import java.util.function.Supplier;
 
-public class BuildingPreviewLayerRenderer implements LayerRenderer{
+public class BuildingPreviewLayerRenderer implements LayerRenderer {
 
-    private final BuildTool buildTool;
     private final TextureLoad textures;
-    private final BuildingFactory factory;
+    private final Supplier<PreviewState> stateSupplier;
 
-    public BuildingPreviewLayerRenderer(BuildTool buildTool, TextureLoad textures, BuildingFactory factory) {
-        this.buildTool = buildTool;
+    public BuildingPreviewLayerRenderer(Supplier<PreviewState> stateSupplier, TextureLoad textures) {
+        this.stateSupplier = stateSupplier;
         this.textures = textures;
-        this.factory = factory;
     }
-
 
     @Override
     public void render(SpriteBatch batch, VisibleBounds bounds, float stateTime) {
-        if (!buildTool.isActive()) return;
-        if (buildTool.eraseMode) {
-            float xl = Math.min(buildTool.getStartHoverPosition().x, buildTool.getHoverPosition().x);
-            float xr = Math.max(buildTool.getStartHoverPosition().x, buildTool.getHoverPosition().x);
-            float yl = Math.min(buildTool.getStartHoverPosition().y, buildTool.getHoverPosition().y);
-            float yr = Math.max(buildTool.getStartHoverPosition().y, buildTool.getHoverPosition().y);
-            if (xl == -1) return;
-//            System.out.println("ERASE: " + buildTool.getStartHoverPosition() + " " + buildTool.getHoverPosition());
+        PreviewState state = stateSupplier.get();
+        if (!state.isActive()) return;
+
+        if (state.isEraseMode()) {
+            Point start = state.isDragging() ? state.dragStart() : state.hoverPosition();
+            Point hover = state.hoverPosition();
+
+            float xl = Math.min(start.x, hover.x);
+            float xr = Math.max(start.x, hover.x);
+            float yl = Math.min(start.y, hover.y);
+            float yr = Math.max(start.y, hover.y);
+
             Color colorFilter = new Color(1f, 0f, 0f, 0.5f);
             batch.setColor(colorFilter);
             batch.draw(
@@ -49,27 +50,26 @@ public class BuildingPreviewLayerRenderer implements LayerRenderer{
             return;
         }
 
-        Array<Point> positions = buildTool.getHoverPositions();
-        BuildingType type = buildTool.getSelectedType();
-        Direction rotation = buildTool.getCurrentRotation();
+        Array<Point> positions = state.positions();
+        BuildingType type = state.selectedType();
+        Direction rotation = state.currentRotation();
 
-        float width = type.getWidth();
-        float height = type.getHeight();
+        Color colorFilter = state.isValidPlace() ? new Color(1f, 1f, 1f, 0.5f) : new Color(1f, 0f, 0f, 0.5f);
 
+        for (int i = 0; i < positions.size; i++) {
+            Point pos = positions.get(i);
 
-        Color colorFilter = new Color(1f, 1f, 1f, 0.5f);
-        if (!buildTool.isValidPlace())colorFilter = new Color(1f, 0f, 0f, 0.5f);
-        for (Point pos : positions){
-            if (type == BuildingType.BELT) {
-                BeltRenderer.drawBackground(colorFilter, batch, textures.getConveyorTextures(), (Belt) factory.createBuilding(BuildingType.BELT, new Point(pos.x, pos.y), rotation), stateTime, 0.5f);
+            if (type == BuildingType.BELT && state.ghostBuilding() instanceof Belt belt) {
+                belt.setAnchor(pos.x, pos.y);
+                BeltRenderer.drawBackground(colorFilter, batch, textures.getConveyorTextures(), belt, stateTime, 0.5f);
                 continue;
             }
+
             TextureRenderer.drawBuilding(
                 batch, textures.get(type),
-                (float)pos.getX(), (float)pos.getY(),
+                (float)pos.x, (float)pos.y,
                 type.getWidth(), type.getHeight(),
-                rotation, colorFilter,
-                0f
+                rotation, colorFilter, 0f
             );
         }
     }

@@ -35,6 +35,12 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
         updateType();
     }
 
+    @Override
+    public void setAnchor(int x, int y){
+        super.setAnchor(x, y);
+        updateType();
+    }
+
     public static void updateAnimationOffset(float delta) {
         animationOffset += speed * delta;
         animationOffset %= 1;
