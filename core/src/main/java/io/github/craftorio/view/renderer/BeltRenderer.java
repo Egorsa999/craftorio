@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.building.Direction;
-import io.github.craftorio.view.GameSprite;
+import io.github.craftorio.view.sprite.GameSprite;
 import io.github.craftorio.view.TextureLoad;
 
 import java.util.ArrayList;

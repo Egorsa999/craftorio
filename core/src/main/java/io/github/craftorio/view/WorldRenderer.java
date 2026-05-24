@@ -186,7 +186,6 @@ public class WorldRenderer {
                 Color colorFilter = new Color(1f, 1f, 1f, 1f);
 
                 if (current instanceof DamageableBuilding damageableCurrent){
-                    System.out.println(damageableCurrent.getHP() + " " + damageableCurrent.isReceivingDamage());
                     if (damageableCurrent.isReceivingDamage())
                         colorFilter = new Color(1.0f, 0.3f, 0.3f, 1.0f);
                     else{
