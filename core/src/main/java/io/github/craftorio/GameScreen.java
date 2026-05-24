@@ -20,6 +20,7 @@ import io.github.craftorio.view.WorldRenderer;
 import io.github.craftorio.view.ui.AssemblerUI;
 import io.github.craftorio.view.ui.InventoryUI;
 
+
 import java.awt.*;
 
 public class GameScreen implements Screen {
@@ -68,7 +69,10 @@ public class GameScreen implements Screen {
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
 
         this.playerCamera = new CameraManager(context.player, worldMap);
-        this.WorldRender = new WorldRenderer(textures, playerCamera, context.player, worldMap, buildTool, factory, buildingRegistry, context.waveSpawner, context.pathFinder);
+        this.WorldRender = new WorldRenderer(playerCamera, worldMap, buildingRegistry, context.waveSpawner, textures,
+            context.player, context.engine.getBullets(), buildTool, factory);
+
+
 
         this.inventoryUI = new InventoryUI(textures, inventory);
         this.assemblerUI = new AssemblerUI(textures);
@@ -118,8 +122,8 @@ public class GameScreen implements Screen {
             GameContext.current.engine.update();
             accumulator -= TIME_STEP;
         }
-
         WorldRender.render();
+
         inventoryUI.render();
         assemblerUI.render();
     }

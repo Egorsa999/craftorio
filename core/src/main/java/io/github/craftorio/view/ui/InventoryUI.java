@@ -21,8 +21,7 @@ import java.util.Map;
 
 
 
-public class InventoryUI {
-
+public class InventoryUI implements UIRenderer{
 
     private Stage stage;
     private Table windowTable;

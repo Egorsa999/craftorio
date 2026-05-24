@@ -23,7 +23,7 @@ import io.github.craftorio.view.TextureLoad;
 
 import java.util.Map;
 
-public class AssemblerUI {
+public class AssemblerUI implements UIRenderer{
 
     private Stage stage;
     private Table rootTable;

@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.view.layers.LayerRenderer;
+import io.github.craftorio.view.VisibleBounds;
 import io.github.craftorio.view.sprite.GameSprite;
 import io.github.craftorio.view.TextureLoad;
 
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class BeltRenderer {
+public class BeltRenderer implements LayerRenderer {
     private static final float ITEM_SIZE = 0.6f;
     private static final float HALF_LOGIC_SIZE = 1f / 6f;
 
@@ -87,5 +89,10 @@ public class BeltRenderer {
         }
 
         batch.setColor(Color.WHITE);
+    }
+
+    @Override
+    public void render(SpriteBatch batch, VisibleBounds bounds, float stateTime) {
+
     }
 }
