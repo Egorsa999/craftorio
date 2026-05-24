@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import io.github.craftorio.controller.InputController;
+import io.github.craftorio.controller.*;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
@@ -27,7 +27,10 @@ public class GameScreen implements Screen {
 
     private CameraManager playerCamera;
     private WorldRenderer WorldRender;
-    private InputController controller;
+    private PlayerController playerController;
+    private BuildInputHandler buildInputHandler;
+    private WorldInteractionHandler worldInteractionHandler;
+    private DebugInputHandler debugInputHandler;
     private BuildingManager buildingManager;
     private BuildTool buildTool;
 
@@ -73,12 +76,10 @@ public class GameScreen implements Screen {
         this.inventoryUI = new InventoryUI(textures, inventory);
         this.assemblerUI = new AssemblerUI(textures);
 
-        this.controller = new InputController(context.player, playerCamera, buildTool, buildingManager, factory, context.waveSpawner, assemblerUI);
-
-        InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(assemblerUI.getStage());
-        multiplexer.addProcessor(controller);
-        Gdx.input.setInputProcessor(multiplexer);
+        this.playerController = new PlayerController(context.player, playerCamera);
+        this.buildInputHandler = new BuildInputHandler(buildTool, playerCamera, factory);
+        this.worldInteractionHandler = new WorldInteractionHandler(playerCamera, buildingManager, assemblerUI);
+        this.debugInputHandler = new DebugInputHandler(context.waveSpawner, playerCamera, buildTool);
     }
 
     @Override
@@ -86,7 +87,10 @@ public class GameScreen implements Screen {
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(inventoryUI.getStage());
         multiplexer.addProcessor(assemblerUI.getStage());
-        multiplexer.addProcessor(controller);
+        multiplexer.addProcessor(buildInputHandler);
+        multiplexer.addProcessor(worldInteractionHandler);
+        multiplexer.addProcessor(debugInputHandler);
+
         Gdx.input.setInputProcessor(multiplexer);
     }
 
@@ -114,7 +118,11 @@ public class GameScreen implements Screen {
         }
 
         while (accumulator >= TIME_STEP) {
-            controller.update(TIME_STEP);
+            playerController.update(TIME_STEP);
+            if (buildTool.isActive()) {
+                buildInputHandler.updateHoverPosition(Gdx.input.getX(), Gdx.input.getY());
+            }
+
             GameContext.current.engine.update();
             accumulator -= TIME_STEP;
         }

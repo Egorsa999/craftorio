@@ -1,0 +1,32 @@
+package io.github.craftorio.controller;
+
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Vector3;
+import io.github.craftorio.model.building.BuildingType;
+import io.github.craftorio.model.core.GameContext;
+import io.github.craftorio.model.enemy.WaveSpawner;
+import io.github.craftorio.model.ui.BuildTool;
+import io.github.craftorio.view.CameraManager;
+
+public class DebugInputHandler extends InputAdapter {
+    private final WaveSpawner waveSpawner;
+    private final CameraManager camera;
+    private final BuildTool buildTool;
+
+    public DebugInputHandler(WaveSpawner waveSpawner, CameraManager camera, BuildTool buildTool) {
+        this.waveSpawner = waveSpawner;
+        this.camera = camera;
+        this.buildTool = buildTool;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT && !buildTool.isActive()) {
+            Vector3 worldCoords = camera.getCamera().unproject(new Vector3(screenX, screenY, 0));
+            waveSpawner.addEnemy(worldCoords.x, worldCoords.y);
+            return false;
+        }
+        return false;
+    }
+}
