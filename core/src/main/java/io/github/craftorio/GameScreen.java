@@ -30,7 +30,7 @@ public class GameScreen implements Screen {
 
     // View & UI
     private final CameraManager playerCamera;
-    private final WorldRenderer worldRenderer; // С маленькой буквы по правилам Java
+    private final WorldRenderer worldRenderer;
     private final InventoryUI inventoryUI;
     private final AssemblerUI assemblerUI;
     private final TextureAtlas atlas;
