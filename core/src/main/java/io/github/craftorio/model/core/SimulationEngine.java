@@ -1,5 +1,6 @@
 package io.github.craftorio.model.core;
 
+import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.entity.Bullet;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.enemy.Enemy;
@@ -9,8 +10,13 @@ import java.util.List;
 
 public class SimulationEngine {
     private final List<Bullet> bullets = new ArrayList<>();
+    private final BuildingRegistry registry;
+    private final WaveSpawner waveSpawner;
 
-    public SimulationEngine() {}
+    public SimulationEngine(BuildingRegistry registry, WaveSpawner waveSpawner) {
+        this.registry = registry;
+        this.waveSpawner = waveSpawner;
+    }
 
     public void spawnBullet(Bullet b) {
         bullets.add(b);
@@ -21,19 +27,19 @@ public class SimulationEngine {
     }
 
     public void update() {
-        GameContext.current.registry.applyPendingChanges();
+        registry.applyPendingChanges();
 
-        for (Building building : GameContext.current.registry.getBuildingsForTick()) {
+        for (Building building : registry.getBuildingsForTick()) {
             building.update();
         }
 
-        for (Enemy enemy : GameContext.current.waveSpawner.getEnemies()){
+        for (Enemy enemy : waveSpawner.getEnemies()){
             enemy.update();
         }
 
         for (int i = bullets.size() - 1; i >= 0; i--) {
             Bullet b = bullets.get(i);
-            b.update(GameContext.current.waveSpawner.getEnemies());
+            b.update(waveSpawner.getEnemies());
 
             if (b.isDead()) {
                 bullets.remove(i);
@@ -42,6 +48,6 @@ public class SimulationEngine {
     }
 
     public List<Enemy> getEnemies() {
-        return GameContext.current.waveSpawner.getEnemies();
+        return waveSpawner.getEnemies();
     }
 }

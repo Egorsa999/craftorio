@@ -34,6 +34,8 @@ public class GameScreen implements Screen {
     private DebugInputHandler debugInputHandler;
     private BuildingManager buildingManager;
     private BuildTool buildTool;
+    private PathFinder pathFinder;
+    private SimulationEngine engine;
 
     private InventoryUI inventoryUI;
     private AssemblerUI assemblerUI;
@@ -53,37 +55,35 @@ public class GameScreen implements Screen {
         WorldMap worldMap = new WorldMap(worldWidth, worldHeight);
         BuildingRegistry buildingRegistry = new BuildingRegistry();
 
-        GameContext context = new GameContext(worldMap, buildingRegistry, inventory, textures);
-
         Point spawnPoint = worldMap.findSpawnPoint();
-        context.player = new Player(worldMap, buildingRegistry, spawnPoint);
+        Player player = new Player(worldMap, buildingRegistry, spawnPoint);
 
         Point corePoint = new Point(spawnPoint.x - 1, spawnPoint.y + 1);
-        context.pathFinder = new PathFinder(corePoint.x + 1, corePoint.y + 1, worldMap, buildingRegistry);
-        context.pathFinder.updateFlowField();
-        context.waveSpawner = new WaveSpawner(context.pathFinder, buildingRegistry, worldMap);
+        pathFinder = new PathFinder(corePoint.x + 1, corePoint.y + 1, worldMap, buildingRegistry);
+        pathFinder.updateFlowField();
+        WaveSpawner waveSpawner = new WaveSpawner(pathFinder, buildingRegistry, worldMap);
 
-        context.engine = new SimulationEngine();
-        BuildingFactory factory = new BuildingFactory();
+        engine = new SimulationEngine(buildingRegistry, waveSpawner);
+        BuildingFactory factory = new BuildingFactory(buildingRegistry, inventory, worldMap, engine);
 
-        this.buildingManager = new BuildingManager(buildingRegistry, worldMap, factory, context.player);
+        this.buildingManager = new BuildingManager(buildingRegistry, worldMap, factory, player);
         this.buildTool = new BuildTool(buildingManager);
 
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
 
-        this.playerCamera = new CameraManager(context.player, worldMap);
-        this.WorldRender = new WorldRenderer(playerCamera, worldMap, buildingRegistry, context.waveSpawner, textures,
-            context.player, context.engine.getBullets(), buildTool, factory);
+        this.playerCamera = new CameraManager(player, worldMap);
+        this.WorldRender = new WorldRenderer(playerCamera, worldMap, buildingRegistry, waveSpawner, textures,
+            player, engine.getBullets(), buildTool, factory);
 
 
 
         this.inventoryUI = new InventoryUI(textures, inventory);
         this.assemblerUI = new AssemblerUI(textures);
 
-        this.playerController = new PlayerController(context.player, playerCamera);
+        this.playerController = new PlayerController(player, playerCamera);
         this.buildInputHandler = new BuildInputHandler(buildTool, playerCamera, factory);
         this.worldInteractionHandler = new WorldInteractionHandler(playerCamera, buildingManager, assemblerUI);
-        this.debugInputHandler = new DebugInputHandler(context.waveSpawner, playerCamera, buildTool);
+        this.debugInputHandler = new DebugInputHandler(waveSpawner, playerCamera, buildTool);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class GameScreen implements Screen {
                 isCalculating = true;
                 new Thread(() -> {
                     try {
-                        GameContext.current.pathFinder.updateFlowField();
+                        pathFinder.updateFlowField();
                     } finally {
                         isCalculating = false;
                     }
@@ -127,7 +127,7 @@ public class GameScreen implements Screen {
                 buildInputHandler.updateHoverPosition(Gdx.input.getX(), Gdx.input.getY());
             }
 
-            GameContext.current.engine.update();
+            engine.update();
             accumulator -= TIME_STEP;
         }
         WorldRender.render();

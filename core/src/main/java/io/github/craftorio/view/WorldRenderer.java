@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.core.BuildingRegistry;
-import io.github.craftorio.model.core.GameContext;
 import io.github.craftorio.model.core.WorldMap;
 import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.entity.Bullet;
