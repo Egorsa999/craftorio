@@ -13,8 +13,8 @@ public abstract class Building {
     public Point anchor;
     public Direction direction;
     // size of object
-    private final List<Point> occupiedTiles;
-    private final List<Point> collisionTiles;
+    private List<Point> occupiedTiles;
+    private List<Point> collisionTiles;
     private final boolean walkable;
     public final BuildingType type;
 
@@ -37,6 +37,14 @@ public abstract class Building {
             }
         }
         return tiles;
+    }
+
+    public void setAnchor(int x, int y){
+        this.anchor.x = x;
+        this.anchor.y = y;
+
+        this.occupiedTiles = generateTiles(type.getWidth(), type.getHeight());
+        this.collisionTiles = generateTiles(type.getCollisionWidth(), type.getCollisionHeight());
     }
 
     public Point rotatePoint(int rx, int ry) {

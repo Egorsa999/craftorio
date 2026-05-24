@@ -9,6 +9,7 @@ import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.ui.BuildTool;
+import io.github.craftorio.model.ui.PreviewState;
 import io.github.craftorio.view.CameraManager;
 
 import java.awt.Point;
@@ -28,8 +29,8 @@ public class BuildInputHandler extends InputAdapter {
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
+            buildTool.clearSelection();
             buildTool.eraseMode = true;
-            select(BuildingType.BELT);
             return true;
         }
         if (keycode == Input.Keys.NUM_1) return select(BuildingType.MINER);
@@ -58,9 +59,7 @@ public class BuildInputHandler extends InputAdapter {
     @Override
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
-            buildTool.eraseMode = false;
-            buildTool.updSelectedType(null);
-            buildTool.updateStartHoverPosition(new Point(-1, -1));
+            buildTool.clearSelection();
             return true;
         }
         return false;
@@ -84,7 +83,7 @@ public class BuildInputHandler extends InputAdapter {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT && buildTool.isActive()) {
             updateHoverPosition(screenX, screenY);
-            buildTool.updateStartHoverPosition(getCurrentHoveredCoords());
+            buildTool.startDrag();
             return true;
         }
         return false;
@@ -98,7 +97,7 @@ public class BuildInputHandler extends InputAdapter {
             } else {
                 buildTool.tryBuild();
             }
-            buildTool.updateStartHoverPosition(new Point(-1, -1));
+            buildTool.stopDrag();
             return true;
         }
         return false;
@@ -118,11 +117,17 @@ public class BuildInputHandler extends InputAdapter {
     }
 
     private Point getCurrentHoveredCoords() {
-        BuildingType type = buildTool.getSelectedType();
-        Direction rotation = buildTool.getCurrentRotation();
+        PreviewState state = buildTool.getPreviewState();
+        BuildingType type = state.selectedType();
+        Direction rotation = state.currentRotation();
 
-        int width = factory.calculateRenderWidth(type, rotation);
-        int height = factory.calculateRenderHeight(type, rotation);
+        int width = 1;
+        int height = 1;
+
+        if (type != null) {
+            width = factory.calculateRenderWidth(type, rotation);
+            height = factory.calculateRenderHeight(type, rotation);
+        }
 
         float halfWidth = width / 2f;
         float halfHeight = height / 2f;

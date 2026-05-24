@@ -12,10 +12,12 @@ import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.entity.Bullet;
 import io.github.craftorio.model.entity.Player;
 import io.github.craftorio.model.ui.BuildTool;
+import io.github.craftorio.model.ui.PreviewState;
 import io.github.craftorio.view.layers.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class WorldRenderer {
     // Осталось только самое необходимое!
@@ -30,7 +32,7 @@ public class WorldRenderer {
     // Конструктор стал намного чище
     public WorldRenderer(CameraManager cameraManager, WorldMap worldMap, BuildingRegistry registry,
                          WaveSpawner waveSpawner, TextureLoad textures, Player player, List<Bullet> bullets,
-                         BuildTool buildTool, BuildingFactory factory) {
+                         Supplier<PreviewState> previewStateSupplier) {
         this.cameraManager = cameraManager;
 
         this.batch = new SpriteBatch();
@@ -46,7 +48,7 @@ public class WorldRenderer {
 
         layerRenderers.add(new BulletLayerRenderer(bullets, textures));
 
-        layerRenderers.add(new BuildingPreviewLayerRenderer(buildTool, textures, factory));
+        layerRenderers.add(new BuildingPreviewLayerRenderer(previewStateSupplier, textures));
 
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
     }

@@ -1,133 +1,157 @@
 package io.github.craftorio.model.ui;
 
 import com.badlogic.gdx.utils.Array;
+import io.github.craftorio.model.building.Building;
+import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.core.BuildingManager;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
 
 import java.awt.Point;
 
-import static java.lang.Math.*;
-
 public class BuildTool {
     private BuildingType selectedType = null;
     private Direction currentRotation = Direction.UP;
-    private final Point startHoverPosition = new Point(-1, -1);
-    private final Point hoverPosition = new Point(0, 0);
-
-    private final BuildingManager buildingManager;
-
     public boolean eraseMode = false;
 
-    public BuildTool(BuildingManager buildingManager){
+    private final Point hoverPosition = new Point(0, 0);
+    private final Point startDragPosition = new Point(0, 0);
+    private boolean isDragging = false;
+
+    private final BuildingManager buildingManager;
+    private final BuildingFactory factory;
+    private Building ghostBuilding = null;
+
+    public BuildTool(BuildingManager buildingManager, BuildingFactory factory){
         this.buildingManager = buildingManager;
+        this.factory = factory;
     }
 
     public void selectBuilding(BuildingType type) {
         this.selectedType = type;
         this.currentRotation = Direction.UP;
-    }
-
-    public boolean tryBuild(){
-        if (!isValidPlace())return false;
-
-        for(Point point : getHoverPositions()){
-            if(!buildingManager.tryPlaceBuilding(selectedType, point, currentRotation))
-                return false;
-        }
-        return true;
-    }
-
-    public boolean isValidPlace(){
-        if (!isActive())return false;
-        for(Point point : getHoverPositions()){
-            if(!buildingManager.isValidPlace(selectedType, point, currentRotation))
-                return false;
-        }
-        return true;
+        this.eraseMode = false;
+        updateGhostBuilding();
     }
 
     public void clearSelection() {
         this.selectedType = null;
-        updateStartHoverPosition(new Point(-1, -1));
+        this.eraseMode = false;
+        this.ghostBuilding = null;
+        stopDrag();
+    }
+
+    public void rotateRight() {
+        if (isActive() && !eraseMode) {
+            currentRotation = currentRotation.next();
+            updateGhostBuilding();
+        }
     }
 
     public boolean isActive() {
         return selectedType != null || eraseMode;
     }
 
-    public void updateStartHoverPosition(int gridX, int gridY) {startHoverPosition.setLocation(gridX, gridY);}
-    public void updateHoverPosition(int gridX, int gridY) {hoverPosition.setLocation(gridX, gridY);}
-    public void updateStartHoverPosition(Point p) {
-        startHoverPosition.setLocation(p);
+    private void updateGhostBuilding() {
+        if (selectedType != null) {
+            ghostBuilding = factory.createBuilding(selectedType, new Point(0, 0), currentRotation);
+        }
     }
+
     public void updateHoverPosition(Point p) {
         hoverPosition.setLocation(p);
-    }
-
-    public Point getStartHoverPosition() {
-        return startHoverPosition;
-    }
-
-    public Point getHoverPosition() {
-        return hoverPosition;
-    }
-
-    public void rotateRight() {
-        if (isActive()) {
-            currentRotation = currentRotation.next();
+        if (isDragging && selectedType == BuildingType.BELT) {
+            autoRotateBelt();
         }
     }
 
-    public BuildingType getSelectedType() { return selectedType; }
-    public Array<Point> getHoverPositions() {
-        Array<Point> positions = new Array<>();
-        if (startHoverPosition.x == -1 && startHoverPosition.y == -1){
-            positions.add(hoverPosition);
-            return positions;
-        }
-        int fin_x = hoverPosition.x, fin_y = hoverPosition.y;
-        if (!eraseMode) {
-            if(abs(startHoverPosition.x - fin_x) <= abs(startHoverPosition.y - fin_y)) fin_x = startHoverPosition.x;
-            else fin_y = startHoverPosition.y;
-        }
-
-        int buildingWidth = selectedType.getWidth();
-        int buildingHeight = selectedType.getHeight();
-
-        if(currentRotation.to_degrees() % 180 != 0){
-            int temp = buildingHeight;
-            buildingHeight = buildingWidth;
-            buildingWidth = temp;
-        }
-
-        int dx = buildingWidth * (startHoverPosition.x <= fin_x ? 1 : -1);
-        int dy = buildingHeight * (startHoverPosition.y <= fin_y ? 1 : -1);
-
-        if(selectedType == BuildingType.BELT){
-            if (startHoverPosition.x < fin_x) currentRotation = Direction.RIGHT;
-            if (startHoverPosition.x > fin_x) currentRotation = Direction.LEFT;
-            if (startHoverPosition.y < fin_y) currentRotation = Direction.UP;
-            if (startHoverPosition.y > fin_y) currentRotation = Direction.DOWN;
-        }
-
-        for(int i = startHoverPosition.x; (dx > 0 ? i <= fin_x : i >= fin_x); i += dx)
-            for(int j = startHoverPosition.y; (dy > 0 ? j <= fin_y : j >= fin_y); j += dy) {
-                positions.add(new Point(i, j));
-            }
-//        System.out.println(startHoverPosition + " " + hoverPosition + " " + positions.size);
-//        System.out.println(abs(startHoverPosition.x - fin_x) + " " + abs(startHoverPosition.y - fin_y) + " " + positions.size);
-        return positions;
+    public void startDrag() {
+        startDragPosition.setLocation(hoverPosition);
+        isDragging = true;
     }
-    public Direction getCurrentRotation() { return currentRotation; }
+
+    public void stopDrag() {
+        isDragging = false;
+    }
+
+    public boolean tryBuild() {
+        if (!isValidPlace()) return false;
+        for (Point point : getTargetPositions()) {
+            if (!buildingManager.tryPlaceBuilding(selectedType, point, currentRotation)) return false;
+        }
+        return true;
+    }
 
     public void tryErase() {
-        for (Point point : getHoverPositions()) {
+        for (Point point : getTargetPositions()) {
             buildingManager.tryRemoveBuilding(point);
         }
     }
 
-    public void updSelectedType(BuildingType type) {
-        selectedType = type;
+    public boolean isValidPlace() {
+        if (!isActive() || eraseMode) return false;
+        for (Point point : getTargetPositions()) {
+            if (!buildingManager.isValidPlace(selectedType, point, currentRotation)) return false;
+        }
+        return true;
+    }
+
+    private Array<Point> getTargetPositions() {
+        Array<Point> positions = new Array<>();
+        if (!isDragging) {
+            positions.add(new Point(hoverPosition));
+            return positions;
+        }
+
+        if (eraseMode) {
+            int minX = Math.min(startDragPosition.x, hoverPosition.x);
+            int maxX = Math.max(startDragPosition.x, hoverPosition.x);
+            int minY = Math.min(startDragPosition.y, hoverPosition.y);
+            int maxY = Math.max(startDragPosition.y, hoverPosition.y);
+            for (int x = minX; x <= maxX; x++) {
+                for (int y = minY; y <= maxY; y++) positions.add(new Point(x, y));
+            }
+        } else {
+            int startX = startDragPosition.x, startY = startDragPosition.y;
+            int endX = hoverPosition.x, endY = hoverPosition.y;
+
+            if (Math.abs(endX - startX) >= Math.abs(endY - startY)) endY = startY;
+            else endX = startX;
+
+            int stepX = selectedType.getWidth(), stepY = selectedType.getHeight();
+            if (currentRotation.to_degrees() % 180 != 0) {
+                int temp = stepX; stepX = stepY; stepY = temp;
+            }
+
+            int dx = endX >= startX ? stepX : -stepX;
+            int dy = endY >= startY ? stepY : -stepY;
+
+            for (int x = startX; (dx > 0 ? x <= endX : x >= endX); x += dx) {
+                for (int y = startY; (dy > 0 ? y <= endY : y >= endY); y += dy) positions.add(new Point(x, y));
+            }
+        }
+        return positions;
+    }
+
+    private void autoRotateBelt() {
+        Direction oldRotation = currentRotation;
+        int dx = hoverPosition.x - startDragPosition.x;
+        int dy = hoverPosition.y - startDragPosition.y;
+
+        if (Math.abs(dx) >= Math.abs(dy)) currentRotation = dx >= 0 ? Direction.RIGHT : Direction.LEFT;
+        else currentRotation = dy >= 0 ? Direction.UP : Direction.DOWN;
+
+        if (oldRotation != currentRotation) updateGhostBuilding();
+    }
+
+    public PreviewState getPreviewState() {
+        if (!isActive()) {
+            return new PreviewState(false, false, false, null, null, null, null, null, false, null);
+        }
+        return new PreviewState(
+            true, eraseMode, isDragging, startDragPosition, hoverPosition,
+            getTargetPositions(), selectedType, currentRotation,
+            isValidPlace(), ghostBuilding
+        );
     }
 }
