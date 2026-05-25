@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class WorldRenderer {
-    // Осталось только самое необходимое!
     private final CameraManager cameraManager;
     private final WorldMap worldMap;
     private final SpriteBatch batch;
@@ -29,7 +28,6 @@ public class WorldRenderer {
 
     private float stateTime = 0f;
 
-    // Конструктор стал намного чище
     public WorldRenderer(CameraManager cameraManager, WorldMap worldMap, BuildingRegistry registry,
                          WaveSpawner waveSpawner, TextureLoad textures, Player player, List<Bullet> bullets,
                          Supplier<PreviewState> previewStateSupplier) {
@@ -40,6 +38,7 @@ public class WorldRenderer {
         this.worldMap = worldMap;
 
         layerRenderers.add(new MapLayerRenderer(worldMap, textures));
+        //layerRenderers.add(new FlowFieldLayerRenderer(waveSpawner, textures));
         layerRenderers.add(new BeltLayerRenderer(registry, textures));
         layerRenderers.add(new ItemLayerRenderer(registry, textures));
         layerRenderers.add(new BuildingLayerRenderer(registry, textures));

@@ -51,7 +51,7 @@ public class MapGenerator {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
 
-                // Генерация ландшафта
+                // World Generation
                 float terrainValue = (terrainNoise.GetNoise(x, y) + 1.0f) / 2.0f;
 
                 if (terrainValue < 0.2f) {

@@ -8,6 +8,11 @@ import java.util.List;
 
 public class WaveSpawner {
     private List<Enemy> enemies = new ArrayList<>();
+
+    public PathFinder getPathFinder() {
+        return pathFinder;
+    }
+
     private PathFinder pathFinder;
     private BuildingRegistry registry;
     private WorldMap worldMap;

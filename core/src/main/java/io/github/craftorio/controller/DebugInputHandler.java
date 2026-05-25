@@ -21,7 +21,7 @@ public class DebugInputHandler extends InputAdapter {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (button == Input.Buttons.LEFT && !buildTool.isActive()) {
+        if (button == Input.Buttons.RIGHT && !buildTool.isActive()) {
             Vector3 worldCoords = camera.getCamera().unproject(new Vector3(screenX, screenY, 0));
             waveSpawner.addEnemy(worldCoords.x, worldCoords.y);
             return false;
