@@ -16,3 +16,44 @@ Spawn into a procedurally generated world with a basic starter-pack of resources
 *   **Language:** Java
 *   **Framework:** LibGDX
 *   **World Gen:** Procedural Grid Generation
+
+---
+
+### Controls Guide
+
+#### Movement & Camera
+| Action | Input |
+| :--- | :--- |
+| **Move Up** | `W` or `Up Arrow` |
+| **Move Down** | `S` or `Down Arrow` |
+| **Move Left** | `A` or `Left Arrow` |
+| **Move Right** | `D` or `Right Arrow` |
+| **Zoom In** | `+` or `=` |
+| **Zoom Out** | `-` |
+
+#### Building Selection (Hotkeys)
+| Building Type | Key |
+| :--- | :--- |
+| **Miner** | `1` |
+| **Belt** | `2` |
+| **Horizontal Miner** | `3` |
+| **Assembler** | `4` |
+| **Turret** | `5` |
+| **Junction** | `6` |
+| **Router** | `7` |
+| **Wall** | `8` |
+
+#### Building & Interaction
+| Action | Input |
+| :--- | :--- |
+| **Build Object** | `Left Mouse Button` (Click or Drag) |
+| **Rotate Object** | `R` (while a building is selected) |
+| **Erase Mode** | Hold `Shift` (Left or Right) + `Left Mouse Button` (Click or Drag) |
+| **Clear Selection** | `Escape` |
+| **Open Assembler UI** | `Left Mouse Button` (Click on an existing Assembler) |
+| **Close UI/Menus** | `Escape` |
+
+#### Debug Tools
+| Action | Input |
+| :--- | :--- |
+| **Spawn Enemy** | `Right Mouse Button` (when build tool is inactive) |
