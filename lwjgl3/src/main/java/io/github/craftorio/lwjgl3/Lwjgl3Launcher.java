@@ -25,7 +25,7 @@ public class Lwjgl3Launcher {
             settings.edgePadding = true;
             settings.duplicatePadding = true;
 
-            TexturePacker.process(settings, "assets/raw", "assets/atlas", "main_atlas");
+            TexturePacker.process(settings, "raw", "atlas", "main_atlas");
         }
         return new Lwjgl3Application(new MainGame(), getDefaultConfiguration());
     }
