@@ -10,7 +10,7 @@ import io.github.craftorio.view.sprite.GameSprite;
 import java.util.HashMap;
 
 public class PipeRenderer {
-    private static final Color EMPTY_PIPE_TINT = new Color(30f / 255f, 30f / 255f, 30f / 255f, 1f);
+    private static final Color EMPTY_PIPE_TINT = new Color(30f / 255f, 30f / 255f, 30f / 255f, 0.3f);
 
     public static void draw(
         Color colorFilter,
@@ -68,15 +68,16 @@ public class PipeRenderer {
 
         float fillRatio = network.getFillRatio();
         Color liquidColor = toGdxColor(liquidType.getColor());
-        float brightness = 0.15f + 0.85f * fillRatio;
+
+        float alpha = 0.3f + (0.7f * fillRatio);
+
         return new Color(
-            liquidColor.r * brightness,
-            liquidColor.g * brightness,
-            liquidColor.b * brightness,
-            1f
+            liquidColor.r,
+            liquidColor.g,
+            liquidColor.b,
+            alpha
         );
     }
-
     private static Color toGdxColor(java.awt.Color color) {
         return new Color(
             color.getRed() / 255f,

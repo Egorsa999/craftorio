@@ -83,7 +83,7 @@ public class LiquidNetworkManager {
                             || (neighbor.canThroughLiquidIn(currentPos)
                             && current.canReceiveLiquidFrom(neighbor, neighborPos, neighbor.getPrevLiquidType()));
 
-                    if (connected && !(neighbor.getPrevLiquidType() != null && neighbor.getPrevLiquidType() != currLiquid)) {
+                    if (connected && !(neighbor.getPrevLiquidType() != null && neighbor.getPrevLiquidType() != currLiquid && currLiquid != null)) {
                         visited.add(neighbor);
                         queue.add(neighbor);
                     }
