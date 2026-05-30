@@ -49,7 +49,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
         super.update();
         if (!outputBuffer.isEmpty()) {
             if (throughItem(outputBuffer.element())) {
-                System.out.println("NEW ITEM");
+                //System.out.println("NEW ITEM");
                 outputBuffer.remove();
             }
         }

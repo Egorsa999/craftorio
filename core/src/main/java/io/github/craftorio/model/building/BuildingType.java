@@ -9,7 +9,9 @@ public enum BuildingType {
     ROUTER(1, 1, false, 100),
     ASSEMBLER(2, 2, false, 100),
     TURRET(1, 1, false, 100),
-    WALL(1, 1, false, 500);
+    WALL(1, 1, false, 500),
+    COAL_POWER_GENERATOR(1, 1, false, 200),
+    POWER_POLE(1, 1, false, 100);
 
 
     private final int width;
