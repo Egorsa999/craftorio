@@ -74,6 +74,13 @@ public abstract class Building {
     public int getX() { return this.anchor.x; }
     public int getY() { return this.anchor.y; }
     public Point getAnchor() { return this.anchor; }
+    public float getCenterX(){
+        return this.anchor.x + this.getWidth() / 2f;
+    }
+
+    public float getCenterY(){
+        return this.anchor.y + this.getWidth() / 2f;
+    }
 
     public int getHeight() {
         boolean isRotated90 = (direction == Direction.LEFT || direction == Direction.RIGHT);

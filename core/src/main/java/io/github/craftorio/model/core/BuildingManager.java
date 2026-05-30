@@ -1,5 +1,9 @@
 package io.github.craftorio.model.core;
 
+import io.github.craftorio.model.building.power.PowerConnectable;
+import io.github.craftorio.model.building.power.PowerNetwork;
+import io.github.craftorio.model.building.power.PowerNode;
+import io.github.craftorio.model.building.power.PowerPole;
 import io.github.craftorio.model.entity.Player;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.BuildingFactory;
@@ -8,7 +12,9 @@ import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.generator.TerrainType;
 
 import java.awt.Point;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BuildingManager {
     private final BuildingRegistry registry;
@@ -21,14 +27,18 @@ public class BuildingManager {
         this.worldMap = worldMap;
         this.factory = factory;
         this.player = player;
+
     }
 
     public boolean tryRemoveBuilding(Point pos){
         Building toDelete = registry.getBuildingAtRemove(pos);
-        System.out.println(pos + " " + toDelete);
+        //System.out.println(pos + " " + toDelete);
         if (toDelete == null || toDelete.type == BuildingType.CORE)return false;
 
         registry.removeBuilding(toDelete);
+        if (toDelete instanceof PowerConnectable cBuilding){
+            cBuilding.getPowerNode().disconnect();
+        }
         return true;
     }
 
@@ -45,6 +55,11 @@ public class BuildingManager {
 
         Building newBuilding = factory.createBuilding(type, anchor, direction);
         registry.addBuilding(newBuilding);
+
+        if (newBuilding instanceof PowerConnectable newConnectable) {
+            newConnectable.getPowerNode().connect();
+        }
+
         return true;
     }
 

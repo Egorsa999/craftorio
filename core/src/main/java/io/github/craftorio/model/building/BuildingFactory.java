@@ -7,6 +7,8 @@ import io.github.craftorio.model.building.logistics.Junction;
 import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.building.production.Pump;
 import io.github.craftorio.model.building.logistics.Router;
+import io.github.craftorio.model.building.power.CoalPowerGenerator;
+import io.github.craftorio.model.building.power.PowerPole;
 import io.github.craftorio.model.building.production.Assembler;
 import io.github.craftorio.model.building.production.HorizontalMiner;
 import io.github.craftorio.model.building.production.Miner;
@@ -95,6 +97,8 @@ public class BuildingFactory {
             case WALL -> new Wall(registry, anchor, rotation);
             case PIPE -> new Pipe(registry, anchor, rotation);
             case PUMP -> new Pump(registry, anchor, rotation, worldMap);
+            case COAL_POWER_GENERATOR -> new CoalPowerGenerator(registry, anchor, rotation);
+            case POWER_POLE -> new PowerPole(registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }

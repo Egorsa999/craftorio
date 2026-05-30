@@ -25,6 +25,7 @@ public class WorldRenderer {
     private final SpriteBatch batch;
     private final ShapeRenderer shapeRenderer;
     private final List<LayerRenderer> layerRenderers = new ArrayList<>();
+    private final List<ShapeLayerRenderer> shapeLayerRenderers = new ArrayList<>();
 
     private float stateTime = 0f;
 
@@ -32,7 +33,6 @@ public class WorldRenderer {
                          WaveSpawner waveSpawner, TextureLoad textures, Player player, List<Bullet> bullets,
                          Supplier<PreviewState> previewStateSupplier) {
         this.cameraManager = cameraManager;
-
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
         this.worldMap = worldMap;
@@ -45,10 +45,10 @@ public class WorldRenderer {
         layerRenderers.add(new BuildingLayerRenderer(registry, textures));
         layerRenderers.add(new EnemyLayerRenderer(waveSpawner, textures));
         layerRenderers.add(new PlayerLayerRenderer(player, textures));
-
         layerRenderers.add(new BulletLayerRenderer(bullets, textures));
-
         layerRenderers.add(new BuildingPreviewLayerRenderer(previewStateSupplier, textures));
+
+        shapeLayerRenderers.add(new WireLayerRenderer(registry));
 
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
     }
@@ -73,6 +73,16 @@ public class WorldRenderer {
         }
 
         batch.end();
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        for (ShapeLayerRenderer layer : shapeLayerRenderers){
+            layer.render(shapeRenderer, bounds, stateTime);
+        }
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private VisibleBounds calculateVisibleBounds(OrthographicCamera camera) {
