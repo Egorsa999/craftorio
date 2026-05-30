@@ -1,5 +1,7 @@
 package io.github.craftorio.model.core;
 
+import io.github.craftorio.model.building.liquid.LiquidNetworkManager;
+import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.building.power.PowerConnectable;
 import io.github.craftorio.model.building.power.PowerNetwork;
 import io.github.craftorio.model.enemy.WaveSpawner;
@@ -16,10 +18,12 @@ public class SimulationEngine {
     private final List<Bullet> bullets = new ArrayList<>();
     private final BuildingRegistry registry;
     private final WaveSpawner waveSpawner;
+    private final LiquidNetworkManager liquidNetworkManager;
 
-    public SimulationEngine(BuildingRegistry registry, WaveSpawner waveSpawner) {
+    public SimulationEngine(BuildingRegistry registry, WaveSpawner waveSpawner, LiquidNetworkManager liquidNetworkManager) {
         this.registry = registry;
         this.waveSpawner = waveSpawner;
+        this.liquidNetworkManager = liquidNetworkManager;
     }
 
     public void spawnBullet(Bullet b) {
@@ -33,6 +37,15 @@ public class SimulationEngine {
     public void update() {
         registry.applyPendingChanges();
 
+        if (registry.consumeLiquidNetworksDirty()) {
+            List<Pipe> pipes = new ArrayList<>();
+            for (Building building : registry.getBuildingsForTick()) {
+                if (building instanceof Pipe pipe) {
+                    pipes.add(pipe);
+                }
+            }
+            liquidNetworkManager.rebuild(pipes);
+        }
 
         Set<PowerNetwork> networks = new HashSet<>();
         for (Building building : registry.getBuildingsForTick()) {
@@ -44,6 +57,8 @@ public class SimulationEngine {
         for (PowerNetwork network : networks){
             network.update();
         }
+
+        liquidNetworkManager.tick();
 
         for (Enemy enemy : waveSpawner.getEnemies()){
             enemy.update();

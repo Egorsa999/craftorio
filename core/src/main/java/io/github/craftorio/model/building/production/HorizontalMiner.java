@@ -53,7 +53,7 @@ public class HorizontalMiner extends DamageableBuilding implements ThroughItem {
     }
 
     @Override
-    public boolean canThroughIn(Point point) {
+    public boolean canThroughItemIn(Point point) {
         return point.equals(rotatePoint(0, -1));
     }
 }

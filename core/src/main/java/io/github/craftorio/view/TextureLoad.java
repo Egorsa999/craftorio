@@ -22,6 +22,8 @@ public class TextureLoad {
     private final Map<BuildingType, GameSprite> buildingSprites = new EnumMap<>(BuildingType.class);
     private final HashMap<String, GameSprite> StringSprites = new HashMap<>();
     private final HashMap<Integer, GameSprite> conveyorTextures = new HashMap<>();
+    private final HashMap<Integer, GameSprite> conduitBottomTextures = new HashMap<>();
+    private final HashMap<Integer, GameSprite> conduitTopTextures = new HashMap<>();
     private final HashMap<ItemType, GameSprite> itemSprites = new HashMap<>();
     private final HashMap<TerrainType, GameSprite> terrarianSprites = new HashMap<>();
     private final TextureAtlas atlas;
@@ -44,6 +46,7 @@ public class TextureLoad {
         terrarianSprites.put(TerrainType.SAND, load("sand"));
         terrarianSprites.put(TerrainType.WALL, load("wall"));
         terrarianSprites.put(TerrainType.WATER, load("water"));
+        terrarianSprites.put(TerrainType.OIL, load("oil"));
 
         buildingSprites.put(BuildingType.MINER, load("miner"));
         buildingSprites.put(BuildingType.HORIZONTAL_MINER, load("horizontal_miner"));
@@ -53,6 +56,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.ROUTER, load("router"));
         buildingSprites.put(BuildingType.TURRET, load("turret"));
         buildingSprites.put(BuildingType.WALL, load("defense-wall"));
+        buildingSprites.put(BuildingType.PUMP, load("pump"));
         buildingSprites.put(BuildingType.COAL_POWER_GENERATOR, load("coal-generator"));
         buildingSprites.put(BuildingType.POWER_POLE, load("power-node"));
 
@@ -74,6 +78,11 @@ public class TextureLoad {
         conveyorTextures.put(2, loadAnimated("conveyor-2", 0.1f));
         conveyorTextures.put(3, loadAnimated("conveyor-3", 0.1f));
         conveyorTextures.put(4, loadAnimated("conveyor-4", 0.1f));
+
+        for (int i = 0; i <= 4; i++) {
+            conduitBottomTextures.put(i, load("conduit-bottom-" + i));
+            conduitTopTextures.put(i, load("conduit-top-" + i));
+        }
 
         itemSprites.put(ItemType.IRON_ORE, load("item-iron"));
         itemSprites.put(ItemType.COAL, load("item-coal"));
@@ -101,6 +110,14 @@ public class TextureLoad {
     }
 
     public HashMap<Integer, GameSprite> getConveyorTextures() {return conveyorTextures;}
+
+    public HashMap<Integer, GameSprite> getConduitBottomTextures() {
+        return conduitBottomTextures;
+    }
+
+    public HashMap<Integer, GameSprite> getConduitTopTextures() {
+        return conduitTopTextures;
+    }
 
     public GameSprite get(ResourceType type) {
         return resourceSprites.get(type);

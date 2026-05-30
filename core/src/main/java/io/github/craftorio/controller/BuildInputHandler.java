@@ -41,6 +41,8 @@ public class BuildInputHandler extends InputAdapter {
         if (keycode == Input.Keys.NUM_6) return select(BuildingType.JUNCTION);
         if (keycode == Input.Keys.NUM_7) return select(BuildingType.ROUTER);
         if (keycode == Input.Keys.NUM_8) return select(BuildingType.WALL);
+        if (keycode == Input.Keys.Y) return select(BuildingType.PIPE);
+        if (keycode == Input.Keys.U) return select(BuildingType.PUMP);
         if (keycode == Input.Keys.NUM_9) return select(BuildingType.COAL_POWER_GENERATOR);
         if (keycode == Input.Keys.NUM_0) return select(BuildingType.POWER_POLE);
 

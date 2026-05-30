@@ -8,6 +8,7 @@ import io.github.craftorio.controller.*;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.building.liquid.LiquidNetworkManager;
 import io.github.craftorio.model.core.*;
 import io.github.craftorio.model.enemy.PathFinder;
 import io.github.craftorio.model.enemy.WaveSpawner;
@@ -75,7 +76,8 @@ public class GameScreen implements Screen {
         this.pathFinder.updateFlowField();
 
         WaveSpawner waveSpawner = new WaveSpawner(pathFinder, buildingRegistry, worldMap);
-        this.engine = new SimulationEngine(buildingRegistry, waveSpawner);
+        LiquidNetworkManager liquidNetworkManager = new LiquidNetworkManager(buildingRegistry);
+        this.engine = new SimulationEngine(buildingRegistry, waveSpawner, liquidNetworkManager);
         BuildingFactory factory = new BuildingFactory(buildingRegistry, inventory, worldMap, engine);
 
         BuildingManager buildingManager = new BuildingManager(buildingRegistry, worldMap, factory, player);

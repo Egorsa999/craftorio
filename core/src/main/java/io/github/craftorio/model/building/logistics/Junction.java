@@ -113,7 +113,7 @@ public class Junction extends DamageableBuilding implements ReceiveItem, Through
     }
 
     @Override
-    public boolean canReceiveFrom(Building building, Point point) {
+    public boolean canReceiveItemFrom(Building building, Point point) {
         return true;
     }
 
@@ -123,7 +123,7 @@ public class Junction extends DamageableBuilding implements ReceiveItem, Through
     }
 
     @Override
-    public boolean canThroughIn(Point point) {
+    public boolean canThroughItemIn(Point point) {
         return true;
     }
 }

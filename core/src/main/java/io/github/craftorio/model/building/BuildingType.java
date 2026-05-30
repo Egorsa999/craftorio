@@ -10,6 +10,8 @@ public enum BuildingType {
     ASSEMBLER(2, 2, false, 100),
     TURRET(1, 1, false, 100),
     WALL(1, 1, false, 500),
+    PIPE(1, 1, true, 50),
+    PUMP(1, 1, false, 50),
     COAL_POWER_GENERATOR(1, 1, false, 200),
     POWER_POLE(1, 1, false, 100);
 

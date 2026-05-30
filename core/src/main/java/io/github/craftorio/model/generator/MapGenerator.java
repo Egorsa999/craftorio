@@ -64,7 +64,7 @@ public class MapGenerator {
                     float wallValue = (wallNoise.GetNoise(x, y) + 1.0f) / 2.0f;
 
                     if (wallValue > 0.95f) {
-                        worldMap.setTerrainType(x, y, TerrainType.WALL);
+                        worldMap.setTerrainType(x, y, TerrainType.OIL);
                     }
                 }
 

@@ -6,6 +6,7 @@ import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.DamageableBuilding;
 import io.github.craftorio.model.building.defense.Turret;
 import io.github.craftorio.model.building.logistics.Belt;
+import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.TextureRenderer;
@@ -35,7 +36,7 @@ public class BuildingLayerRenderer implements LayerRenderer {
                 Building current = registry.getBuildingAt(x, y);
                 if (current == null || !renderedBuildingsThisFrame.add(current)) continue;
 
-                if (current instanceof Belt) {
+                if (current instanceof Belt || current instanceof Pipe) {
                     continue;
                 }
                 Color colorFilter = new Color(1f, 1f, 1f, 1f);

@@ -117,7 +117,7 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
     }
 
     @Override
-    public boolean canReceiveFrom(Building building, Point point) {
+    public boolean canReceiveItemFrom(Building building, Point point) {
         return true;
     }
 
@@ -139,7 +139,7 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
     }
 
     @Override
-    public boolean canThroughIn(Point point) {
+    public boolean canThroughItemIn(Point point) {
         return true;
     }
 
