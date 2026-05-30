@@ -6,11 +6,13 @@ import com.badlogic.gdx.utils.Array;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.building.logistics.Belt;
+import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.ui.PreviewState;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.TextureRenderer;
 import io.github.craftorio.view.VisibleBounds;
 import io.github.craftorio.view.renderer.BeltRenderer;
+import io.github.craftorio.view.renderer.PipeRenderer;
 
 import java.awt.Point;
 import java.util.function.Supplier;
@@ -62,6 +64,20 @@ public class BuildingPreviewLayerRenderer implements LayerRenderer {
             if (type == BuildingType.BELT && state.ghostBuilding() instanceof Belt belt) {
                 belt.setAnchor(pos.x, pos.y);
                 BeltRenderer.drawBackground(colorFilter, batch, textures.getConveyorTextures(), belt, stateTime, 0.5f);
+                continue;
+            }
+
+            if (type == BuildingType.PIPE && state.ghostBuilding() instanceof Pipe pipe) {
+                pipe.setAnchor(pos.x, pos.y);
+                Color previewTint = colorFilter.cpy().mul(0.5f, 0.5f, 0.5f, 0.5f);
+                PipeRenderer.draw(
+                    previewTint,
+                    batch,
+                    textures.getConduitBottomTextures(),
+                    textures.getConduitTopTextures(),
+                    pipe,
+                    stateTime
+                );
                 continue;
             }
 

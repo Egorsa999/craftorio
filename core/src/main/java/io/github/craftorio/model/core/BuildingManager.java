@@ -75,6 +75,15 @@ public class BuildingManager {
     }
 
     private boolean isValidTerrainFor(BuildingType type, List<Point> tiles, Point anchor, Direction direction) {
+        if (type == BuildingType.PUMP) {
+            for (Point p : tiles) {
+                if (worldMap.getCell(p.x, p.y).getTerrainType() != TerrainType.WATER) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         for (Point p : tiles) {
             TerrainType terrainType = worldMap.getCell(p.x, p.y).getTerrainType();
             if(terrainType == TerrainType.WALL || terrainType == TerrainType.WATER){

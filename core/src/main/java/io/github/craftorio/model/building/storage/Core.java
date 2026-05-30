@@ -29,7 +29,7 @@ public class Core extends DamageableBuilding implements ReceiveItem {
     }
 
     @Override
-    public boolean canReceiveFrom(Building building, Point point) {
+    public boolean canReceiveItemFrom(Building building, Point point) {
         return true;
     }
 }

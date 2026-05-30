@@ -4,6 +4,8 @@ import io.github.craftorio.model.building.defense.Turret;
 import io.github.craftorio.model.building.defense.Wall;
 import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.building.logistics.Junction;
+import io.github.craftorio.model.building.logistics.Pipe;
+import io.github.craftorio.model.building.production.Pump;
 import io.github.craftorio.model.building.logistics.Router;
 import io.github.craftorio.model.building.production.Assembler;
 import io.github.craftorio.model.building.production.HorizontalMiner;
@@ -91,6 +93,8 @@ public class BuildingFactory {
             case ROUTER -> new Router(registry, anchor, rotation);
             case ASSEMBLER -> new Assembler(registry, anchor, rotation);
             case WALL -> new Wall(registry, anchor, rotation);
+            case PIPE -> new Pipe(registry, anchor, rotation);
+            case PUMP -> new Pump(registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }

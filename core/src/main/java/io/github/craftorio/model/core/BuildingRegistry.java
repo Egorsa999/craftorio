@@ -1,6 +1,7 @@
 package io.github.craftorio.model.core;
 
 import io.github.craftorio.model.building.Building;
+import io.github.craftorio.model.building.logistics.Pipe;
 
 import java.awt.Point;
 import java.util.*;
@@ -17,6 +18,8 @@ public class BuildingRegistry {
     private final List<Building> pendingAdds = new ArrayList<>();
     private final List<Building> pendingRemoves = new ArrayList<>();
 
+    private boolean liquidNetworksDirty = false;
+
     public void addBuilding(Building building) {
         for (Point p : building.getOccupiedTiles()) {
             spatialGrid.put(p, building);
@@ -25,6 +28,9 @@ public class BuildingRegistry {
             collisionGrid.put(p, building);
         }
         pendingAdds.add(building);
+        if (building instanceof Pipe) {
+            liquidNetworksDirty = true;
+        }
     }
 
     public void removeBuilding(Building building) {
@@ -32,6 +38,17 @@ public class BuildingRegistry {
             spatialGrid.remove(p);
         }
         pendingRemoves.add(building);
+        if (building instanceof Pipe) {
+            liquidNetworksDirty = true;
+        }
+    }
+
+    public boolean consumeLiquidNetworksDirty() {
+        if (!liquidNetworksDirty) {
+            return false;
+        }
+        liquidNetworksDirty = false;
+        return true;
     }
 
     public Building getBuildingAt(int x, int y) {

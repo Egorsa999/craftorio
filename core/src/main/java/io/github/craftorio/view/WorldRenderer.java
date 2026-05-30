@@ -40,6 +40,7 @@ public class WorldRenderer {
         layerRenderers.add(new MapLayerRenderer(worldMap, textures));
         //layerRenderers.add(new FlowFieldLayerRenderer(waveSpawner, textures));
         layerRenderers.add(new BeltLayerRenderer(registry, textures));
+        layerRenderers.add(new PipeLayerRenderer(registry, textures));
         layerRenderers.add(new ItemLayerRenderer(registry, textures));
         layerRenderers.add(new BuildingLayerRenderer(registry, textures));
         layerRenderers.add(new EnemyLayerRenderer(waveSpawner, textures));

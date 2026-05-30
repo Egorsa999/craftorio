@@ -78,7 +78,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     }
 
     @Override
-    public boolean canReceiveFrom(Building building, Point point) {
+    public boolean canReceiveItemFrom(Building building, Point point) {
         return true;
     }
 
@@ -107,7 +107,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     }
 
     @Override
-    public boolean canThroughIn(Point point) {
+    public boolean canThroughItemIn(Point point) {
         return true;
     }
 }

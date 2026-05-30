@@ -135,7 +135,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
 
         // type 3
         if (d instanceof ThroughItem dd && l instanceof ThroughItem ll && r instanceof ThroughItem rr) {
-            if (ll.canThroughIn(new Point(getX(), getY())) && rr.canThroughIn(new Point(getX(), getY())) && dd.canThroughIn(new Point(getX(), getY()))) {
+            if (ll.canThroughItemIn(new Point(getX(), getY())) && rr.canThroughItemIn(new Point(getX(), getY())) && dd.canThroughItemIn(new Point(getX(), getY()))) {
                 beltType = 3;
                 rotation = dirToInt(direction) * 90f;
                 reflection = 1f;
@@ -144,9 +144,9 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
         }
 
         // type 2
-        if (d instanceof ThroughItem dd && dd.canThroughIn(new Point(getX(), getY()))) {
+        if (d instanceof ThroughItem dd && dd.canThroughItemIn(new Point(getX(), getY()))) {
             if (r instanceof ThroughItem rr) {
-                if (rr.canThroughIn(new Point(getX(), getY()))) {
+                if (rr.canThroughItemIn(new Point(getX(), getY()))) {
                     beltType = 2;
                     rotation = dirToInt(direction) * 90f;
                     reflection = 1f;
@@ -154,7 +154,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
                 }
             }
             if (l instanceof ThroughItem ll) {
-                if (ll.canThroughIn(new Point(getX(), getY()))) {
+                if (ll.canThroughItemIn(new Point(getX(), getY()))) {
                     beltType = 2;
                     rotation = dirToInt(direction) * 90f;
                     reflection = -1f;
@@ -165,7 +165,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
 
         // type 4
         if (l instanceof ThroughItem ll && r instanceof ThroughItem rr) {
-            if (ll.canThroughIn(new Point(getX(), getY())) && rr.canThroughIn(new Point(getX(), getY()))) {
+            if (ll.canThroughItemIn(new Point(getX(), getY())) && rr.canThroughItemIn(new Point(getX(), getY()))) {
                 beltType = 4;
                 rotation = dirToInt(direction) * 90f;
                 reflection = 1f;
@@ -175,7 +175,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
 
         // type 1
         if (l instanceof ThroughItem ll) {
-            if (ll.canThroughIn(new Point(getX(), getY()))) {
+            if (ll.canThroughItemIn(new Point(getX(), getY()))) {
                 beltType = 1;
                 rotation = dirToInt(direction) * 90f;
                 reflection = 1f;
@@ -183,7 +183,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
             }
         }
         if (r instanceof ThroughItem rr) {
-            if (rr.canThroughIn(new Point(getX(), getY()))) {
+            if (rr.canThroughItemIn(new Point(getX(), getY()))) {
                 beltType = 1;
                 rotation = dirToInt(direction) * 90f;
                 reflection = -1f;
@@ -249,7 +249,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
     }
 
     @Override
-    public boolean canThroughIn(Point point) {
+    public boolean canThroughItemIn(Point point) {
         int nextCol = getX();
         int nextRow = getY();
 
@@ -295,7 +295,7 @@ public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem
     }
 
     @Override
-    public boolean canReceiveFrom(Building building, Point point) {
+    public boolean canReceiveItemFrom(Building building, Point point) {
         return building != null && building != getUpperBuilding();
     }
 
