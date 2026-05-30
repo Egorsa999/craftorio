@@ -1,6 +1,9 @@
 package io.github.craftorio.model.building.production;
 
 import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.building.power.PowerConnectable;
+import io.github.craftorio.model.building.power.PowerConsumer;
+import io.github.craftorio.model.building.power.PowerNode;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.item.Recipe;
@@ -10,20 +13,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Assembler extends DamageableBuilding implements ThroughItem, ReceiveItem {
+public class Assembler extends DamageableBuilding implements ThroughItem, ReceiveItem, PowerConsumer, PowerConnectable {
+
+    private final PowerNode powerNode;
+
     private final Map<ItemType, Integer> inputInventory = new HashMap<>();
     private final Map<ItemType, Integer> outputInventory = new HashMap<>();
+
+    private final int MAX_CAPACITY_PER_ITEM = 50;
+    private final int MAX_OUTPUT_CAPACITY = 50;
 
     private Recipe currentRecipe = null;
 
     private boolean isCraftingNow = false;
-    private int progress = 0;
+    private float progress = 0;
 
     private final ArrayList<Point> throughDelta = new ArrayList<>();
     private int lastThrough = 0;
 
+    private final float maxPowerPerTick = 150.0f / 60.0f;
+    private float satisfactionRatio = 0f;
+
+
     public Assembler(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.ASSEMBLER);
+
+        this.powerNode = new PowerNode(this, registry);
 
         throughDelta.add(new Point(+0, +2));
         throughDelta.add(new Point(+1, +2));
@@ -52,18 +67,29 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
             }
         }
         if (isCraftingNow) {
-            progress++;
-            if (progress == currentRecipe.getCraftTicks()) {
+            System.out.println(satisfactionRatio);
+            progress += satisfactionRatio;
+            if (progress >= currentRecipe.getCraftTicks()) {
                 progress = 0;
                 isCraftingNow = false;
                 outputInventory.put(currentRecipe.getOutput(), outputInventory.getOrDefault(currentRecipe.getOutput(), 0) + currentRecipe.getOutputAmount());
             }
-            return;
+            else return;
         }
+
         boolean canCraft = true;
-        for (Map.Entry<ItemType, Integer> entry : currentRecipe.getInputs().entrySet()) {
-            if (inputInventory.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
-                canCraft = false;
+
+        int currentOutputAmount = outputInventory.getOrDefault(currentRecipe.getOutput(), 0);
+        if (currentOutputAmount + currentRecipe.getOutputAmount() > MAX_OUTPUT_CAPACITY) {
+            canCraft = false;
+        }
+
+        if (canCraft) {
+            for (Map.Entry<ItemType, Integer> entry : currentRecipe.getInputs().entrySet()) {
+                if (inputInventory.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
+                    canCraft = false;
+                    break;
+                }
             }
         }
         if (canCraft) {
@@ -79,8 +105,15 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
 
     @Override
     public boolean receiveItem(Building building, ItemType id) {
-        inputInventory.put(id, inputInventory.getOrDefault(id, 0) + 1);
-        return true;
+        if (currentRecipe != null && currentRecipe.getInputs().containsKey(id)) {
+            int currentAmount = inputInventory.getOrDefault(id, 0);
+
+            if (currentAmount < MAX_CAPACITY_PER_ITEM) {
+                inputInventory.put(id, currentAmount + 1);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -133,5 +166,20 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
 
     public Map<ItemType, Integer> getOutputInventory() {
         return this.outputInventory;
+    }
+
+    @Override
+    public PowerNode getPowerNode() {
+        return powerNode;
+    }
+
+    @Override
+    public float getRequiredPower() {
+        return isCraftingNow ? maxPowerPerTick : 0f;
+    }
+
+    @Override
+    public void setSatisfactionRatio(float ratio) {
+        this.satisfactionRatio = Math.max(0f, Math.min(ratio, 1.0f));
     }
 }

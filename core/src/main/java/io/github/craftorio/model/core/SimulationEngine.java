@@ -1,12 +1,16 @@
 package io.github.craftorio.model.core;
 
+import io.github.craftorio.model.building.power.PowerConnectable;
+import io.github.craftorio.model.building.power.PowerNetwork;
 import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.entity.Bullet;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.enemy.Enemy;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SimulationEngine {
     private final List<Bullet> bullets = new ArrayList<>();
@@ -30,8 +34,15 @@ public class SimulationEngine {
         registry.applyPendingChanges();
 
 
+        Set<PowerNetwork> networks = new HashSet<>();
         for (Building building : registry.getBuildingsForTick()) {
             building.update();
+            if (building instanceof PowerConnectable cBuilding)
+                networks.add(cBuilding.getPowerNode().getNetwork());
+        }
+
+        for (PowerNetwork network : networks){
+            network.update();
         }
 
         for (Enemy enemy : waveSpawner.getEnemies()){

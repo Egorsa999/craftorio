@@ -31,6 +31,9 @@ public class BuildingRegistry {
         for (Point p : building.getOccupiedTiles()) {
             spatialGrid.remove(p);
         }
+        for (Point p : building.getCollisionTiles()){
+            collisionGrid.remove(p);
+        }
         pendingRemoves.add(building);
     }
 
