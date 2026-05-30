@@ -55,7 +55,7 @@ public class CoalPowerGenerator extends DamageableBuilding implements PowerProdu
     }
 
     @Override
-    public boolean canReceiveFrom(Building from, Point point) {
+    public boolean canReceiveItemFrom(Building from, Point point) {
         return true;
     }
 
