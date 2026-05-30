@@ -94,7 +94,7 @@ public class BuildingFactory {
             case ASSEMBLER -> new Assembler(registry, anchor, rotation);
             case WALL -> new Wall(registry, anchor, rotation);
             case PIPE -> new Pipe(registry, anchor, rotation);
-            case PUMP -> new Pump(registry, anchor, rotation);
+            case PUMP -> new Pump(registry, anchor, rotation, worldMap);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }

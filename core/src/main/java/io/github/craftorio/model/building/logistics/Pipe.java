@@ -34,16 +34,24 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
         updateType();
     }
 
+    public LiquidType getLiquidType() {
+        if (network == null) {
+            return null;
+        }
+        return network.getLiquidType();
+    }
+
     @Override
     public float receiveLiquid(Building from, LiquidType type, float amount) {
-        if (network == null || amount <= 0f || !canReceiveLiquidFrom(from, from.getAnchor())) {
+        if (network == null || amount <= 0f || !canReceiveLiquidFrom(from, from.getAnchor(), type)) {
             return 0f;
         }
         return network.addLiquid(type, amount);
     }
 
     @Override
-    public boolean canReceiveLiquidFrom(Building from, Point point) {
+    public boolean canReceiveLiquidFrom(Building from, Point point, LiquidType type) {
+        if (getLiquidType() != null && getLiquidType() != type) return false;
         return from != null && from != getOutputBuilding();
     }
 
@@ -249,7 +257,7 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
             return;
         }
 
-        if (!receiver.canReceiveLiquidFrom(this, getAnchor())) {
+        if (!receiver.canReceiveLiquidFrom(this, getAnchor(), getLiquidType())) {
             return;
         }
 

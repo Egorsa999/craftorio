@@ -46,6 +46,7 @@ public class TextureLoad {
         terrarianSprites.put(TerrainType.SAND, load("sand"));
         terrarianSprites.put(TerrainType.WALL, load("wall"));
         terrarianSprites.put(TerrainType.WATER, load("water"));
+        terrarianSprites.put(TerrainType.OIL, load("oil"));
 
         buildingSprites.put(BuildingType.MINER, load("miner"));
         buildingSprites.put(BuildingType.HORIZONTAL_MINER, load("horizontal_miner"));

@@ -3,8 +3,8 @@ package io.github.craftorio.model.item;
 import java.awt.Color;
 
 public enum LiquidType {
-    WATER(new Color(0, 0, 255)),
-    OIL(new Color(0, 0, 0));
+    WATER(new Color(92, 92, 255)),
+    OIL(new Color(64, 64, 64));
 
     private final Color color;
 

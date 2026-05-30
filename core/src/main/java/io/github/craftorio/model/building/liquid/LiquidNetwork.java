@@ -81,13 +81,17 @@ public class LiquidNetwork {
         currSystemAmount = 0f;
         liquidType = null;
 
+        System.out.println("__________");
+
         for (Pipe pipe : members) {
             currSystemAmount += pipe.getPrevFill() * pipe.getLiquidCapacity();
             LiquidType prevType = pipe.getPrevLiquidType();
+            System.out.println(prevType);
             if (prevType != null) {
                 liquidType = prevType;
             }
         }
+        System.out.println("__________");
 
         currSystemAmount = Math.min(currSystemAmount, getCurrSystemCapacity());
     }

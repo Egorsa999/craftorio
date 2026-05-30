@@ -7,6 +7,7 @@ import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.building.ReceiveLiquid;
 import io.github.craftorio.model.building.ThroughLiquid;
 import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.core.WorldMap;
 import io.github.craftorio.model.item.LiquidType;
 
 import java.awt.Point;
@@ -15,9 +16,11 @@ import java.util.Set;
 
 public class Pump extends DamageableBuilding implements ThroughLiquid {
     private static final float PRODUCTION_RATE = 5f;
+    private final LiquidType liquidType;
 
-    public Pump(BuildingRegistry registry, Point anchor, Direction direction) {
+    public Pump(BuildingRegistry registry, Point anchor, Direction direction, WorldMap worldMap) {
         super(registry, anchor, direction, BuildingType.PUMP);
+        this.liquidType = worldMap.getCell(anchor.x, anchor.y).getTerrainType().getLiquidType();
     }
 
     @Override
@@ -47,7 +50,7 @@ public class Pump extends DamageableBuilding implements ThroughLiquid {
             if (!(building instanceof ReceiveLiquid receiver)) {
                 continue;
             }
-            if (!receiver.canReceiveLiquidFrom(this, sourcePoint)) {
+            if (!receiver.canReceiveLiquidFrom(this, sourcePoint, liquidType)) {
                 continue;
             }
             targets.add(receiver);
@@ -59,7 +62,7 @@ public class Pump extends DamageableBuilding implements ThroughLiquid {
 
         float amountPerTarget = PRODUCTION_RATE / targets.size();
         for (ReceiveLiquid receiver : targets) {
-            receiver.receiveLiquid(this, LiquidType.WATER, amountPerTarget);
+            receiver.receiveLiquid(this, liquidType, amountPerTarget);
         }
     }
 

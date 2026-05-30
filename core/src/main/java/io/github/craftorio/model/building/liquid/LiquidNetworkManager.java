@@ -4,6 +4,7 @@ import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.item.LiquidType;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -44,9 +45,14 @@ public class LiquidNetworkManager {
             queue.add(start);
             visited.add(start);
 
+            LiquidType currLiquid = null;
+
             while (!queue.isEmpty()) {
                 Pipe current = queue.poll();
                 network.addMember(current);
+                if (current.getPrevLiquidType() != null) {
+                    currLiquid = current.getPrevLiquidType();
+                }
 
                 Point currentPos = new Point(current.getX(), current.getY());
 
@@ -70,13 +76,14 @@ public class LiquidNetworkManager {
                     }
 
                     Point neighborPos = new Point(nx, ny);
+                    System.out.println(neighborPos + " " + current.getPrevLiquidType() + " " + neighbor.getPrevLiquidType());
                     boolean connected =
                         (current.canThroughLiquidIn(neighborPos)
-                            && neighbor.canReceiveLiquidFrom(current, currentPos))
+                            && neighbor.canReceiveLiquidFrom(current, currentPos, current.getPrevLiquidType()))
                             || (neighbor.canThroughLiquidIn(currentPos)
-                            && current.canReceiveLiquidFrom(neighbor, neighborPos));
+                            && current.canReceiveLiquidFrom(neighbor, neighborPos, neighbor.getPrevLiquidType()));
 
-                    if (connected) {
+                    if (connected && !(neighbor.getPrevLiquidType() != null && neighbor.getPrevLiquidType() != currLiquid)) {
                         visited.add(neighbor);
                         queue.add(neighbor);
                     }

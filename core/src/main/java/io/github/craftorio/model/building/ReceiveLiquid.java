@@ -6,5 +6,5 @@ import java.awt.*;
 
 public interface ReceiveLiquid {
     float receiveLiquid(Building from, LiquidType type, float amount);
-    boolean canReceiveLiquidFrom(Building from, Point point);
+    boolean canReceiveLiquidFrom(Building from, Point point, LiquidType type);
 }
