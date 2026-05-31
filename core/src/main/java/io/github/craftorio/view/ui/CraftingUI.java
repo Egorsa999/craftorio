@@ -141,21 +141,33 @@ public class CraftingUI implements UIRenderer {
         pbYellowKnobTexture = new Texture(pbYellowKnobPix);
         pbYellowKnobPix.dispose();
 
-        Pixmap emptyPix = new Pixmap(1, 10, Pixmap.Format.RGBA8888);
+        Pixmap emptyPix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         emptyPix.setColor(0, 0, 0, 0f);
         emptyPix.fill();
         pbEmptyTexture = new Texture(emptyPix);
         emptyPix.dispose();
 
+        TextureRegionDrawable bgDrawable = new TextureRegionDrawable(new TextureRegion(pbBgTexture));
+        bgDrawable.setMinHeight(10);
+
+        TextureRegionDrawable knobBeforeGreen = new TextureRegionDrawable(new TextureRegion(pbKnobTexture));
+        knobBeforeGreen.setMinWidth(0);
+
+        TextureRegionDrawable knobBeforeYellow = new TextureRegionDrawable(new TextureRegion(pbYellowKnobTexture));
+        knobBeforeYellow.setMinWidth(0);
+
+        TextureRegionDrawable emptyKnob = new TextureRegionDrawable(new TextureRegion(pbEmptyTexture));
+        emptyKnob.setMinWidth(0);
+
         progressBarStyle = new ProgressBar.ProgressBarStyle();
-        progressBarStyle.background = new TextureRegionDrawable(new TextureRegion(pbBgTexture));
-        progressBarStyle.knob = new TextureRegionDrawable(new TextureRegion(pbEmptyTexture));
-        progressBarStyle.knobBefore = new TextureRegionDrawable(new TextureRegion(pbKnobTexture));
+        progressBarStyle.background = bgDrawable;
+        progressBarStyle.knob = emptyKnob;
+        progressBarStyle.knobBefore = knobBeforeGreen;
 
         powerProgressBarStyle = new ProgressBar.ProgressBarStyle();
-        powerProgressBarStyle.background = new TextureRegionDrawable(new TextureRegion(pbBgTexture));
-        powerProgressBarStyle.knob = new TextureRegionDrawable(new TextureRegion(pbEmptyTexture));
-        powerProgressBarStyle.knobBefore = new TextureRegionDrawable(new TextureRegion(pbYellowKnobTexture));
+        powerProgressBarStyle.background = bgDrawable;
+        powerProgressBarStyle.knob = emptyKnob;
+        powerProgressBarStyle.knobBefore = knobBeforeYellow;
 
         rootTable.add(windowTable).minWidth(500).minHeight(400);
         stage.addActor(rootTable);
@@ -259,13 +271,15 @@ public class CraftingUI implements UIRenderer {
         Table progressBarsTable = new Table();
         if (module.usesPower()) {
             powerProgressBar = new ProgressBar(0f, 1f, 0.01f, false, powerProgressBarStyle);
-            progressBarsTable.add(powerProgressBar).width(120).padBottom(5).row();
+            powerProgressBar.setValue(0);
+            progressBarsTable.add(powerProgressBar).width(120).height(10).padBottom(5).row();
         } else {
             powerProgressBar = null;
         }
 
         currentProgressBar = new ProgressBar(0f, 1f, 0.01f, false, progressBarStyle);
-        progressBarsTable.add(currentProgressBar).width(120);
+        currentProgressBar.setValue(0);
+        progressBarsTable.add(currentProgressBar).width(120).height(10);
 
         progressBarsTable.setVisible(module.getRecipe() != null);
 
@@ -376,7 +390,7 @@ public class CraftingUI implements UIRenderer {
         pbBgTexture.dispose();
         pbKnobTexture.dispose();
         pbYellowKnobTexture.dispose();
-        pbEmptyTexture.dispose();
+        if (pbEmptyTexture != null) pbEmptyTexture.dispose();
         if (customFont != null) customFont.dispose();
         if (smallFont != null) smallFont.dispose();
     }
