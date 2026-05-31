@@ -42,10 +42,11 @@ public class CraftModule {
             progress += satisfactionRatio;
             if (progress >= currentRecipe.getCraftTicks()) {
                 finishCrafting();
+            } else {
+                return;
             }
-        } else {
-            tryStartCrafting();
         }
+        tryStartCrafting();
     }
 
     private void tryStartCrafting() {
