@@ -1,6 +1,7 @@
 package io.github.craftorio.view.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -71,14 +74,14 @@ public class BuildMenuUI implements UIRenderer {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Silkscreen-Regular.ttf"));
 
         FreeTypeFontGenerator.FreeTypeFontParameter paramTitle = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        paramTitle.size = 19;
+        paramTitle.size = 25;
         paramTitle.color = Color.WHITE;
         paramTitle.minFilter = Texture.TextureFilter.Nearest;
         paramTitle.magFilter = Texture.TextureFilter.Nearest;
         this.titleFont = generator.generateFont(paramTitle);
 
         FreeTypeFontGenerator.FreeTypeFontParameter paramCost = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        paramCost.size = 13;
+        paramCost.size = 19;
         paramCost.color = Color.WHITE;
         paramCost.minFilter = Texture.TextureFilter.Nearest;
         paramCost.magFilter = Texture.TextureFilter.Nearest;
@@ -120,6 +123,15 @@ public class BuildMenuUI implements UIRenderer {
         windowTable.setBackground(darkBg);
         windowTable.pad(20);
 
+        // --- ДЕЛАЕМ ГЛАВНОЕ МЕНЮ ТВЕРДЫМ ---
+        windowTable.setTouchable(Touchable.enabled);
+        windowTable.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+        });
+
         infoTable = new Table();
         infoTable.left();
 
@@ -129,10 +141,24 @@ public class BuildMenuUI implements UIRenderer {
         Table textTable = new Table();
         titleLabel = new Label("", titleStyle);
         titleLabel.setEllipsis(true);
+
+        Label helpButton = new Label("[?]", titleStyle);
+        helpButton.setColor(Color.YELLOW);
+
+        helpButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (lastSelectedType != null) {
+                    showDetailedInfoWindow(lastSelectedType);
+                }
+            }
+        });
+
         costTable = new Table();
         costTable.top().left();
 
         textTable.add(titleLabel).expandX().fillX().left().row();
+        textTable.add(helpButton).right().padRight(10).row();
         textTable.add(costTable).left().top().expandY();
 
         infoTable.add(infoIcon).size(72, 72).padRight(16).top();
@@ -191,6 +217,77 @@ public class BuildMenuUI implements UIRenderer {
 
         rootTable.add(windowTable).pad(25);
         stage.addActor(rootTable);
+    }
+
+    private void showDetailedInfoWindow(BuildingType type) {
+        final Table overlay = new Table();
+        overlay.setFillParent(true);
+
+        overlay.setTouchable(Touchable.enabled);
+
+        TextureRegionDrawable darkOverlay = new TextureRegionDrawable(new TextureRegion(darkBgTexture));
+        overlay.setBackground(darkOverlay);
+
+        overlay.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                overlay.remove();
+            }
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    overlay.remove();
+                    return true; // Съедаем событие, чтобы оно не ушло в игру
+                }
+                return false;
+            }
+        });
+
+        Table window = new Table();
+
+        window.setTouchable(Touchable.enabled);
+        window.setBackground(darkOverlay);
+        window.pad(30);
+        window.setBackground(selectedOutline);
+
+        Label title = new Label(type.getDisplayName(), titleStyle);
+        title.setColor(Color.ORANGE);
+
+        TextureRegion iconRegion = getSafeRegion(textures.get(type));
+        Image icon = new Image(iconRegion);
+        icon.setScaling(Scaling.fit);
+
+        // --- ИСПОЛЬЗУЕМ НОВЫЙ КЛАСС ДЛЯ ТЕКСТА ---
+        String descText = BuildingInfoProvider.getDetailedText(type);
+        Label descLabel = new Label(descText, costStyle);
+        descLabel.setWrap(true);
+        descLabel.setAlignment(Align.center);
+
+        Label closeLabel = new Label("(Click anywhere or press ESC to close)", costStyle);
+        closeLabel.setColor(Color.GRAY);
+
+        window.add(title).padBottom(20).row();
+        window.add(icon).size(128, 128).padBottom(20).row();
+        window.add(descLabel).width(400).padBottom(30).row();
+        window.add(closeLabel).row();
+
+        window.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+        });
+
+        overlay.add(window);
+        stage.addActor(overlay);
+
+        stage.setKeyboardFocus(overlay);
     }
 
     private void updateInfoPanel(BuildingType type) {
@@ -288,6 +385,7 @@ public class BuildMenuUI implements UIRenderer {
 
     @Override
     public void render() {
+        stage.getViewport().apply();
         update();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();

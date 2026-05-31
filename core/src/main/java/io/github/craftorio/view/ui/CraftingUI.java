@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -78,7 +80,7 @@ public class CraftingUI implements UIRenderer {
         this.customFont = generator.generateFont(parameter);
 
         FreeTypeFontGenerator.FreeTypeFontParameter smallParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        smallParam.size = 12;
+        smallParam.size = 15;
         smallParam.color = Color.WHITE;
         smallParam.minFilter = Texture.TextureFilter.Nearest;
         smallParam.magFilter = Texture.TextureFilter.Nearest;
@@ -99,6 +101,13 @@ public class CraftingUI implements UIRenderer {
         windowTable = new Table();
         windowTable.pad(20);
 
+        windowTable.setTouchable(Touchable.enabled);
+        windowTable.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+        });
         inputSlotsTable = new Table();
         outputSlotTable = new Table();
 
@@ -220,6 +229,9 @@ public class CraftingUI implements UIRenderer {
             if (needsLiquids && !supportsLiquids) continue;
 
             Table recipeRow = new Table();
+
+            recipeRow.setTouchable(Touchable.enabled);
+
             if (module.getRecipe() == recipe) {
                 recipeRow.setBackground(selectedSlotDrawable);
             } else {
@@ -358,13 +370,18 @@ public class CraftingUI implements UIRenderer {
     }
 
     public void render() {
+        stage.getViewport().apply();
         if (rootTable.isVisible()) {
             if (currentCraftable != null) {
                 if (currentProgressBar != null) {
                     currentProgressBar.setValue(currentCraftable.getCraftModule().getProgress());
                 }
                 if (powerProgressBar != null) {
-                    powerProgressBar.setValue(currentCraftable.getCraftModule().getSatisfactionRatio());
+                    if (currentCraftable.getCraftModule().isCrafting()) {
+                        powerProgressBar.setValue(currentCraftable.getCraftModule().getSatisfactionRatio());
+                    } else {
+                        powerProgressBar.setValue(0f);
+                    }
                 }
                 updateInventories();
             }
