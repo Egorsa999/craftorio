@@ -101,6 +101,7 @@ public class InventoryUI implements UIRenderer{
     }
 
     public void render() {
+        stage.getViewport().apply();
         update();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
