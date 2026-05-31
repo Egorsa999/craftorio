@@ -6,8 +6,11 @@ import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.core.BuildingManager;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.item.ItemType;
 
 import java.awt.Point;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BuildTool {
     private BuildingType selectedType = null;
@@ -21,10 +24,12 @@ public class BuildTool {
     private final BuildingManager buildingManager;
     private final BuildingFactory factory;
     private Building ghostBuilding = null;
+    private final Inventory inventory;
 
-    public BuildTool(BuildingManager buildingManager, BuildingFactory factory){
+    public BuildTool(BuildingManager buildingManager, BuildingFactory factory, Inventory inventory){
         this.buildingManager = buildingManager;
         this.factory = factory;
+        this.inventory = inventory;
     }
 
     public void selectBuilding(BuildingType type) {
@@ -100,9 +105,14 @@ public class BuildTool {
 
     public boolean tryBuild() {
         if (!isValidPlace()) return false;
+        HashMap<ItemType, Integer> map = new HashMap<>();
         for (Point point : getTargetPositions()) {
+            for (Map.Entry<ItemType, Integer> entry : selectedType.getCost().entrySet()) {
+                map.put(entry.getKey(), map.getOrDefault(entry.getKey(), 0) + entry.getValue());
+            }
             if (!buildingManager.tryPlaceBuilding(selectedType, point, currentRotation)) return false;
         }
+        inventory.take(map);
         return true;
     }
 
@@ -114,10 +124,14 @@ public class BuildTool {
 
     public boolean isValidPlace() {
         if (!isActive() || eraseMode) return false;
+        HashMap<ItemType, Integer> map = new HashMap<>();
         for (Point point : getTargetPositions()) {
+            for (Map.Entry<ItemType, Integer> entry : selectedType.getCost().entrySet()) {
+                map.put(entry.getKey(), map.getOrDefault(entry.getKey(), 0) + entry.getValue());
+            }
             if (!buildingManager.isValidPlace(selectedType, point, currentRotation)) return false;
         }
-        return true;
+        return inventory.canTake(map);
     }
 
     private Array<Point> getTargetPositions() {
