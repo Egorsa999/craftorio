@@ -165,7 +165,6 @@ public class CraftingUI implements UIRenderer {
             boolean needsItems = !recipe.getInputItems().isEmpty() || !recipe.getOutputItems().isEmpty();
             boolean needsLiquids = !recipe.getInputLiquids().isEmpty() || !recipe.getOutputLiquids().isEmpty();
 
-            // Скрываем рецепты, которые здание не может потянуть физически
             if (needsItems && !supportsItems) continue;
             if (needsLiquids && !supportsLiquids) continue;
 
@@ -177,12 +176,10 @@ public class CraftingUI implements UIRenderer {
             }
             recipeRow.pad(10);
 
-            // Отрисовка аутпутов в списке рецептов (Предметы)
             for (Map.Entry<ItemType, Integer> outItem : recipe.getOutputItems().entrySet()) {
                 recipeRow.add(new Image(textures.get(outItem.getKey()).getFirstFrame())).size(32, 32).padRight(5);
                 recipeRow.add(new Label("x" + outItem.getValue(), labelStyle)).padRight(15);
             }
-            // Отрисовка аутпутов в списке рецептов (Жидкости)
             for (Map.Entry<LiquidType, Float> outLiq : recipe.getOutputLiquids().entrySet()) {
                 recipeRow.add(new Image(textures.get(outLiq.getKey()).getFirstFrame())).size(32, 32).padRight(5);
                 recipeRow.add(new Label("x" + String.format(Locale.US, "%.1f", outLiq.getValue()), labelStyle)).padRight(15);
@@ -191,13 +188,11 @@ public class CraftingUI implements UIRenderer {
             float seconds = recipe.getCraftTicks() / 60f;
             recipeRow.add(new Label(String.format(Locale.US, "%.1fs", seconds), labelStyle)).padRight(15);
 
-            // Отрисовка инпутов в списке рецептов (Предметы)
             Table ingTable = new Table();
             for (Map.Entry<ItemType, Integer> inItem : recipe.getInputItems().entrySet()) {
                 ingTable.add(new Image(textures.get(inItem.getKey()).getFirstFrame())).size(24, 24).padRight(2);
                 ingTable.add(new Label("x" + inItem.getValue(), labelStyle)).padRight(10);
             }
-            // Отрисовка инпутов в списке рецептов (Жидкости)
             for (Map.Entry<LiquidType, Float> inLiq : recipe.getInputLiquids().entrySet()) {
                 ingTable.add(new Image(textures.get(inLiq.getKey()).getFirstFrame())).size(24, 24).padRight(2);
                 ingTable.add(new Label("x" + String.format(Locale.US, "%.1f", inLiq.getValue()), labelStyle)).padRight(10);
@@ -208,7 +203,7 @@ public class CraftingUI implements UIRenderer {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     module.setRecipe(recipe);
-                    updateUI(); // Перерисовываем UI при смене рецепта
+                    updateUI();
                 }
             });
 
@@ -259,7 +254,6 @@ public class CraftingUI implements UIRenderer {
         }
     }
 
-    // Хелпер для создания ячейки предмета
     private Table createItemSlot(ItemType type, int amount) {
         Table slot = new Table();
         slot.setBackground(slotDrawable);
@@ -269,7 +263,6 @@ public class CraftingUI implements UIRenderer {
         return slot;
     }
 
-    // Хелпер для создания ячейки жидкости
     private Table createLiquidSlot(LiquidType type, float amount) {
         Table slot = new Table();
         slot.setBackground(slotDrawable);

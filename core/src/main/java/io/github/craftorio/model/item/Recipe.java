@@ -31,6 +31,13 @@ public enum Recipe {
         Map.of(ItemType.BULLET, 3),
         Collections.emptyMap(),
         60
+    ),
+    IRON_INGOT(
+        Map.of(ItemType.IRON_ORE, 2),
+        Collections.emptyMap(),
+        Map.of(ItemType.COPPER_ORE, 1),
+        Collections.emptyMap(),
+        120
     );
 
     private final Map<ItemType, Integer> inputItems;

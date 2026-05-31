@@ -61,6 +61,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.PUMP, load("pump"));
         buildingSprites.put(BuildingType.COAL_POWER_GENERATOR, load("coal-generator"));
         buildingSprites.put(BuildingType.POWER_POLE, load("power-node"));
+        buildingSprites.put(BuildingType.FURNACE, load("furnace"));
 
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));
