@@ -20,10 +20,22 @@ public class Inventory {
         return items.getOrDefault(item, 0) >= quantity;
     }
 
-    public boolean take(ItemType item, Integer quantity){
-        if (!isContains(item, quantity))return false;
-        items.put(item, items.getOrDefault(item, 0) + quantity);
+    public boolean canTake(Map<ItemType, Integer> map) {
+        for (Map.Entry<ItemType, Integer> entry : map.entrySet()) {
+            if (items.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
+                return false;
+            }
+        }
         return true;
+    }
+
+    public void take(Map<ItemType, Integer> map) {
+        for (Map.Entry<ItemType, Integer> entry : map.entrySet()) {
+            items.put(entry.getKey(), items.getOrDefault(entry.getKey(), 0) - entry.getValue());
+            if (items.getOrDefault(entry.getKey(), 0) == 0) {
+                items.remove(entry.getKey());
+            }
+        }
     }
 
     public Map<ItemType, Integer> getItems(){

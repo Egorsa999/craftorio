@@ -49,6 +49,8 @@ public class TextureLoad {
         terrarianSprites.put(TerrainType.OIL, load("oil"));
 
         buildingSprites.put(BuildingType.MINER, load("miner"));
+        buildingSprites.put(BuildingType.BELT, load("conveyor"));
+        buildingSprites.put(BuildingType.PIPE, load("conduit-top-0"));
         buildingSprites.put(BuildingType.HORIZONTAL_MINER, load("horizontal_miner"));
         buildingSprites.put(BuildingType.CORE, load("core"));
         buildingSprites.put(BuildingType.ASSEMBLER, load("assembler"));
@@ -63,6 +65,7 @@ public class TextureLoad {
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));
         StringSprites.put("bullet", load("bullet"));
+        StringSprites.put("horizontal-miner-icon", load("horizontal-miner-icon"));
 
         StringSprites.put("player_idle_side", loadAnimated("player_idle_side", 0.15f));
         StringSprites.put("player_idle_up", loadAnimated("player_idle_up", 0.15f));

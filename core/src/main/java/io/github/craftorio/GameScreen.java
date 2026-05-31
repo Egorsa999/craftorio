@@ -13,12 +13,14 @@ import io.github.craftorio.model.core.*;
 import io.github.craftorio.model.enemy.PathFinder;
 import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.entity.Player;
+import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.ui.BuildTool;
 import io.github.craftorio.model.ui.Inventory;
 import io.github.craftorio.view.CameraManager;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.WorldRenderer;
 import io.github.craftorio.view.ui.AssemblerUI;
+import io.github.craftorio.view.ui.BuildMenuUI;
 import io.github.craftorio.view.ui.InventoryUI;
 
 import java.awt.Point;
@@ -34,6 +36,7 @@ public class GameScreen implements Screen {
     private final WorldRenderer worldRenderer;
     private final InventoryUI inventoryUI;
     private final AssemblerUI assemblerUI;
+    private final BuildMenuUI buildMenuUI;
     private final TextureAtlas atlas;
 
     // Controllers
@@ -67,6 +70,7 @@ public class GameScreen implements Screen {
         WorldMap worldMap = new WorldMap(GameConfig.WORLD_SIZE_WIDTH, GameConfig.WORLD_SIZE_HEIGHT);
         BuildingRegistry buildingRegistry = new BuildingRegistry();
         Inventory inventory = new Inventory();
+        inventory.add(ItemType.COPPER_ORE, 100);
 
         Point spawnPoint = worldMap.findSpawnPoint();
         Player player = new Player(worldMap, buildingRegistry, spawnPoint);
@@ -81,7 +85,7 @@ public class GameScreen implements Screen {
         BuildingFactory factory = new BuildingFactory(buildingRegistry, inventory, worldMap, engine);
 
         BuildingManager buildingManager = new BuildingManager(buildingRegistry, worldMap, factory, player);
-        this.buildTool = new BuildTool(buildingManager, factory);
+        this.buildTool = new BuildTool(buildingManager, factory, inventory);
 
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
 
@@ -92,6 +96,7 @@ public class GameScreen implements Screen {
 
         this.inventoryUI = new InventoryUI(textures, inventory);
         this.assemblerUI = new AssemblerUI(textures);
+        this.buildMenuUI = new BuildMenuUI(buildTool, inventory, textures);
 
         // Controller creation
         this.playerController = new PlayerController(player, playerCamera);
@@ -105,6 +110,7 @@ public class GameScreen implements Screen {
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(inventoryUI.getStage());
         multiplexer.addProcessor(assemblerUI.getStage());
+        multiplexer.addProcessor(buildMenuUI.getStage());
         multiplexer.addProcessor(buildInputHandler);
         multiplexer.addProcessor(worldInteractionHandler);
         multiplexer.addProcessor(debugInputHandler);
@@ -135,6 +141,7 @@ public class GameScreen implements Screen {
         worldRenderer.render();
         inventoryUI.render();
         assemblerUI.render();
+        buildMenuUI.render();
     }
 
     @Override
@@ -142,6 +149,7 @@ public class GameScreen implements Screen {
         playerCamera.resize(width, height);
         inventoryUI.resize(width, height);
         assemblerUI.resize(width, height);
+        buildMenuUI.resize(width, height);
     }
 
     @Override
@@ -162,6 +170,7 @@ public class GameScreen implements Screen {
         worldRenderer.dispose();
         inventoryUI.dispose();
         assemblerUI.dispose();
+        buildMenuUI.dispose();
         atlas.dispose();
     }
 }
