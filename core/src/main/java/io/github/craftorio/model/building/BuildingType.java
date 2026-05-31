@@ -14,7 +14,9 @@ public enum BuildingType {
     PUMP(1, 1, false, 50),
     COAL_POWER_GENERATOR(1, 1, false, 200),
     POWER_POLE(1, 1, false, 100),
-    FURNACE(2, 2, false, 100);
+    FURNACE(2, 2, false, 100),
+    CHEMICAL_PLANT(2, 2, false, 100);
+
 
 
     private final int width;

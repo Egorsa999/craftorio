@@ -62,6 +62,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.COAL_POWER_GENERATOR, load("coal-generator"));
         buildingSprites.put(BuildingType.POWER_POLE, load("power-node"));
         buildingSprites.put(BuildingType.FURNACE, load("furnace"));
+        buildingSprites.put(BuildingType.CHEMICAL_PLANT, load("chemical-plant"));
 
         StringSprites.put("player", load("player"));
         StringSprites.put("blank", load("blank"));
@@ -95,6 +96,7 @@ public class TextureLoad {
 
         liquidSprites.put(LiquidType.WATER, load("liquid-water"));
         liquidSprites.put(LiquidType.OIL, load("liquid-oil"));
+        liquidSprites.put(LiquidType.ROCKET_FUEL, load("liquid-rocket-fuel"));
     }
 
     private GameSprite load(String regionName) {

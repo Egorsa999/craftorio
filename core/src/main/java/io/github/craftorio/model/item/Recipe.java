@@ -25,6 +25,13 @@ public enum Recipe {
         Map.of(LiquidType.OIL, 1.0f),
         90
     ),
+    ROCKET_FUEL(
+        Collections.emptyMap(),
+        Map.of(LiquidType.WATER, 10.0f, LiquidType.OIL, 5.0f),
+        Collections.emptyMap(),
+        Map.of(LiquidType.ROCKET_FUEL, 1.0f),
+        120
+    ),
     BULLET(
         Map.of(ItemType.COPPER_ORE, 1, ItemType.COAL, 1),
         Collections.emptyMap(),

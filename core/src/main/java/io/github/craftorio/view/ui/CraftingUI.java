@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.item.Recipe;
@@ -51,6 +53,7 @@ public class CraftingUI implements UIRenderer {
     private ProgressBar.ProgressBarStyle progressBarStyle;
 
     private BitmapFont customFont;
+    private final GlyphLayout glyphLayout = new GlyphLayout();
 
     private Craftable currentCraftable;
     private TextureLoad textures;
@@ -254,12 +257,27 @@ public class CraftingUI implements UIRenderer {
         }
     }
 
+    private Label createFitLabel(String text, float maxWidth) {
+        Label label = new Label(text, labelStyle);
+        label.setAlignment(Align.center);
+
+        glyphLayout.setText(customFont, text);
+
+        if (glyphLayout.width > maxWidth) {
+            label.setFontScale(maxWidth / glyphLayout.width);
+        } else {
+            label.setFontScale(1f);
+        }
+
+        return label;
+    }
+
     private Table createItemSlot(ItemType type, int amount) {
         Table slot = new Table();
         slot.setBackground(slotDrawable);
         TextureRegion reg = textures.get(type).getFirstFrame();
         slot.add(new Image(reg)).size(24, 24).padBottom(2).row();
-        slot.add(new Label(String.valueOf(amount), labelStyle));
+        slot.add(createFitLabel(String.valueOf(amount), 44f));
         return slot;
     }
 
@@ -268,7 +286,7 @@ public class CraftingUI implements UIRenderer {
         slot.setBackground(slotDrawable);
         TextureRegion reg = textures.get(type).getFirstFrame();
         slot.add(new Image(reg)).size(24, 24).padBottom(2).row();
-        slot.add(new Label(String.format(Locale.US, "%.1f", amount), labelStyle));
+        slot.add(createFitLabel(String.format(Locale.US, "%.1f", amount), 44f));
         return slot;
     }
 
