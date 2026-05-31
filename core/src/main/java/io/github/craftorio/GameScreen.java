@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.craftorio.controller.*;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
@@ -148,9 +149,19 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         playerCamera.resize(width, height);
-        inventoryUI.resize(width, height);
-        buildMenuUI.resize(width, height);
-        craftingUI.resize(width, height);
+        Viewport gameViewport = playerCamera.getViewport();
+        int gameX = gameViewport.getScreenX();
+        int gameY = gameViewport.getScreenY();
+        int gameWidth = gameViewport.getScreenWidth();
+        int gameHeight = gameViewport.getScreenHeight();
+
+        inventoryUI.resize(gameWidth, gameHeight);
+        buildMenuUI.resize(gameWidth, gameHeight);
+        craftingUI.resize(gameWidth, gameHeight);
+
+        inventoryUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
+        buildMenuUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
+        craftingUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
     }
 
     @Override

@@ -33,9 +33,20 @@ public class PowerNetwork {
         component.setNetwork(null);
 
         Building owner = component.getOwner();
-        if (owner instanceof PowerConsumer c) consumers.add(c);
-        if (owner instanceof PowerProducer p) producers.add(p);
-        if (owner instanceof Battery b) batteries.add(b);
+
+        if (owner instanceof PowerConsumer c) {
+            consumers.remove(c);
+            c.setSatisfactionRatio(0f);
+        }
+
+        if (owner instanceof PowerProducer p) {
+            producers.remove(p);
+            p.setLoadRatio(0f);
+        }
+
+        if (owner instanceof Battery b) {
+            batteries.remove(b);
+        }
     }
 
     public void update() {
@@ -60,7 +71,6 @@ public class PowerNetwork {
         float productionRatio = 1.0f;
 
         float netEnergy = totalSupply - totalDemand;
-        //System.out.println(netEnergy);
 
 
 
@@ -91,6 +101,7 @@ public class PowerNetwork {
             }
             chargeBatteries(0f, 1f);
         }
+
 
 
         if (totalDemand == 0f && totalBatteryChargeSpace == 0f) {
