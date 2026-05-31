@@ -12,11 +12,17 @@ import java.util.List;
 public class Enemy {
 
     private float x, y;
-    private float speed;
-    private int coolDown = 60;
-    private int damage = 30;
-    private int attackTimer = 0;
-    private int hp = 20;
+    private final float speed;
+    private final int coolDown;
+    private final int damage;
+    private int attackTimer;
+    private int hp;
+
+    public EnemyType getType() {
+        return type;
+    }
+
+    private final EnemyType type;
 
     private int directionChangeCounter = 0;
 
@@ -26,18 +32,26 @@ public class Enemy {
 
     private Direction direction = Direction.LEFT;
 
-    private static final float HITBOX_SIZE = 0.7f;
 
     private PathFinder pathFinder;
     private BuildingRegistry registry;
     private WorldMap worldMap;
     private List<Enemy> allEnemies;
 
-    public Enemy(float x, float y, float speed, PathFinder pathFinder, BuildingRegistry registry, List<Enemy> allEnemies,
+    private final float hitboxSize;
+
+    public Enemy(float x, float y, EnemyType type, PathFinder pathFinder, BuildingRegistry registry, List<Enemy> allEnemies,
                  WorldMap worldMap) {
         this.x = x;
         this.y = y;
-        this.speed = speed;
+        this.speed = type.getSpeed();
+        this.coolDown = type.getCoolDown();
+        this.damage = type.getDamage();
+        this.hp = type.getHp();
+        this.hitboxSize = type.getHitbox();
+
+        this.type = type;
+
         this.pathFinder = pathFinder;
         this.registry = registry;
         this.allEnemies = allEnemies;
@@ -52,7 +66,7 @@ public class Enemy {
             attackTimer--;
         }
 
-        float[] flowDir = getAverageFlowDirection();
+        float[] flowDir = getInterpolatedFlowDirection();
         float fdx = flowDir[0];
         float fdy = flowDir[1];
 
@@ -93,11 +107,10 @@ public class Enemy {
             boolean movedX = tryMove(finalX, 0);
 
             if (!movedX) {
-                tryMove(0, finalY);
+                 tryMove(0, finalY);
             }
         }
     }
-
 
     private float[] getSeparationVector() {
         float pushX = 0;
@@ -110,42 +123,64 @@ public class Enemy {
             float distY = this.y - other.y;
             float distSq = distX * distX + distY * distY;
 
-            if (distSq > 0 && distSq < 1.0f) {
-                float dist = (float) Math.sqrt(distSq);
-                float overlap = 1.0f - dist;
+            float maxDist = (this.hitboxSize + other.hitboxSize) / 2f;
+            float maxDistSq = maxDist * maxDist;
 
-                pushX += (distX / dist) * overlap * 0.2f;
-                pushY += (distY / dist) * overlap * 0.2f;
+            if (distSq == 0) {
+                pushX += (float) (Math.random() - 0.5) * 0.1f;
+                pushY += (float) (Math.random() - 0.5) * 0.1f;
+                continue;
+            }
+
+            if (distSq < maxDistSq) {
+                float dist = (float) Math.sqrt(distSq);
+                float overlap = maxDist - dist;
+
+                float forceX = (distX / dist) * overlap * 0.2f;
+                float forceY = (distY / dist) * overlap * 0.2f;
+
+                float jitterX = (float) (Math.random() - 0.5) * 0.02f;
+                float jitterY = (float) (Math.random() - 0.5) * 0.02f;
+
+                pushX += forceX + jitterX;
+                pushY += forceY + jitterY;
             }
         }
 
         return new float[]{pushX, pushY};
     }
 
-    private float[] getAverageFlowDirection() {
-        float half = HITBOX_SIZE / 2f;
+    private float lerp(float a, float b, float t) {
+        return a + t * (b - a);
+    }
 
-        float[][] points = {
-            {x, y},
-            {x - half, y - half},
-            {x + half, y - half},
-            {x - half, y + half},
-            {x + half, y + half}
-        };
+    private float[] getInterpolatedFlowDirection() {
+        PathFinder.SizeClass sizeClass = (this.hitboxSize > 1.5f) ?
+            PathFinder.SizeClass.HEAVY : PathFinder.SizeClass.SMALL;
 
-        float sumX = 0;
-        float sumY = 0;
+        float px = this.x - 0.5f;
+        float py = this.y - 0.5f;
 
-        for (float[] p : points) {
-            int gx = (int) p[0];
-            int gy = (int) p[1];
-            Point pointDir = pathFinder.getFlowDirection(gx, gy);
+        int gx = (int) Math.floor(px);
+        int gy = (int) Math.floor(py);
 
-            sumX += pointDir.x;
-            sumY += pointDir.y;
-        }
+        float tx = px - gx;
+        float ty = py - gy;
 
-        return new float[]{sumX, sumY};
+        Point v00 = pathFinder.getFlowDirection(gx, gy, sizeClass);
+        Point v10 = pathFinder.getFlowDirection(gx + 1, gy, sizeClass);
+        Point v01 = pathFinder.getFlowDirection(gx, gy + 1, sizeClass);
+        Point v11 = pathFinder.getFlowDirection(gx + 1, gy + 1, sizeClass);
+
+        float bottomX = lerp(v00.x, v10.x, tx);
+        float topX = lerp(v01.x, v11.x, tx);
+        float finalDx = lerp(bottomX, topX, ty);
+
+        float bottomY = lerp(v00.y, v10.y, tx);
+        float topY = lerp(v01.y, v11.y, tx);
+        float finalDy = lerp(bottomY, topY, ty);
+
+        return new float[]{finalDx, finalDy};
     }
 
 
@@ -164,23 +199,33 @@ public class Enemy {
     }
 
     private boolean isAreaFree(float testX, float testY) {
-        float halfHitbox = HITBOX_SIZE / 2f;
+        float halfHitbox = hitboxSize / 2f;
 
         float left = testX - halfHitbox;
         float right = testX + halfHitbox;
         float bottom = testY - halfHitbox;
         float top = testY + halfHitbox;
 
-        return isWalkable(left, bottom) &&
-            isWalkable(right, bottom) &&
-            isWalkable(left, top) &&
-            isWalkable(right, top);
+        int minX = (int) Math.floor(left);
+        int maxX = (int) Math.floor(right);
+        int minY = (int) Math.floor(bottom);
+        int maxY = (int) Math.floor(top);
+
+        for (int gx = minX; gx <= maxX; gx++) {
+            for (int gy = minY; gy <= maxY; gy++) {
+                if (gx + 1 <= left || gx >= right || gy + 1 <= bottom || gy >= top) {
+                    continue;
+                }
+
+                if (!isTileWalkable(gx, gy)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
-    private boolean isWalkable(float checkX, float checkY) {
-        int gx = (int) checkX;
-        int gy = (int) checkY;
-
+    private boolean isTileWalkable(int gx, int gy) {
         if (gx < 0 || gx >= worldMap.getWidth() || gy < 0 || gy >= worldMap.getHeight()) {
             return false;
         }
@@ -195,23 +240,23 @@ public class Enemy {
         if (attackTimer > 0) return;
         if (dirX == 0 && dirY == 0) return;
 
-
         float len = (float) Math.sqrt(dirX * dirX + dirY * dirY);
         float normX = dirX / len;
         float normY = dirY / len;
 
-
+        float half = hitboxSize / 2f;
         float attackReach = 0.35f;
-        float attackCenterX = this.x + (normX * attackReach);
-        float attackCenterY = this.y + (normY * attackReach);
+
+        float attackLeft = (this.x - half) + (normX * attackReach);
+        float attackRight = (this.x + half) + (normX * attackReach);
+        float attackBottom = (this.y - half) + (normY * attackReach);
+        float attackTop = (this.y + half) + (normY * attackReach);
 
 
-        float half = HITBOX_SIZE / 2f;
-
-        int minX = (int) Math.floor(attackCenterX - half);
-        int maxX = (int) Math.floor(attackCenterX + half);
-        int minY = (int) Math.floor(attackCenterY - half);
-        int maxY = (int) Math.floor(attackCenterY + half);
+        int minX = (int) Math.floor(attackLeft);
+        int maxX = (int) Math.floor(attackRight);
+        int minY = (int) Math.floor(attackBottom);
+        int maxY = (int) Math.floor(attackTop);
 
 
         for (int gx = minX; gx <= maxX; gx++) {
@@ -219,7 +264,6 @@ public class Enemy {
 
                 if (gx >= 0 && gx < worldMap.getWidth() && gy >= 0 && gy < worldMap.getHeight()) {
                     Building targetBuilding = registry.getBuildingAt(gx, gy);
-
 
                     if (targetBuilding instanceof DamageableBuilding building) {
                         building.receiveDamage(damage);

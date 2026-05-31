@@ -60,13 +60,13 @@ public class SimulationEngine {
 
         liquidNetworkManager.tick();
 
-        for (Enemy enemy : waveSpawner.getEnemies()){
+        for (Enemy enemy : waveSpawner.getActiveEnemies()){
             enemy.update();
         }
 
         for (int i = bullets.size() - 1; i >= 0; i--) {
             Bullet b = bullets.get(i);
-            b.update(waveSpawner.getEnemies());
+            b.update(waveSpawner.getActiveEnemies());
 
             if (b.isDead()) {
                 bullets.remove(i);
@@ -77,6 +77,6 @@ public class SimulationEngine {
     }
 
     public List<Enemy> getEnemies() {
-        return waveSpawner.getEnemies();
+        return waveSpawner.getActiveEnemies();
     }
 }

@@ -21,18 +21,21 @@ public class EnemyLayerRenderer implements LayerRenderer{
 
     @Override
     public void render(SpriteBatch batch, VisibleBounds bounds, float stateTime) {
-        for (Enemy enemy : waveSpawner.getEnemies()){
-            float x = enemy.getX() - 1/2f;
-            float y = enemy.getY() - 1/2f;
+        for (Enemy enemy : waveSpawner.getActiveEnemies()){
+            float drawWidth = enemy.getType().getTextureSize();
+            float drawHeight = drawWidth;
 
-            float drawWidth = 1f;
+            float x = enemy.getX() - drawWidth/2f;
+            float y = enemy.getY() - drawWidth/2f;
+
+
 
             if (enemy.getDirection() == Direction.LEFT) {
-                x += 1f;
+                x += drawWidth;
                 drawWidth *= -1f;
             }
 
-            TextureRenderer.draw(batch, textures.get("slime"), x, y, drawWidth, 1f,
+            TextureRenderer.draw(batch, textures.get("slime"), x, y, drawWidth, drawHeight,
                 0, null, stateTime);
         }
     }
