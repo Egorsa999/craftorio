@@ -28,7 +28,7 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
         super(registry, anchor, direction, BuildingType.ASSEMBLER);
 
         this.powerNode = new PowerNode(this, registry);
-        this.craftModule = new CraftModule(50, 0.0f, List.of(Recipe.BULLET));
+        this.craftModule = new CraftModule(50, 0.0f, List.of(Recipe.BULLET), true, maxPowerPerTick);
 
         throughDelta.add(new Point(+0, +2));
         throughDelta.add(new Point(+1, +2));

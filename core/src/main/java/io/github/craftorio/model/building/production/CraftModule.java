@@ -17,6 +17,9 @@ public class CraftModule {
     private final int maxItemCapacity;
     private final float maxLiquidCapacity;
 
+    private final boolean usesPower;
+    private final float maxPowerPerTick;
+
     private Recipe currentRecipe = null;
     private boolean isCraftingNow = false;
     private float progress = 0;
@@ -24,10 +27,12 @@ public class CraftModule {
 
     private final List<Recipe> allowedRecipes;
 
-    public CraftModule(int maxItemCapacity, float maxLiquidCapacity, List<Recipe> allowedRecipes) {
+    public CraftModule(int maxItemCapacity, float maxLiquidCapacity, List<Recipe> allowedRecipes, boolean usesPower, float maxPowerPerTick) {
         this.maxItemCapacity = maxItemCapacity;
         this.maxLiquidCapacity = maxLiquidCapacity;
         this.allowedRecipes = allowedRecipes;
+        this.usesPower = usesPower;
+        this.maxPowerPerTick = maxPowerPerTick;
     }
 
     public void update() {
@@ -140,7 +145,11 @@ public class CraftModule {
     public Recipe getRecipe() { return currentRecipe; }
     public boolean isCrafting() { return isCraftingNow; }
     public float getProgress() { return currentRecipe == null ? 0f : progress / currentRecipe.getCraftTicks(); }
-    public void setSatisfactionRatio(float ratio) { this.satisfactionRatio = Math.max(0f, Math.min(ratio, 1.0f)); }
+    public void setSatisfactionRatio(float ratio) {
+        System.out.println(ratio);
+        this.satisfactionRatio = Math.max(0f, Math.min(ratio, 1.0f));
+    }
+    public float getSatisfactionRatio() { return satisfactionRatio; }
 
     public Map<ItemType, Integer> getInputItems() { return inputItems; }
     public Map<ItemType, Integer> getOutputItems() { return outputItems; }
@@ -149,6 +158,8 @@ public class CraftModule {
 
     public int getMaxItemCapacity() { return maxItemCapacity; }
     public float getMaxLiquidCapacity() { return maxLiquidCapacity; }
+    public boolean usesPower() { return usesPower; }
+    public float getMaxPowerPerTick() { return maxPowerPerTick; }
 
     public List<Recipe> getAllowedRecipes() {
         return this.allowedRecipes;

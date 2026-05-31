@@ -30,7 +30,7 @@ public class ChemicalPlant  extends DamageableBuilding implements ThroughLiquid,
         super(registry, anchor, direction, BuildingType.CHEMICAL_PLANT);
 
         this.powerNode = new PowerNode(this, registry);
-        this.craftModule = new CraftModule(0, 100.0f, List.of(Recipe.ROCKET_FUEL));
+        this.craftModule = new CraftModule(0, 100.0f, List.of(Recipe.ROCKET_FUEL), true, maxPowerPerTick);
 
         throughDelta.add(new Point(+0, +2));
         throughDelta.add(new Point(+1, +2));

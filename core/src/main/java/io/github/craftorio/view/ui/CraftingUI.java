@@ -38,6 +38,7 @@ public class CraftingUI implements UIRenderer {
     private Table outputSlotTable;
 
     private Label.LabelStyle labelStyle;
+    private Label.LabelStyle smallLabelStyle;
     private Label.LabelStyle closeButtonStyle;
 
     private Texture bgTexture;
@@ -46,33 +47,49 @@ public class CraftingUI implements UIRenderer {
 
     private Texture pbBgTexture;
     private Texture pbKnobTexture;
+    private Texture pbYellowKnobTexture;
     private Texture pbEmptyTexture;
 
     private TextureRegionDrawable slotDrawable;
     private TextureRegionDrawable selectedSlotDrawable;
     private ProgressBar.ProgressBarStyle progressBarStyle;
+    private ProgressBar.ProgressBarStyle powerProgressBarStyle;
 
     private BitmapFont customFont;
+    private BitmapFont smallFont;
     private final GlyphLayout glyphLayout = new GlyphLayout();
 
     private Craftable currentCraftable;
     private TextureLoad textures;
 
     private ProgressBar currentProgressBar;
+    private ProgressBar powerProgressBar;
 
     public CraftingUI(TextureLoad textures) {
         this.textures = textures;
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Silkscreen-Regular.ttf"));
+
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 20;
         parameter.color = Color.WHITE;
+        parameter.minFilter = Texture.TextureFilter.Nearest;
+        parameter.magFilter = Texture.TextureFilter.Nearest;
         this.customFont = generator.generateFont(parameter);
+
+        FreeTypeFontGenerator.FreeTypeFontParameter smallParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        smallParam.size = 12;
+        smallParam.color = Color.WHITE;
+        smallParam.minFilter = Texture.TextureFilter.Nearest;
+        smallParam.magFilter = Texture.TextureFilter.Nearest;
+        this.smallFont = generator.generateFont(smallParam);
+
         generator.dispose();
 
         this.stage = new Stage(new ScreenViewport());
 
         this.labelStyle = new Label.LabelStyle(customFont, Color.WHITE);
+        this.smallLabelStyle = new Label.LabelStyle(smallFont, Color.WHITE);
         this.closeButtonStyle = new Label.LabelStyle(customFont, Color.FIREBRICK);
 
         rootTable = new Table();
@@ -118,6 +135,12 @@ public class CraftingUI implements UIRenderer {
         pbKnobTexture = new Texture(pbKnobPix);
         pbKnobPix.dispose();
 
+        Pixmap pbYellowKnobPix = new Pixmap(1, 10, Pixmap.Format.RGBA8888);
+        pbYellowKnobPix.setColor(Color.YELLOW);
+        pbYellowKnobPix.fill();
+        pbYellowKnobTexture = new Texture(pbYellowKnobPix);
+        pbYellowKnobPix.dispose();
+
         Pixmap emptyPix = new Pixmap(1, 10, Pixmap.Format.RGBA8888);
         emptyPix.setColor(0, 0, 0, 0f);
         emptyPix.fill();
@@ -128,6 +151,11 @@ public class CraftingUI implements UIRenderer {
         progressBarStyle.background = new TextureRegionDrawable(new TextureRegion(pbBgTexture));
         progressBarStyle.knob = new TextureRegionDrawable(new TextureRegion(pbEmptyTexture));
         progressBarStyle.knobBefore = new TextureRegionDrawable(new TextureRegion(pbKnobTexture));
+
+        powerProgressBarStyle = new ProgressBar.ProgressBarStyle();
+        powerProgressBarStyle.background = new TextureRegionDrawable(new TextureRegion(pbBgTexture));
+        powerProgressBarStyle.knob = new TextureRegionDrawable(new TextureRegion(pbEmptyTexture));
+        powerProgressBarStyle.knobBefore = new TextureRegionDrawable(new TextureRegion(pbYellowKnobTexture));
 
         rootTable.add(windowTable).minWidth(500).minHeight(400);
         stage.addActor(rootTable);
@@ -150,6 +178,15 @@ public class CraftingUI implements UIRenderer {
 
         Table headerTable = new Table();
         Label title = new Label(currentCraftable.getBuildingName(), labelStyle);
+        headerTable.add(title).left();
+
+        if (module.usesPower()) {
+            Label powerLabel = new Label(String.format(Locale.US, " Consumes %.1fW", module.getMaxPowerPerTick() * 60), smallLabelStyle);
+            powerLabel.setColor(Color.YELLOW);
+            headerTable.add(powerLabel).left().padLeft(10).bottom().padBottom(3);
+        }
+
+        headerTable.add().expandX();
 
         Label closeButton = new Label("[ X ]", closeButtonStyle);
         closeButton.addListener(new ClickListener() {
@@ -158,9 +195,8 @@ public class CraftingUI implements UIRenderer {
                 close();
             }
         });
-
-        headerTable.add(title).expandX().left();
         headerTable.add(closeButton).right();
+
         windowTable.add(headerTable).expandX().fillX().padBottom(20).row();
 
         Table recipesTable = new Table();
@@ -219,10 +255,22 @@ public class CraftingUI implements UIRenderer {
         bottomTable.add(inputSlotsTable).left().expandX();
 
         Table outputSection = new Table();
-        currentProgressBar = new ProgressBar(0f, 1f, 0.01f, false, progressBarStyle);
-        outputSection.add(currentProgressBar).width(120).padRight(15);
 
-        outputSection.add(outputSlotTable);
+        Table progressBarsTable = new Table();
+        if (module.usesPower()) {
+            powerProgressBar = new ProgressBar(0f, 1f, 0.01f, false, powerProgressBarStyle);
+            progressBarsTable.add(powerProgressBar).width(120).padBottom(5).row();
+        } else {
+            powerProgressBar = null;
+        }
+
+        currentProgressBar = new ProgressBar(0f, 1f, 0.01f, false, progressBarStyle);
+        progressBarsTable.add(currentProgressBar).width(120);
+
+        progressBarsTable.setVisible(module.getRecipe() != null);
+
+        outputSection.add(progressBarsTable).padRight(15);
+        outputSection.add(outputSlotTable).size(48, 48);
 
         bottomTable.add(outputSection).right();
         windowTable.add(bottomTable).fillX().padTop(20);
@@ -301,6 +349,9 @@ public class CraftingUI implements UIRenderer {
                 if (currentProgressBar != null) {
                     currentProgressBar.setValue(currentCraftable.getCraftModule().getProgress());
                 }
+                if (powerProgressBar != null) {
+                    powerProgressBar.setValue(currentCraftable.getCraftModule().getSatisfactionRatio());
+                }
                 updateInventories();
             }
 
@@ -324,7 +375,9 @@ public class CraftingUI implements UIRenderer {
         selectedSlotBgTexture.dispose();
         pbBgTexture.dispose();
         pbKnobTexture.dispose();
+        pbYellowKnobTexture.dispose();
         pbEmptyTexture.dispose();
         if (customFont != null) customFont.dispose();
+        if (smallFont != null) smallFont.dispose();
     }
 }
