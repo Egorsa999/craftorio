@@ -147,7 +147,7 @@ public class CraftModule {
     public boolean isCrafting() { return isCraftingNow; }
     public float getProgress() { return currentRecipe == null ? 0f : progress / currentRecipe.getCraftTicks(); }
     public void setSatisfactionRatio(float ratio) {
-        System.out.println(ratio);
+//        System.out.println(ratio);
         this.satisfactionRatio = Math.max(0f, Math.min(ratio, 1.0f));
     }
     public float getSatisfactionRatio() { return satisfactionRatio; }

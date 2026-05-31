@@ -103,14 +103,14 @@ public class BuildMenuUI implements UIRenderer {
         TextureRegionDrawable darkBg = new TextureRegionDrawable(new TextureRegion(darkBgTexture));
         bgPixmap.dispose();
 
-        Pixmap outlinePix = new Pixmap(12, 12, Pixmap.Format.RGBA8888);
+        Pixmap outlinePix = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
         outlinePix.setColor(new Color(1f, 0.85f, 0.5f, 1f));
-        for (int i = 0; i < 3; i++) {
-            outlinePix.drawRectangle(i, i, 12 - i*2, 12 - i*2);
+        for (int i = 0; i < 4; i++) {
+            outlinePix.drawRectangle(i, i, 16 - i * 2, 16 - i * 2);
         }
         this.outlineTexture = new Texture(outlinePix);
         outlinePix.dispose();
-        this.selectedOutline = new NinePatchDrawable(new NinePatch(outlineTexture, 3, 3, 3, 3));
+        this.selectedOutline = new NinePatchDrawable(new NinePatch(outlineTexture, 4, 4, 4, 4));
 
         Table rootTable = new Table();
         rootTable.setFillParent(true);
@@ -118,7 +118,7 @@ public class BuildMenuUI implements UIRenderer {
 
         windowTable = new Table();
         windowTable.setBackground(darkBg);
-        windowTable.pad(15);
+        windowTable.pad(20);
 
         infoTable = new Table();
         infoTable.left();
@@ -132,11 +132,11 @@ public class BuildMenuUI implements UIRenderer {
         costTable = new Table();
         costTable.top().left();
 
-        textTable.add(titleLabel).width(160).left().row();
+        textTable.add(titleLabel).expandX().fillX().left().row();
         textTable.add(costTable).left().top().expandY();
 
-        infoTable.add(infoIcon).size(56, 56).padRight(12).top();
-        infoTable.add(textTable).width(160).height(70).left().top();
+        infoTable.add(infoIcon).size(72, 72).padRight(16).top();
+        infoTable.add(textTable).expandX().fillX().height(90).left().top();
 
         infoCell = windowTable.add(infoTable).left().fillX();
         infoTable.setVisible(false);
@@ -162,7 +162,7 @@ public class BuildMenuUI implements UIRenderer {
             }
             Image iconImage = new Image(iconRegion);
             iconImage.setScaling(Scaling.fit);
-            btn.add(iconImage).expand().fill().pad(4);
+            btn.add(iconImage).expand().fill().pad(6);
 
             buttons.put(type, btn);
 
@@ -178,7 +178,7 @@ public class BuildMenuUI implements UIRenderer {
                 }
             });
 
-            gridTable.add(btn).size(48, 48).pad(2);
+            gridTable.add(btn).size(64, 64).pad(3);
 
             currentCol++;
             if (currentCol >= columns) {
@@ -189,7 +189,7 @@ public class BuildMenuUI implements UIRenderer {
 
         windowTable.add(gridTable).fillX();
 
-        rootTable.add(windowTable).pad(20);
+        rootTable.add(windowTable).pad(25);
         stage.addActor(rootTable);
     }
 
@@ -202,7 +202,7 @@ public class BuildMenuUI implements UIRenderer {
         }
 
         infoTable.setVisible(true);
-        infoCell.height(70).padBottom(10);
+        infoCell.height(90).padBottom(15);
 
         titleLabel.setText(type.getDisplayName());
 
@@ -234,9 +234,9 @@ public class BuildMenuUI implements UIRenderer {
                     amountLabel.setColor(Color.WHITE);
                 }
 
-                costTable.add(itemIcon).size(16, 16).padRight(6).padBottom(2);
-                costTable.add(nameLabel).left().padBottom(2);
-                costTable.add(amountLabel).left().padBottom(2).row();
+                costTable.add(itemIcon).size(20, 20).padRight(8).padBottom(3);
+                costTable.add(nameLabel).left().padBottom(3);
+                costTable.add(amountLabel).left().padBottom(3).row();
             }
         }
 
