@@ -67,7 +67,7 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
             }
         }
         if (isCraftingNow) {
-            System.out.println(satisfactionRatio);
+            //System.out.println(satisfactionRatio);
             progress += satisfactionRatio;
             if (progress >= currentRecipe.getCraftTicks()) {
                 progress = 0;
