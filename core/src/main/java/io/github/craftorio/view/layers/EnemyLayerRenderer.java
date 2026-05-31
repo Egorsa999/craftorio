@@ -1,12 +1,16 @@
 package io.github.craftorio.view.layers;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.enemy.Enemy;
+import io.github.craftorio.model.enemy.EnemyType;
 import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.TextureRenderer;
 import io.github.craftorio.view.VisibleBounds;
+
+import java.util.Objects;
 
 public class EnemyLayerRenderer implements LayerRenderer{
 
@@ -35,8 +39,14 @@ public class EnemyLayerRenderer implements LayerRenderer{
                 drawWidth *= -1f;
             }
 
+            Color filter = Color.WHITE;
+
+            if (Objects.requireNonNull(enemy.getType()) == EnemyType.FAST_ENEMY) {
+                filter = new Color(1f, 1f, 0.2f, 1f);
+            }
+
             TextureRenderer.draw(batch, textures.get("slime"), x, y, drawWidth, drawHeight,
-                0, null, stateTime);
+                0, filter, stateTime);
         }
     }
 }
