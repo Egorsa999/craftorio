@@ -1,5 +1,9 @@
 package io.github.craftorio.model.building;
 
+import io.github.craftorio.model.item.ItemType;
+
+import java.util.Map;
+
 public enum BuildingType {
     BELT("Belt", 1, 1, true, 50, Map.of(ItemType.COPPER_ORE, 1)),
     MINER("Miner", 2, 2, false, 100, Map.of(ItemType.COPPER_ORE, 10, ItemType.IRON_ORE, 5)),
