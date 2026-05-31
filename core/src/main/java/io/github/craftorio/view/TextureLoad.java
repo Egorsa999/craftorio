@@ -8,6 +8,7 @@ import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.generator.TerrainType;
+import io.github.craftorio.model.item.LiquidType;
 import io.github.craftorio.view.sprite.AnimatedSprite;
 import io.github.craftorio.view.sprite.GameSprite;
 import io.github.craftorio.view.sprite.StaticSprite;
@@ -25,6 +26,7 @@ public class TextureLoad {
     private final HashMap<Integer, GameSprite> conduitBottomTextures = new HashMap<>();
     private final HashMap<Integer, GameSprite> conduitTopTextures = new HashMap<>();
     private final HashMap<ItemType, GameSprite> itemSprites = new HashMap<>();
+    private final HashMap<LiquidType, GameSprite> liquidSprites = new HashMap<>();
     private final HashMap<TerrainType, GameSprite> terrarianSprites = new HashMap<>();
     private final TextureAtlas atlas;
 
@@ -89,6 +91,9 @@ public class TextureLoad {
         itemSprites.put(ItemType.COPPER_ORE, load("item-copper"));
         itemSprites.put(ItemType.BULLET, load("item-bullet"));
         itemSprites.put(ItemType.STONE, load("item-stone"));
+
+        liquidSprites.put(LiquidType.WATER, load("liquid-water"));
+        liquidSprites.put(LiquidType.OIL, load("liquid-oil"));
     }
 
     private GameSprite load(String regionName) {
@@ -129,6 +134,10 @@ public class TextureLoad {
 
     public GameSprite get(ItemType type) {
         return itemSprites.get(type);
+    }
+
+    public GameSprite get(LiquidType type) {
+        return liquidSprites.get(type);
     }
 
     public GameSprite get(BuildingType type) {

@@ -18,12 +18,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.item.Recipe;
-import io.github.craftorio.model.building.production.Assembler;
+import io.github.craftorio.model.item.LiquidType;
+import io.github.craftorio.model.building.production.Craftable;
+import io.github.craftorio.model.building.production.CraftModule;
 import io.github.craftorio.view.TextureLoad;
 
+import java.util.Locale;
 import java.util.Map;
 
-public class AssemblerUI implements UIRenderer{
+public class CraftingUI implements UIRenderer {
 
     private Stage stage;
     private Table rootTable;
@@ -49,12 +52,12 @@ public class AssemblerUI implements UIRenderer{
 
     private BitmapFont customFont;
 
-    private Assembler currentAssembler;
+    private Craftable currentCraftable;
     private TextureLoad textures;
 
     private ProgressBar currentProgressBar;
 
-    public AssemblerUI(TextureLoad textures) {
+    public CraftingUI(TextureLoad textures) {
         this.textures = textures;
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Silkscreen-Regular.ttf"));
@@ -79,7 +82,6 @@ public class AssemblerUI implements UIRenderer{
         inputSlotsTable = new Table();
         outputSlotTable = new Table();
 
-
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0, 0, 0, 0.8f);
         pixmap.fill();
@@ -100,7 +102,6 @@ public class AssemblerUI implements UIRenderer{
         selectedSlotBgTexture = new Texture(selectedPixmap);
         selectedSlotDrawable = new TextureRegionDrawable(new TextureRegion(selectedSlotBgTexture));
         selectedPixmap.dispose();
-
 
         Pixmap pbBgPix = new Pixmap(1, 10, Pixmap.Format.RGBA8888);
         pbBgPix.setColor(0.2f, 0.2f, 0.2f, 1f);
@@ -125,17 +126,27 @@ public class AssemblerUI implements UIRenderer{
         progressBarStyle.knob = new TextureRegionDrawable(new TextureRegion(pbEmptyTexture));
         progressBarStyle.knobBefore = new TextureRegionDrawable(new TextureRegion(pbKnobTexture));
 
-
         rootTable.add(windowTable).minWidth(500).minHeight(400);
         stage.addActor(rootTable);
         rootTable.setVisible(false);
     }
 
+    public void show(Craftable craftable) {
+        this.currentCraftable = craftable;
+        updateUI();
+        rootTable.setVisible(true);
+    }
+
     private void updateUI() {
         windowTable.clearChildren();
+        if (currentCraftable == null) return;
+
+        CraftModule module = currentCraftable.getCraftModule();
+        boolean supportsItems = module.getMaxItemCapacity() > 0;
+        boolean supportsLiquids = module.getMaxLiquidCapacity() > 0f;
 
         Table headerTable = new Table();
-        Label title = new Label("Assembler", labelStyle);
+        Label title = new Label(currentCraftable.getBuildingName(), labelStyle);
 
         Label closeButton = new Label("[ X ]", closeButtonStyle);
         closeButton.addListener(new ClickListener() {
@@ -150,38 +161,54 @@ public class AssemblerUI implements UIRenderer{
         windowTable.add(headerTable).expandX().fillX().padBottom(20).row();
 
         Table recipesTable = new Table();
-        for (Recipe recipe : Recipe.values()) {
-            Table recipeRow = new Table();
+        for (Recipe recipe : module.getAllowedRecipes()) {
+            boolean needsItems = !recipe.getInputItems().isEmpty() || !recipe.getOutputItems().isEmpty();
+            boolean needsLiquids = !recipe.getInputLiquids().isEmpty() || !recipe.getOutputLiquids().isEmpty();
 
-            if (currentAssembler != null && currentAssembler.getRecipe() == recipe) {
+            // Скрываем рецепты, которые здание не может потянуть физически
+            if (needsItems && !supportsItems) continue;
+            if (needsLiquids && !supportsLiquids) continue;
+
+            Table recipeRow = new Table();
+            if (module.getRecipe() == recipe) {
                 recipeRow.setBackground(selectedSlotDrawable);
             } else {
                 recipeRow.setBackground(slotDrawable);
             }
             recipeRow.pad(10);
 
-            TextureRegion outReg = textures.get(recipe.getOutput()).getFirstFrame();
-            recipeRow.add(new Image(outReg)).size(32, 32).padRight(5);
-            recipeRow.add(new Label("x" + recipe.getOutputAmount(), labelStyle)).padRight(15);
+            // Отрисовка аутпутов в списке рецептов (Предметы)
+            for (Map.Entry<ItemType, Integer> outItem : recipe.getOutputItems().entrySet()) {
+                recipeRow.add(new Image(textures.get(outItem.getKey()).getFirstFrame())).size(32, 32).padRight(5);
+                recipeRow.add(new Label("x" + outItem.getValue(), labelStyle)).padRight(15);
+            }
+            // Отрисовка аутпутов в списке рецептов (Жидкости)
+            for (Map.Entry<LiquidType, Float> outLiq : recipe.getOutputLiquids().entrySet()) {
+                recipeRow.add(new Image(textures.get(outLiq.getKey()).getFirstFrame())).size(32, 32).padRight(5);
+                recipeRow.add(new Label("x" + String.format(Locale.US, "%.1f", outLiq.getValue()), labelStyle)).padRight(15);
+            }
 
             float seconds = recipe.getCraftTicks() / 60f;
-            recipeRow.add(new Label(String.format("%.1fs", seconds), labelStyle)).padRight(15);
+            recipeRow.add(new Label(String.format(Locale.US, "%.1fs", seconds), labelStyle)).padRight(15);
 
+            // Отрисовка инпутов в списке рецептов (Предметы)
             Table ingTable = new Table();
-            for (Map.Entry<ItemType, Integer> entry : recipe.getInputs().entrySet()) {
-                TextureRegion inReg = textures.get(entry.getKey()).getFirstFrame();
-                ingTable.add(new Image(inReg)).size(24, 24).padRight(2);
-                ingTable.add(new Label("x" + entry.getValue(), labelStyle)).padRight(10);
+            for (Map.Entry<ItemType, Integer> inItem : recipe.getInputItems().entrySet()) {
+                ingTable.add(new Image(textures.get(inItem.getKey()).getFirstFrame())).size(24, 24).padRight(2);
+                ingTable.add(new Label("x" + inItem.getValue(), labelStyle)).padRight(10);
+            }
+            // Отрисовка инпутов в списке рецептов (Жидкости)
+            for (Map.Entry<LiquidType, Float> inLiq : recipe.getInputLiquids().entrySet()) {
+                ingTable.add(new Image(textures.get(inLiq.getKey()).getFirstFrame())).size(24, 24).padRight(2);
+                ingTable.add(new Label("x" + String.format(Locale.US, "%.1f", inLiq.getValue()), labelStyle)).padRight(10);
             }
             recipeRow.add(ingTable).expandX().left();
 
             recipeRow.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    if (currentAssembler != null) {
-                        currentAssembler.setRecipe(recipe);
-                        updateUI();
-                    }
+                    module.setRecipe(recipe);
+                    updateUI(); // Перерисовываем UI при смене рецепта
                 }
             });
 
@@ -191,75 +218,77 @@ public class AssemblerUI implements UIRenderer{
         windowTable.add(recipesTable).expand().top().fillX().row();
 
         Table bottomTable = new Table();
-
         bottomTable.add(inputSlotsTable).left().expandX();
 
         Table outputSection = new Table();
         currentProgressBar = new ProgressBar(0f, 1f, 0.01f, false, progressBarStyle);
         outputSection.add(currentProgressBar).width(120).padRight(15);
-        outputSection.add(outputSlotTable).size(48, 48);
+
+        outputSection.add(outputSlotTable);
 
         bottomTable.add(outputSection).right();
-
         windowTable.add(bottomTable).fillX().padTop(20);
     }
 
     private void updateInventories() {
-        if (currentAssembler == null) return;
+        if (currentCraftable == null) return;
+        CraftModule module = currentCraftable.getCraftModule();
+        Recipe recipe = module.getRecipe();
 
         inputSlotsTable.clearChildren();
-        Map<ItemType, Integer> inputs = currentAssembler.getInputInventory();
-        int inputCount = 0;
-
-        if (inputs != null) {
-            for (Map.Entry<ItemType, Integer> entry : inputs.entrySet()) {
-                Table slot = new Table();
-                slot.setBackground(slotDrawable);
-
-                TextureRegion reg = textures.get(entry.getKey()).getFirstFrame();
-                slot.add(new Image(reg)).size(24, 24).padBottom(2).row();
-                slot.add(new Label(String.valueOf(entry.getValue()), labelStyle));
-
-                inputSlotsTable.add(slot).size(48, 48).padRight(10);
-                inputCount++;
-            }
-        }
-
-        for (int i = inputCount; i < 3; i++) {
-            Table slot = new Table();
-            slot.setBackground(slotDrawable);
-            inputSlotsTable.add(slot).size(48, 48).padRight(10);
-        }
-
         outputSlotTable.clearChildren();
-        outputSlotTable.setBackground(slotDrawable);
 
-        Map<ItemType, Integer> outputs = currentAssembler.getOutputInventory();
-        if (outputs != null && !outputs.isEmpty()) {
-            Map.Entry<ItemType, Integer> outEntry = outputs.entrySet().iterator().next();
+        if (recipe != null) {
+            for (Map.Entry<ItemType, Integer> entry : recipe.getInputItems().entrySet()) {
+                int currentAmount = module.getInputItems().getOrDefault(entry.getKey(), 0);
+                inputSlotsTable.add(createItemSlot(entry.getKey(), currentAmount)).size(48, 48).padRight(10);
+            }
+            for (Map.Entry<LiquidType, Float> entry : recipe.getInputLiquids().entrySet()) {
+                float currentAmount = module.getInputLiquids().getOrDefault(entry.getKey(), 0f);
+                inputSlotsTable.add(createLiquidSlot(entry.getKey(), currentAmount)).size(48, 48).padRight(10);
+            }
 
-            TextureRegion reg = textures.get(outEntry.getKey()).getFirstFrame();
-            outputSlotTable.add(new Image(reg)).size(24, 24).padBottom(2).row();
-            outputSlotTable.add(new Label(String.valueOf(outEntry.getValue()), labelStyle));
+            for (Map.Entry<ItemType, Integer> entry : recipe.getOutputItems().entrySet()) {
+                int currentAmount = module.getOutputItems().getOrDefault(entry.getKey(), 0);
+                outputSlotTable.add(createItemSlot(entry.getKey(), currentAmount)).size(48, 48).padRight(10);
+            }
+            for (Map.Entry<LiquidType, Float> entry : recipe.getOutputLiquids().entrySet()) {
+                float currentAmount = module.getOutputLiquids().getOrDefault(entry.getKey(), 0f);
+                outputSlotTable.add(createLiquidSlot(entry.getKey(), currentAmount)).size(48, 48).padRight(10);
+            }
         }
     }
 
-    public void show(Assembler assembler) {
-        this.currentAssembler = assembler;
-        updateUI();
-        rootTable.setVisible(true);
+    // Хелпер для создания ячейки предмета
+    private Table createItemSlot(ItemType type, int amount) {
+        Table slot = new Table();
+        slot.setBackground(slotDrawable);
+        TextureRegion reg = textures.get(type).getFirstFrame();
+        slot.add(new Image(reg)).size(24, 24).padBottom(2).row();
+        slot.add(new Label(String.valueOf(amount), labelStyle));
+        return slot;
+    }
+
+    // Хелпер для создания ячейки жидкости
+    private Table createLiquidSlot(LiquidType type, float amount) {
+        Table slot = new Table();
+        slot.setBackground(slotDrawable);
+        TextureRegion reg = textures.get(type).getFirstFrame();
+        slot.add(new Image(reg)).size(24, 24).padBottom(2).row();
+        slot.add(new Label(String.format(Locale.US, "%.1f", amount), labelStyle));
+        return slot;
     }
 
     public void close() {
         rootTable.setVisible(false);
-        this.currentAssembler = null;
+        this.currentCraftable = null;
     }
 
     public void render() {
         if (rootTable.isVisible()) {
-            if (currentAssembler != null) {
+            if (currentCraftable != null) {
                 if (currentProgressBar != null) {
-                    currentProgressBar.setValue(currentAssembler.getProgress());
+                    currentProgressBar.setValue(currentCraftable.getCraftModule().getProgress());
                 }
                 updateInventories();
             }
