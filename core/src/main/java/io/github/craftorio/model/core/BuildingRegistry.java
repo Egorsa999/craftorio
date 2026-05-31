@@ -77,4 +77,52 @@ public class BuildingRegistry {
     public List<Building> getBuildingsForTick() {
         return Collections.unmodifiableList(activeBuildings);
     }
+
+    public float getMaxX() {
+        if (spatialGrid.isEmpty()) return 0;
+
+        int maxX = Integer.MIN_VALUE;
+        for (Point p : spatialGrid.keySet()) {
+            if (p.x > maxX) {
+                maxX = p.x;
+            }
+        }
+        return maxX;
+    }
+
+    public float getMaxY() {
+        if (spatialGrid.isEmpty()) return 0;
+
+        int maxY = Integer.MIN_VALUE;
+        for (Point p : spatialGrid.keySet()) {
+            if (p.y > maxY) {
+                maxY = p.y;
+            }
+        }
+        return maxY;
+    }
+
+    public float getMinX() {
+        if (spatialGrid.isEmpty()) return 0;
+
+        int minX = Integer.MAX_VALUE;
+        for (Point p : spatialGrid.keySet()) {
+            if (p.x < minX) {
+                minX = p.x;
+            }
+        }
+        return minX;
+    }
+
+    public float getMinY() {
+        if (spatialGrid.isEmpty()) return 0;
+
+        int minY = Integer.MAX_VALUE;
+        for (Point p : spatialGrid.keySet()) {
+            if (p.y < minY) {
+                minY = p.y;
+            }
+        }
+        return minY;
+    }
 }

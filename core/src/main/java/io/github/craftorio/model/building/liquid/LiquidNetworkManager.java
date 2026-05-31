@@ -76,7 +76,7 @@ public class LiquidNetworkManager {
                     }
 
                     Point neighborPos = new Point(nx, ny);
-                    System.out.println(neighborPos + " " + current.getPrevLiquidType() + " " + neighbor.getPrevLiquidType());
+                    //System.out.println(neighborPos + " " + current.getPrevLiquidType() + " " + neighbor.getPrevLiquidType());
                     boolean connected =
                         (current.canThroughLiquidIn(neighborPos)
                             && neighbor.canReceiveLiquidFrom(current, currentPos, current.getPrevLiquidType()))

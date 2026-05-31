@@ -1,6 +1,7 @@
 package io.github.craftorio.model.core;
 
 import com.badlogic.gdx.math.MathUtils;
+import io.github.craftorio.model.building.storage.Core;
 import io.github.craftorio.model.generator.Cell;
 import io.github.craftorio.model.generator.MapGenerator;
 import io.github.craftorio.model.generator.ResourceType;
@@ -14,6 +15,8 @@ public class WorldMap {
     private final Cell[][] map;
     private final int width;
     private final int height;
+
+    private int CoreX, CoreY;
 
     public WorldMap(int width, int height) {
         this.width = width;
@@ -67,16 +70,28 @@ public class WorldMap {
             for (int dx = 0; dx <= 7; dx++){
                 for (int dy = 0; dy <= 7; dy++){
                     Cell current = getCell(x + dx, y + dy);
-                    isGood &= current.getTerrainType() == TerrainType.GRASS ||
-                        current.getTerrainType() == TerrainType.SAND;
+                    isGood &= current.getTerrainType().getWalkability();
                     isGood &= current.getResourceType() == ResourceType.NONE;
                 }
             }
             if (counter++ == 10000)break;
-            if (isGood)return new Point(x + 1, y + 3);
+            if (isGood){
+                CoreX = x + 3;
+                CoreY = y + 1;
+                return new Point(x + 3, y + 1);
+            }
+
             }
         System.err.println("Can't find spawnPoint!");
         return new Point(10, 10);
+    }
+
+    public int getCoreX() {
+        return CoreX;
+    }
+
+    public int getCoreY() {
+        return CoreY;
     }
 
     public List<ResourceType> getResources (List<Point> tiles){

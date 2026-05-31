@@ -26,6 +26,11 @@ public class PathFinder {
         COST_DIAGONAL, COST_ORTHOGONAL, COST_DIAGONAL
     };
 
+    public enum SizeClass {
+        SMALL,
+        HEAVY
+    }
+
     public static class FlowData {
         public final int width, height;
         public final int[][] distances;
@@ -41,9 +46,19 @@ public class PathFinder {
         }
     }
 
-    private final FlowData bufferA;
-    private final FlowData bufferB;
-    private volatile FlowData activeData;
+    public static class LayeredFlowData {
+        public final FlowData small;
+        public final FlowData heavy;
+
+        public LayeredFlowData(int width, int height) {
+            this.small = new FlowData(width, height);
+            this.heavy = new FlowData(width, height);
+        }
+    }
+
+    private final LayeredFlowData bufferA;
+    private final LayeredFlowData bufferB;
+    private volatile LayeredFlowData activeData;
 
     private final Pool<Node> nodePool = new Pool<Node>(11000, 15000) {
         @Override
@@ -75,30 +90,35 @@ public class PathFinder {
         int width = worldMap.getWidth();
         int height = worldMap.getHeight();
 
-        this.bufferA = new FlowData(width, height);
-        this.bufferB = new FlowData(width, height);
+        this.bufferA = new LayeredFlowData(width, height);
+        this.bufferB = new LayeredFlowData(width, height);
         this.activeData = bufferA;
     }
 
     public synchronized void updateFlowField() {
-        FlowData workData = (activeData == bufferA) ? bufferB : bufferA;
+        LayeredFlowData workData = (activeData == bufferA) ? bufferB : bufferA;
 
-        calculateIntegrationField(workData);
-        calculateVectorField(workData);
+        calculateIntegrationField(workData.small, SizeClass.SMALL);
+        calculateVectorField(workData.small, SizeClass.SMALL);
+
+        calculateIntegrationField(workData.heavy, SizeClass.HEAVY);
+        calculateVectorField(workData.heavy, SizeClass.HEAVY);
 
         activeData = workData;
     }
 
-    public Point getFlowDirection(int x, int y) {
-        FlowData current = activeData;
-        if (x >= 0 && x < current.width && y >= 0 && y < current.height) {
-            return new Point(current.flowX[x][y], current.flowY[x][y]);
+    public Point getFlowDirection(int x, int y, SizeClass sizeClass) {
+        LayeredFlowData current = activeData;
+        FlowData layer = (sizeClass == SizeClass.HEAVY) ? current.heavy : current.small;
+
+        if (x >= 0 && x < layer.width && y >= 0 && y < layer.height) {
+            return new Point(layer.flowX[x][y], layer.flowY[x][y]);
         } else {
             return new Point(0, 0);
         }
     }
 
-    private void calculateIntegrationField(FlowData data) {
+    private void calculateIntegrationField(FlowData data, SizeClass size) {
         int w = data.width;
         int h = data.height;
 
@@ -127,17 +147,13 @@ public class PathFinder {
 
                 if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
 
-                    if (!worldMap.getCell(nx, ny).getTerrainType().getWalkability()) {
+                    int cellPenalty = getCellPenalty(nx, ny, size);
+
+                    if (cellPenalty == -1) {
                         continue;
                     }
 
-                    int moveCost = COST[i];
-
-                    Building building = registry.getBuildingAt(nx, ny);
-                    if (building instanceof DamageableBuilding dBuilding) {
-                        moveCost += dBuilding.getHP();
-                    }
-
+                    int moveCost = COST[i] + cellPenalty;
                     int newCost = current.cost + moveCost;
 
                     if (newCost < data.distances[nx][ny]) {
@@ -150,7 +166,7 @@ public class PathFinder {
         }
     }
 
-    private void calculateVectorField(FlowData data) {
+    private void calculateVectorField(FlowData data, SizeClass size) {
         int w = data.width;
         int h = data.height;
 
@@ -181,14 +197,19 @@ public class PathFinder {
                     int ny = y + DY[dirIndex];
 
                     if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+
+                        if (DX[dirIndex] != 0 && DY[dirIndex] != 0) {
+                            if (getCellPenalty(x + DX[dirIndex], y, size) == -1 ||
+                                getCellPenalty(x, y + DY[dirIndex], size) == -1) {
+                                continue;
+                            }
+                        }
+
                         int neighborDist = data.distances[nx][ny];
 
                         if (neighborDist < currentDist) {
-
                             int dirHash = Math.abs(cellHash ^ (dirIndex * 0x9E3779B9));
-
                             int noise = dirHash % 24;
-
                             int perceivedDist = neighborDist + noise;
 
                             if (perceivedDist < minPerceivedDist) {
@@ -204,5 +225,36 @@ public class PathFinder {
                 data.flowY[x][y] = bestDy;
             }
         }
+    }
+
+    private int getCellPenalty(int targetX, int targetY, SizeClass size) {
+        int padding = (size == SizeClass.HEAVY) ? 1 : 0;
+        int maxPenalty = 0;
+
+        for (int dx = -padding; dx <= padding; dx++) {
+            for (int dy = -padding; dy <= padding; dy++) {
+                int cx = targetX + dx;
+                int cy = targetY + dy;
+
+                if (cx < 0 || cx >= worldMap.getWidth() || cy < 0 || cy >= worldMap.getHeight()) {
+                    return -1;
+                }
+
+                if (!worldMap.getCell(cx, cy).getTerrainType().getWalkability()) {
+                    return -1;
+                }
+
+                Building building = registry.getBuildingAt(cx, cy);
+                if (building != null) {
+                    if (building instanceof DamageableBuilding dBuilding) {
+                        maxPenalty = Math.max(maxPenalty, dBuilding.getHP());
+                    } else {
+                        maxPenalty = Math.max(maxPenalty, BUILDING_PENALTY);
+                    }
+                }
+            }
+        }
+
+        return maxPenalty;
     }
 }
