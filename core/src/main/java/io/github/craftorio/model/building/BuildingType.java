@@ -1,8 +1,5 @@
 package io.github.craftorio.model.building;
 
-import io.github.craftorio.model.item.ItemType;
-import java.util.Map;
-
 public enum BuildingType {
     BELT("Belt", 1, 1, true, 50, Map.of(ItemType.COPPER_ORE, 1)),
     MINER("Miner", 2, 2, false, 100, Map.of(ItemType.COPPER_ORE, 10, ItemType.IRON_ORE, 5)),
@@ -16,7 +13,9 @@ public enum BuildingType {
     PIPE("Pipe", 1, 1, true, 50, Map.of(ItemType.COPPER_ORE, 2)),
     PUMP("Pump", 1, 1, false, 50, Map.of(ItemType.COPPER_ORE, 10)),
     COAL_POWER_GENERATOR("Coal Generator", 1, 1, false, 200, Map.of(ItemType.COPPER_ORE, 15, ItemType.IRON_ORE, 15)),
-    POWER_POLE("Power Node", 1, 1, false, 100, Map.of(ItemType.COPPER_ORE, 2));
+    POWER_POLE("Power Node", 1, 1, false, 100, Map.of(ItemType.COPPER_ORE, 2)),
+    FURNACE("Furnance", 2, 2, false, 100, Map.of(ItemType.COPPER_ORE, 2)),
+    CHEMICAL_PLANT("Chemical Plant", 2, 2, false, 100, Map.of(ItemType.COPPER_ORE, 2));
 
     private final String displayName;
     private final int width;

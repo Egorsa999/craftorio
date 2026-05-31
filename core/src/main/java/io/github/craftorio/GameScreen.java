@@ -19,8 +19,8 @@ import io.github.craftorio.model.ui.Inventory;
 import io.github.craftorio.view.CameraManager;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.WorldRenderer;
-import io.github.craftorio.view.ui.AssemblerUI;
 import io.github.craftorio.view.ui.BuildMenuUI;
+import io.github.craftorio.view.ui.CraftingUI;
 import io.github.craftorio.view.ui.InventoryUI;
 
 import java.awt.Point;
@@ -35,8 +35,8 @@ public class GameScreen implements Screen {
     private final CameraManager playerCamera;
     private final WorldRenderer worldRenderer;
     private final InventoryUI inventoryUI;
-    private final AssemblerUI assemblerUI;
     private final BuildMenuUI buildMenuUI;
+    private final CraftingUI craftingUI;
     private final TextureAtlas atlas;
 
     // Controllers
@@ -95,13 +95,13 @@ public class GameScreen implements Screen {
             player, engine.getBullets(), buildTool::getPreviewState);
 
         this.inventoryUI = new InventoryUI(textures, inventory);
-        this.assemblerUI = new AssemblerUI(textures);
         this.buildMenuUI = new BuildMenuUI(buildTool, inventory, textures);
+        this.craftingUI = new CraftingUI(textures);
 
         // Controller creation
         this.playerController = new PlayerController(player, playerCamera);
         this.buildInputHandler = new BuildInputHandler(buildTool, playerCamera, factory);
-        this.worldInteractionHandler = new WorldInteractionHandler(playerCamera, buildingManager, assemblerUI);
+        this.worldInteractionHandler = new WorldInteractionHandler(playerCamera, buildingManager, craftingUI);
         this.debugInputHandler = new DebugInputHandler(waveSpawner, playerCamera, buildTool);
     }
 
@@ -109,8 +109,8 @@ public class GameScreen implements Screen {
     public void show() {
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(inventoryUI.getStage());
-        multiplexer.addProcessor(assemblerUI.getStage());
         multiplexer.addProcessor(buildMenuUI.getStage());
+        multiplexer.addProcessor(craftingUI.getStage());
         multiplexer.addProcessor(buildInputHandler);
         multiplexer.addProcessor(worldInteractionHandler);
         multiplexer.addProcessor(debugInputHandler);
@@ -140,16 +140,16 @@ public class GameScreen implements Screen {
 
         worldRenderer.render();
         inventoryUI.render();
-        assemblerUI.render();
         buildMenuUI.render();
+        craftingUI.render();
     }
 
     @Override
     public void resize(int width, int height) {
         playerCamera.resize(width, height);
         inventoryUI.resize(width, height);
-        assemblerUI.resize(width, height);
         buildMenuUI.resize(width, height);
+        craftingUI.resize(width, height);
     }
 
     @Override
@@ -169,8 +169,8 @@ public class GameScreen implements Screen {
 
         worldRenderer.dispose();
         inventoryUI.dispose();
-        assemblerUI.dispose();
         buildMenuUI.dispose();
+        craftingUI.dispose();
         atlas.dispose();
     }
 }

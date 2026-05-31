@@ -9,12 +9,12 @@ import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.item.LiquidType;
 import io.github.craftorio.model.item.Recipe;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Assembler extends DamageableBuilding implements ThroughItem, ReceiveItem, PowerConsumer, PowerConnectable, Craftable {
+public class ChemicalPlant  extends DamageableBuilding implements ThroughLiquid, ReceiveLiquid, PowerConsumer, PowerConnectable, Craftable {
 
     private final PowerNode powerNode;
     private final CraftModule craftModule;
@@ -24,11 +24,13 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
 
     private final float maxPowerPerTick = 150.0f / 60.0f;
 
-    public Assembler(BuildingRegistry registry, Point anchor, Direction direction) {
-        super(registry, anchor, direction, BuildingType.ASSEMBLER);
+    private final float LIQUID_THROUGHPUT = 2.0f;
+
+    public ChemicalPlant(BuildingRegistry registry, Point anchor, Direction direction) {
+        super(registry, anchor, direction, BuildingType.CHEMICAL_PLANT);
 
         this.powerNode = new PowerNode(this, registry);
-        this.craftModule = new CraftModule(50, 0.0f, List.of(Recipe.BULLET));
+        this.craftModule = new CraftModule(0, 100.0f, List.of(Recipe.ROCKET_FUEL));
 
         throughDelta.add(new Point(+0, +2));
         throughDelta.add(new Point(+1, +2));
@@ -45,11 +47,12 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
         super.update();
         craftModule.update();
 
-        Map<ItemType, Integer> outputs = craftModule.getOutputItems();
-        for (Map.Entry<ItemType, Integer> entry : outputs.entrySet()) {
+        Map<LiquidType, Float> outputs = craftModule.getOutputLiquids();
+        for (Map.Entry<LiquidType, Float> entry : outputs.entrySet()) {
             if (entry.getValue() > 0) {
-                if (throughItem(entry.getKey())) {
-                    outputs.put(entry.getKey(), outputs.get(entry.getKey()) - 1);
+                float throughed = throughLiquid(entry.getKey(), Math.min(entry.getValue(), LIQUID_THROUGHPUT));
+                if (throughed > 0) {
+                    outputs.put(entry.getKey(), outputs.get(entry.getKey()) - throughed);
                     if (outputs.get(entry.getKey()) == 0) {
                         outputs.remove(entry.getKey());
                     }
@@ -60,34 +63,35 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
     }
 
     @Override
-    public boolean receiveItem(Building building, ItemType id) {
-        return craftModule.receiveItem(id);
+    public float receiveLiquid(Building building, LiquidType id, float amount) {
+        return craftModule.receiveLiquid(id, amount);
     }
 
     @Override
-    public boolean canReceiveItemFrom(Building building, Point point) {
+    public boolean canReceiveLiquidFrom(Building building, Point point, LiquidType type) {
         return true;
     }
 
     @Override
-    public boolean throughItem(ItemType type) {
+    public float throughLiquid(LiquidType type, float amount) {
         for (int iterate = 0; iterate <= throughDelta.size(); iterate++) {
             lastThrough++;
             lastThrough %= throughDelta.size();
             int x = getX() + throughDelta.get(lastThrough).x;
             int y = getY() + throughDelta.get(lastThrough).y;
             Building nextBuilding = registry.getBuildingAt(x, y);
-            if (nextBuilding instanceof ReceiveItem building) {
-                if (building.receiveItem(this, type)) {
-                    return true;
+            if (nextBuilding instanceof ReceiveLiquid building) {
+                float received = building.receiveLiquid(this, type, amount);
+                if (received > 0) {
+                    return received;
                 }
             }
         }
-        return false;
+        return 0;
     }
 
     @Override
-    public boolean canThroughItemIn(Point point) {
+    public boolean canThroughLiquidIn(Point point) {
         return true;
     }
 
@@ -113,6 +117,6 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
 
     @Override
     public String getBuildingName() {
-        return "Assembler";
+        return "Chemical Plant";
     }
 }

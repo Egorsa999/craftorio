@@ -29,8 +29,8 @@ public class FlowFieldLayerRenderer implements LayerRenderer{
 
                 float rotaion = 1000;
 
-                int dx = pathFinder.getFlowDirection(x, y).x;
-                int dy = pathFinder.getFlowDirection(x, y).y;
+                int dx = pathFinder.getFlowDirection(x, y, PathFinder.SizeClass.HEAVY).x;
+                int dy = pathFinder.getFlowDirection(x, y, PathFinder.SizeClass.HEAVY).y;
 
                 if (dx == 1 && dy == 0)rotaion = 0;
                 else if (dx == 1 && dy == 1)rotaion = 45;

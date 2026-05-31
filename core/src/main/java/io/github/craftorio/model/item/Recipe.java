@@ -1,47 +1,70 @@
 package io.github.craftorio.model.item;
 
-import io.github.craftorio.model.entity.Bullet;
-
+import java.util.Collections;
 import java.util.Map;
 
 public enum Recipe {
-    TEST1(ItemType.IRON_ORE, 1, 90, Map.of(
-        ItemType.COPPER_ORE, 1,
-        ItemType.COAL, 3
-    )),
-    TEST2(ItemType.COPPER_ORE, 2, 90, Map.of(
-                           ItemType.IRON_ORE, 2
-    )),
-    BULLET(ItemType.BULLET, 3, 60, Map.of(
-        ItemType.COPPER_ORE, 1,
-        ItemType.COAL, 1
-    ));
+    TEST1(
+        Map.of(ItemType.COPPER_ORE, 1, ItemType.COAL, 3),
+        Map.of(LiquidType.WATER, 10.0f),
+        Map.of(ItemType.IRON_ORE, 1),
+        Collections.emptyMap(),
+        90
+    ),
+    TEST2(
+        Map.of(ItemType.IRON_ORE, 2),
+        Collections.emptyMap(),
+        Map.of(ItemType.COPPER_ORE, 2),
+        Collections.emptyMap(),
+        90
+    ),
+    TEST3(
+        Collections.emptyMap(),
+        Map.of(LiquidType.WATER, 10.0f),
+        Collections.emptyMap(),
+        Map.of(LiquidType.OIL, 1.0f),
+        90
+    ),
+    ROCKET_FUEL(
+        Collections.emptyMap(),
+        Map.of(LiquidType.WATER, 10.0f, LiquidType.OIL, 5.0f),
+        Collections.emptyMap(),
+        Map.of(LiquidType.ROCKET_FUEL, 1.0f),
+        120
+    ),
+    BULLET(
+        Map.of(ItemType.COPPER_ORE, 1, ItemType.COAL, 1),
+        Collections.emptyMap(),
+        Map.of(ItemType.BULLET, 3),
+        Collections.emptyMap(),
+        60
+    ),
+    IRON_INGOT(
+        Map.of(ItemType.IRON_ORE, 2),
+        Collections.emptyMap(),
+        Map.of(ItemType.COPPER_ORE, 1),
+        Collections.emptyMap(),
+        120
+    );
 
-    private final ItemType output;
-    private final int outputAmount;
+    private final Map<ItemType, Integer> inputItems;
+    private final Map<LiquidType, Float> inputLiquids;
+    private final Map<ItemType, Integer> outputItems;
+    private final Map<LiquidType, Float> outputLiquids;
     private final int craftTicks;
-    private final Map<ItemType, Integer> inputs;
 
-    Recipe(ItemType output, int outputAmount, int craftTicks, Map<ItemType, Integer> inputs) {
-        this.output = output;
-        this.outputAmount = outputAmount;
+    Recipe(Map<ItemType, Integer> inputItems, Map<LiquidType, Float> inputLiquids,
+           Map<ItemType, Integer> outputItems, Map<LiquidType, Float> outputLiquids, int craftTicks) {
+        this.inputItems = inputItems;
+        this.inputLiquids = inputLiquids;
+        this.outputItems = outputItems;
+        this.outputLiquids = outputLiquids;
         this.craftTicks = craftTicks;
-        this.inputs = inputs;
     }
 
-    public ItemType getOutput() {
-        return output;
-    }
-
-    public int getOutputAmount() {
-        return outputAmount;
-    }
-
-    public int getCraftTicks() {
-        return craftTicks;
-    }
-
-    public Map<ItemType, Integer> getInputs() {
-        return inputs;
-    }
+    public Map<ItemType, Integer> getInputItems() { return inputItems; }
+    public Map<LiquidType, Float> getInputLiquids() { return inputLiquids; }
+    public Map<ItemType, Integer> getOutputItems() { return outputItems; }
+    public Map<LiquidType, Float> getOutputLiquids() { return outputLiquids; }
+    public int getCraftTicks() { return craftTicks; }
 }
