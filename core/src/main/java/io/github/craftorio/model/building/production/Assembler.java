@@ -1,5 +1,7 @@
 package io.github.craftorio.model.building.production;
 
+import io.github.craftorio.BalanceConfig;
+import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.building.power.PowerConnectable;
 import io.github.craftorio.model.building.power.PowerConsumer;
@@ -22,7 +24,7 @@ public class Assembler extends DamageableBuilding implements ThroughItem, Receiv
     private final ArrayList<Point> throughDelta = new ArrayList<>();
     private int lastThrough = 0;
 
-    private final float maxPowerPerTick = 150.0f / 60.0f;
+    private final float maxPowerPerTick = BalanceConfig.ASSEMBLER_POWER_CONSUMPTION * GameConfig.TICK_TIME;
 
     public Assembler(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.ASSEMBLER);

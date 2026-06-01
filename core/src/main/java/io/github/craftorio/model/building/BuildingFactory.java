@@ -13,7 +13,7 @@ import io.github.craftorio.model.building.storage.Core;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.core.SimulationEngine;
 import io.github.craftorio.model.core.WorldMap;
-import io.github.craftorio.model.ui.Inventory;
+import io.github.craftorio.ui.Inventory;
 
 import java.awt.Point;
 import java.util.ArrayList;

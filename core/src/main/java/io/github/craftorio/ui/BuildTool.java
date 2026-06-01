@@ -1,4 +1,4 @@
-package io.github.craftorio.model.ui;
+package io.github.craftorio.ui;
 
 import com.badlogic.gdx.utils.Array;
 import io.github.craftorio.model.building.Building;

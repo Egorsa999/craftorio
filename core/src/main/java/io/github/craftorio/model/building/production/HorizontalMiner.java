@@ -1,5 +1,6 @@
 package io.github.craftorio.model.building.production;
 
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.ItemType;
@@ -8,7 +9,6 @@ import java.awt.*;
 
 public class HorizontalMiner extends DamageableBuilding implements ThroughItem {
 
-    private final int BASE_TICKS_PER_ITEM = 240;
     private final int MAX_BUFFER_SIZE = 10;
 
     private int bufferCounter;
@@ -37,7 +37,7 @@ public class HorizontalMiner extends DamageableBuilding implements ThroughItem {
         }
         if (bufferCounter >= MAX_BUFFER_SIZE) return;
         currentProgress++;
-        if (currentProgress >= BASE_TICKS_PER_ITEM){
+        if (currentProgress >= BalanceConfig.HORIZONTAL_MINER_TICKS){
             currentProgress = 0;
             bufferCounter++;
         }

@@ -1,5 +1,6 @@
 package io.github.craftorio.model.building.production;
 
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.core.WorldMap;
@@ -17,7 +18,6 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
     private final Map<ResourceType, Integer> oreCoverage = new EnumMap<>(ResourceType.class);
     private final Map<ResourceType, Integer> oreProgress = new EnumMap<>(ResourceType.class);
 
-    private final int BASE_TICKS_PER_ITEM = 120;
 
     private final ArrayList<Point> throughDelta = new ArrayList<>();
     private int lastThrough = 0;
@@ -62,7 +62,7 @@ public class Miner extends DamageableBuilding implements ThroughItem, ReceiveIte
 
             int currentProgress = oreProgress.get(type) + multiplier;
 
-            float requiredTicks = BASE_TICKS_PER_ITEM * type.getMiningDifficulty();
+            float requiredTicks = BalanceConfig.MINER_TICKS * type.getMiningDifficulty();
             if (currentProgress >= requiredTicks) {
                 ItemType extracted = type.getDrop();
                 outputBuffer.add(extracted);

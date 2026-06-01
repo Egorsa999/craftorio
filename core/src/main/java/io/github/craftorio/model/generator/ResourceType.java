@@ -3,7 +3,7 @@ package io.github.craftorio.model.generator;
 import io.github.craftorio.model.item.ItemType;
 
 public enum ResourceType {
-    IRON(ItemType.IRON_ORE, 1.2f),   // Выдает предмет IRON_ORE
+    IRON(ItemType.IRON_ORE, 1.2f),
     COPPER(ItemType.COPPER_ORE, 1.2f),
     COAL(ItemType.COAL, 0.8f),
     NONE(null, 0);

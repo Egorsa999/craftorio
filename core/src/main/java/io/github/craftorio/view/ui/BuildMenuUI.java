@@ -24,14 +24,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.model.building.BuildingType;
+import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.item.ItemType;
-import io.github.craftorio.model.ui.BuildTool;
-import io.github.craftorio.model.ui.Inventory;
+import io.github.craftorio.ui.BuildTool;
+import io.github.craftorio.ui.Inventory;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.sprite.GameSprite;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class BuildMenuUI implements UIRenderer {
@@ -65,11 +68,15 @@ public class BuildMenuUI implements UIRenderer {
     private BuildingType lastSelectedType = null;
     private final Map<ItemType, Integer> lastKnownInventory = new HashMap<>();
 
+    private final BuildingInfoWindow infoWindow;
+
     public BuildMenuUI(BuildTool buildTool, Inventory inventory, TextureLoad textures) {
         this.stage = new Stage(new ScreenViewport());
         this.buildTool = buildTool;
         this.inventory = inventory;
         this.textures = textures;
+
+
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Silkscreen-Regular.ttf"));
 
@@ -123,7 +130,7 @@ public class BuildMenuUI implements UIRenderer {
         windowTable.setBackground(darkBg);
         windowTable.pad(20);
 
-        // --- ДЕЛАЕМ ГЛАВНОЕ МЕНЮ ТВЕРДЫМ ---
+
         windowTable.setTouchable(Touchable.enabled);
         windowTable.addListener(new InputListener() {
             @Override
@@ -145,11 +152,14 @@ public class BuildMenuUI implements UIRenderer {
         Label helpButton = new Label("[?]", titleStyle);
         helpButton.setColor(Color.YELLOW);
 
+
+        this.infoWindow = new BuildingInfoWindow(stage, textures, titleStyle, costStyle, darkBgTexture, selectedOutline, fallbackRegion);
+
         helpButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (lastSelectedType != null) {
-                    showDetailedInfoWindow(lastSelectedType);
+                    infoWindow.show(lastSelectedType);
                 }
             }
         });
@@ -219,76 +229,6 @@ public class BuildMenuUI implements UIRenderer {
         stage.addActor(rootTable);
     }
 
-    private void showDetailedInfoWindow(BuildingType type) {
-        final Table overlay = new Table();
-        overlay.setFillParent(true);
-
-        overlay.setTouchable(Touchable.enabled);
-
-        TextureRegionDrawable darkOverlay = new TextureRegionDrawable(new TextureRegion(darkBgTexture));
-        overlay.setBackground(darkOverlay);
-
-        overlay.addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                overlay.remove();
-            }
-
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ESCAPE) {
-                    overlay.remove();
-                    return true; // Съедаем событие, чтобы оно не ушло в игру
-                }
-                return false;
-            }
-        });
-
-        Table window = new Table();
-
-        window.setTouchable(Touchable.enabled);
-        window.setBackground(darkOverlay);
-        window.pad(30);
-        window.setBackground(selectedOutline);
-
-        Label title = new Label(type.getDisplayName(), titleStyle);
-        title.setColor(Color.ORANGE);
-
-        TextureRegion iconRegion = getSafeRegion(textures.get(type));
-        Image icon = new Image(iconRegion);
-        icon.setScaling(Scaling.fit);
-
-        // --- ИСПОЛЬЗУЕМ НОВЫЙ КЛАСС ДЛЯ ТЕКСТА ---
-        String descText = BuildingInfoProvider.getDetailedText(type);
-        Label descLabel = new Label(descText, costStyle);
-        descLabel.setWrap(true);
-        descLabel.setAlignment(Align.center);
-
-        Label closeLabel = new Label("(Click anywhere or press ESC to close)", costStyle);
-        closeLabel.setColor(Color.GRAY);
-
-        window.add(title).padBottom(20).row();
-        window.add(icon).size(128, 128).padBottom(20).row();
-        window.add(descLabel).width(400).padBottom(30).row();
-        window.add(closeLabel).row();
-
-        window.addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-        });
-
-        overlay.add(window);
-        stage.addActor(overlay);
-
-        stage.setKeyboardFocus(overlay);
-    }
 
     private void updateInfoPanel(BuildingType type) {
         if (type == null) {

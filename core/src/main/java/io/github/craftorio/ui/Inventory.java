@@ -1,4 +1,4 @@
-package io.github.craftorio.model.ui;
+package io.github.craftorio.ui;
 
 import io.github.craftorio.model.item.ItemType;
 

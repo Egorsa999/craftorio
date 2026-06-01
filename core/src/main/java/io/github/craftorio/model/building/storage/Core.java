@@ -3,7 +3,7 @@ package io.github.craftorio.model.building.storage;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.ItemType;
-import io.github.craftorio.model.ui.Inventory;
+import io.github.craftorio.ui.Inventory;
 
 import java.awt.*;
 

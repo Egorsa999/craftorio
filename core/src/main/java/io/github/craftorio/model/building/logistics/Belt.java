@@ -1,5 +1,6 @@
 package io.github.craftorio.model.building.logistics;
 
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
@@ -9,8 +10,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Belt extends DamageableBuilding implements ThroughItem, ReceiveItem {
-    private static final float speed = 1f * GameConfig.TICK_TIME;
-    private static final float ItemSize = 1f / 3f;
+    private static final float speed = BalanceConfig.CONVEYOR_SPEED * GameConfig.TICK_TIME;
+    private static final float ItemSize = BalanceConfig.CONVEYOR_ITEM_SIZE;
     private static float animationOffset = 0.0f;
 
     private ArrayList<ItemType> itemId;

@@ -7,7 +7,7 @@ import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.building.logistics.Pipe;
-import io.github.craftorio.model.ui.PreviewState;
+import io.github.craftorio.ui.PreviewState;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.TextureRenderer;
 import io.github.craftorio.view.VisibleBounds;

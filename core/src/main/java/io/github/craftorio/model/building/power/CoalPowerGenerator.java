@@ -1,5 +1,7 @@
 package io.github.craftorio.model.building.power;
 
+import io.github.craftorio.BalanceConfig;
+import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.ItemType;
@@ -10,13 +12,13 @@ public class CoalPowerGenerator extends DamageableBuilding implements PowerProdu
 
     private final PowerNode powerNode;
 
-    private final float maxPowerPerTick = 100.0f / 60.0f;
+    private final float maxPowerPerTick = BalanceConfig.COAL_GENERATOR_POWER_PRODUCTION * GameConfig.TICK_TIME;
 
     private int coalInInventory = 0;
     private final int maxCoalCapacity = 10;
 
     private float fuelFrames = 0;
-    private final float FRAMES_PER_COAL = 300f;
+    private final float FRAMES_PER_COAL = BalanceConfig.COAL_GENERATOR_COAL_FRAME_TIME;
 
     private float currentLoadRatio = 0f;
 

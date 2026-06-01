@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Vector3;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
-import io.github.craftorio.model.ui.BuildTool;
-import io.github.craftorio.model.ui.PreviewState;
+import io.github.craftorio.ui.BuildTool;
+import io.github.craftorio.ui.PreviewState;
 import io.github.craftorio.view.CameraManager;
 
 import java.awt.Point;

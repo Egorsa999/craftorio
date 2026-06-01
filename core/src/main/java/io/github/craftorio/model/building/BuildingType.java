@@ -21,6 +21,8 @@ public enum BuildingType {
     FURNACE("Furnance", 2, 2, false, 100, Map.of(ItemType.COPPER_ORE, 2)),
     CHEMICAL_PLANT("Chemical Plant", 2, 2, false, 100, Map.of(ItemType.COPPER_ORE, 2));
 
+
+
     private final String displayName;
     private final int width;
     private final int height;
@@ -30,7 +32,7 @@ public enum BuildingType {
     private final boolean walkable;
     private final Map<ItemType, Integer> cost;
 
-    BuildingType(String displayName, int width, int height, boolean walkable, int maxHP, Map<ItemType, Integer> cost) {
+    BuildingType(String displayName, int width, int height, boolean walkable,  int maxHP, Map<ItemType, Integer> cost) {
         this.displayName = displayName;
         this.width = width;
         this.height = height;

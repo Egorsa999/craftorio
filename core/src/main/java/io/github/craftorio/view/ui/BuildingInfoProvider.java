@@ -4,25 +4,8 @@ import io.github.craftorio.model.building.BuildingType;
 
 public class BuildingInfoProvider {
 
-
-    public static String getDetailedText(BuildingType type) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(getDescription(type)).append("\n\n");
-
-        sb.append("Size: ").append(type.getWidth()).append("x").append(type.getHeight()).append("\n");
-        sb.append("Max HP: ").append(type.getMaxHP()).append("\n");
-
-        if (type.getWalkable()) {
-            sb.append("Walkable: Yes\n");
-        } else {
-            sb.append("Walkable: No\n");
-        }
-
-        return sb.toString();
-    }
-
-    private static String getDescription(BuildingType type) {
+    // Сделали метод public, чтобы забирать только текст описания
+    public static String getDescription(BuildingType type) {
         switch (type) {
             case BELT: return "Transports items efficiently across the factory floor.";
             case MINER: return "Extracts solid resources from the ground directly below it.";
@@ -35,7 +18,7 @@ public class BuildingInfoProvider {
             case WALL: return "A sturdy defensive structure to block enemy movement.";
             case PIPE: return "Transports liquids across the factory.";
             case PUMP: return "Moves liquids through pipes, ensuring flow pressure.";
-            case COAL_POWER_GENERATOR: return "Accepts coal and burns it for 5 seconds, generating 100W of power during the process.";
+            case COAL_POWER_GENERATOR: return "Generates power from Coal.";
             case POWER_POLE: return "Connects buildings to the power grid.";
             case FURNACE: return "Smelts raw ores into usable plates and materials.";
             case CHEMICAL_PLANT: return "Processes liquids into advanced chemical products.";

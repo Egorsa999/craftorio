@@ -3,10 +3,8 @@ package io.github.craftorio.controller;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector3;
-import io.github.craftorio.model.building.BuildingType;
-import io.github.craftorio.model.enemy.EnemyType;
 import io.github.craftorio.model.enemy.WaveSpawner;
-import io.github.craftorio.model.ui.BuildTool;
+import io.github.craftorio.ui.BuildTool;
 import io.github.craftorio.view.CameraManager;
 
 public class DebugInputHandler extends InputAdapter {
