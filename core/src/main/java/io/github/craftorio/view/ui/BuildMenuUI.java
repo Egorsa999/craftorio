@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -47,7 +48,10 @@ public class BuildMenuUI implements UIRenderer {
     private final Table infoTable;
     private final Cell<Table> infoCell;
 
-    private final Image infoIcon;
+    private final Stack infoIconStack;
+    private final Image infoBaseIcon;
+    private final Image infoTopIcon;
+
     private final Label titleLabel;
     private final Table costTable;
 
@@ -75,8 +79,6 @@ public class BuildMenuUI implements UIRenderer {
         this.buildTool = buildTool;
         this.inventory = inventory;
         this.textures = textures;
-
-
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Silkscreen-Regular.ttf"));
 
@@ -130,7 +132,6 @@ public class BuildMenuUI implements UIRenderer {
         windowTable.setBackground(darkBg);
         windowTable.pad(20);
 
-
         windowTable.setTouchable(Touchable.enabled);
         windowTable.addListener(new InputListener() {
             @Override
@@ -142,8 +143,14 @@ public class BuildMenuUI implements UIRenderer {
         infoTable = new Table();
         infoTable.left();
 
-        infoIcon = new Image();
-        infoIcon.setScaling(Scaling.fit);
+        infoIconStack = new Stack();
+        infoBaseIcon = new Image();
+        infoBaseIcon.setScaling(Scaling.fit);
+        infoTopIcon = new Image();
+        infoTopIcon.setScaling(Scaling.fit);
+
+        infoIconStack.add(infoBaseIcon);
+        infoIconStack.add(infoTopIcon);
 
         Table textTable = new Table();
         titleLabel = new Label("", titleStyle);
@@ -151,7 +158,6 @@ public class BuildMenuUI implements UIRenderer {
 
         Label helpButton = new Label("[?]", titleStyle);
         helpButton.setColor(Color.YELLOW);
-
 
         this.infoWindow = new BuildingInfoWindow(stage, textures, titleStyle, costStyle, darkBgTexture, selectedOutline, fallbackRegion);
 
@@ -171,7 +177,7 @@ public class BuildMenuUI implements UIRenderer {
         textTable.add(helpButton).right().padRight(10).row();
         textTable.add(costTable).left().top().expandY();
 
-        infoTable.add(infoIcon).size(72, 72).padRight(16).top();
+        infoTable.add(infoIconStack).size(72, 72).padRight(16).top();
         infoTable.add(textTable).expandX().fillX().height(90).left().top();
 
         infoCell = windowTable.add(infoTable).left().fillX();
@@ -192,13 +198,23 @@ public class BuildMenuUI implements UIRenderer {
             btnStyle.up = null;
             Button btn = new Button(btnStyle);
 
+            Stack gridIconStack = new Stack();
+
+            if (type == BuildingType.TURRET || type == BuildingType.LASER_TURRET) {
+                Image baseImg = new Image(getSafeRegion(textures.get("turret-base")));
+                baseImg.setScaling(Scaling.fit);
+                gridIconStack.add(baseImg);
+            }
+
             TextureRegion iconRegion = getSafeRegion(textures.get(type));
             if (type == BuildingType.HORIZONTAL_MINER) {
                 iconRegion = getSafeRegion(textures.get("horizontal-miner-icon"));
             }
-            Image iconImage = new Image(iconRegion);
-            iconImage.setScaling(Scaling.fit);
-            btn.add(iconImage).expand().fill().pad(6);
+            Image topImg = new Image(iconRegion);
+            topImg.setScaling(Scaling.fit);
+            gridIconStack.add(topImg);
+
+            btn.add(gridIconStack).expand().fill().pad(6);
 
             buttons.put(type, btn);
 
@@ -243,11 +259,18 @@ public class BuildMenuUI implements UIRenderer {
 
         titleLabel.setText(type.getDisplayName());
 
+        if (type == BuildingType.TURRET || type == BuildingType.LASER_TURRET) {
+            infoBaseIcon.setDrawable(new TextureRegionDrawable(getSafeRegion(textures.get("turret-base"))));
+            infoBaseIcon.setVisible(true);
+        } else {
+            infoBaseIcon.setVisible(false);
+        }
+
         TextureRegion iconRegion = getSafeRegion(textures.get(type));
         if (type == BuildingType.HORIZONTAL_MINER) {
             iconRegion = getSafeRegion(textures.get("horizontal-miner-icon"));
         }
-        infoIcon.setDrawable(new TextureRegionDrawable(iconRegion));
+        infoTopIcon.setDrawable(new TextureRegionDrawable(iconRegion));
 
         costTable.clearChildren();
 

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -88,9 +89,18 @@ public class BuildingInfoWindow {
         Label title = new Label(type.getDisplayName(), titleStyle);
         title.setColor(Color.ORANGE);
 
+        Stack iconStack = new Stack();
+
+        if (type == BuildingType.TURRET || type == BuildingType.LASER_TURRET) {
+            Image baseIcon = new Image(getSafeRegion(textures.get("turret-base")));
+            baseIcon.setScaling(Scaling.fit);
+            iconStack.add(baseIcon);
+        }
+
         TextureRegion iconRegion = getSafeRegion(textures.get(type));
-        Image icon = new Image(iconRegion);
-        icon.setScaling(Scaling.fit);
+        Image topIcon = new Image(iconRegion);
+        topIcon.setScaling(Scaling.fit);
+        iconStack.add(topIcon);
 
         String descText = BuildingInfoProvider.getDescription(type);
         Label descLabel = new Label(descText, costStyle);
@@ -188,7 +198,7 @@ public class BuildingInfoWindow {
 
             statsTable.add(new Label("Accepted Ammo:", costStyle)).left().padBottom(5).row();
 
-            for (BulletType bullet : Turret.getAcceptedAmmo()) {
+            for (BulletType bullet : BulletType.values()) {
                 Table ammoRow = new Table();
                 TextureRegion dropIcon = getSafeRegion(textures.get(bullet.getItemType()));
 
@@ -218,7 +228,7 @@ public class BuildingInfoWindow {
         closeLabel.setColor(Color.GRAY);
 
         window.add(title).padBottom(15).row();
-        window.add(icon).size(128, 128).padBottom(15).row();
+        window.add(iconStack).size(128, 128).padBottom(15).row();
         window.add(descLabel).width(400).padBottom(20).row();
         window.add(statsTable).left().padBottom(25).row();
         window.add(closeLabel).row();

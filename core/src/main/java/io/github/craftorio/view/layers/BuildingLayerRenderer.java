@@ -52,6 +52,13 @@ public class BuildingLayerRenderer implements LayerRenderer {
                 }
 
                 if (current instanceof Turret turret) {
+                    TextureRenderer.drawBuilding(
+                        batch, textures.get("turret-base"),
+                        (float)current.anchor.x, (float)current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        current.direction, colorFilter, stateTime
+                    );
+
                     TextureRenderer.draw(
                         batch, textures.get(current.type),
                         (float)current.anchor.x, (float)current.anchor.y,
@@ -62,6 +69,13 @@ public class BuildingLayerRenderer implements LayerRenderer {
                 }
 
                 if (current instanceof LaserTurret laserTurret) {
+                    TextureRenderer.drawBuilding(
+                        batch, textures.get("turret-base"),
+                        (float)current.anchor.x, (float)current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        current.direction, colorFilter, stateTime
+                    );
+
                     TextureRenderer.draw(
                         batch, textures.get(current.type),
                         (float)current.anchor.x, (float)current.anchor.y,
