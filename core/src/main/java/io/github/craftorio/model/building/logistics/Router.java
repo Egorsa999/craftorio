@@ -1,5 +1,6 @@
 package io.github.craftorio.model.building.logistics;
 
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.ItemType;
@@ -7,7 +8,7 @@ import io.github.craftorio.model.item.ItemType;
 import java.awt.Point;
 
 public class Router extends DamageableBuilding implements ReceiveItem, ThroughItem {
-    private static final int PROCESS_TIME = 15;
+    private static final int PROCESS_TIME = BalanceConfig.ROUTER_SPEED;
 
     private ItemType currentItem = null;
     private int timer = 0;

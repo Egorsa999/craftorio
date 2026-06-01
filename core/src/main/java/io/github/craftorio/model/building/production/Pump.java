@@ -1,5 +1,6 @@
 package io.github.craftorio.model.building.production;
 
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.DamageableBuilding;
@@ -15,12 +16,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Pump extends DamageableBuilding implements ThroughLiquid {
-    private static final float PRODUCTION_RATE = 5f;
+    private static final float PRODUCTION_RATE = BalanceConfig.PUMP_PRODUCTION_RATE;
+    private final float PRODUCTION_RATIO;
     private final LiquidType liquidType;
 
     public Pump(BuildingRegistry registry, Point anchor, Direction direction, WorldMap worldMap) {
         super(registry, anchor, direction, BuildingType.PUMP);
         this.liquidType = worldMap.getCell(anchor.x, anchor.y).getTerrainType().getLiquidType();
+        this.PRODUCTION_RATIO = worldMap.getCell(anchor.x, anchor.y).getTerrainType().getRatio();
     }
 
     @Override
@@ -60,7 +63,7 @@ public class Pump extends DamageableBuilding implements ThroughLiquid {
             return;
         }
 
-        float amountPerTarget = PRODUCTION_RATE / targets.size();
+        float amountPerTarget = (PRODUCTION_RATIO * PRODUCTION_RATE) / targets.size();
         for (ReceiveLiquid receiver : targets) {
             receiver.receiveLiquid(this, liquidType, amountPerTarget);
         }

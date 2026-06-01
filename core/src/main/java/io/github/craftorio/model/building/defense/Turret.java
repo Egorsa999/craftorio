@@ -1,6 +1,7 @@
 package io.github.craftorio.model.building.defense;
 
 import com.badlogic.gdx.math.MathUtils;
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.core.SimulationEngine;
@@ -12,14 +13,15 @@ import java.awt.Point;
 import java.util.List;
 
 public class Turret extends DamageableBuilding implements ReceiveItem {
-    private final ItemType ammoType = ItemType.BULLET;
+    private final ItemType ammoType = BalanceConfig.TURRET_AMMO_TYPE;
     private int ammoAmount = 0;
 
     private float rotationDeg = 0f;
-    private float range = 8f;
-    private int fireCooldown = 15;
+    private float range = BalanceConfig.TURRET_RANGE;
+    private int fireCooldown = BalanceConfig.TURRET_FIRE_COOLDOWN;
     private int currentCooldown = 0;
-    private int damage = 10;
+    private int damage = BalanceConfig.TURRET_DAMAGE;
+    private float bulletSpeed = BalanceConfig.TURRET_BULLET_SPEED;
 
     private final SimulationEngine engine;
 
@@ -42,7 +44,7 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
                 float myX = getX() + 0.5f;
                 float myY = getY() + 0.5f;
 
-                Bullet bullet = new Bullet(myX, myY, target.getX(), target.getY(), 0.4f, damage);
+                Bullet bullet = new Bullet(myX, myY, target.getX(), target.getY(), bulletSpeed, damage);
                 engine.spawnBullet(bullet);
 
                 currentCooldown = fireCooldown;
