@@ -17,6 +17,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.BalanceConfig;
+import io.github.craftorio.model.building.defense.Turret;
+import io.github.craftorio.model.entity.BulletType;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.generator.TerrainType;
@@ -179,15 +181,37 @@ public class BuildingInfoWindow {
         if (type == BuildingType.TURRET) {
             statsTable.add(new Label("Combat Stats:", costStyle)).left().padBottom(5).row();
 
-            statsTable.add(new Label("- Damage: " + BalanceConfig.TURRET_DAMAGE, costStyle)).left().row();
             statsTable.add(new Label("- Range: " + String.format(Locale.US, "%.1f", BalanceConfig.TURRET_RANGE) + " blocks", costStyle)).left().row();
-            statsTable.add(new Label("- Bullet Speed: " + String.format(Locale.US, "%.1f", BalanceConfig.TURRET_BULLET_SPEED), costStyle)).left().row();
 
             float shotsPerSecond = 60f / BalanceConfig.TURRET_FIRE_COOLDOWN;
-            statsTable.add(new Label("- Fire Rate: " + String.format(Locale.US, "%.1f", shotsPerSecond) + "/s", costStyle)).left().padBottom(5).row();
+            statsTable.add(new Label("- Fire Rate: " + String.format(Locale.US, "%.1f", shotsPerSecond) + "/s", costStyle)).left().padBottom(10).row();
 
-            statsTable.add(new Label("- Ammo Consumed:", costStyle)).left().row();
-            addResourceInfo(statsTable, BalanceConfig.TURRET_AMMO_TYPE, shotsPerSecond);
+            statsTable.add(new Label("Accepted Ammo:", costStyle)).left().padBottom(5).row();
+
+            for (BulletType bullet : Turret.getAcceptedAmmo()) {
+                Table ammoRow = new Table();
+                TextureRegion dropIcon = getSafeRegion(textures.get(bullet.getItemType()));
+
+                ammoRow.add(new Image(dropIcon)).size(24, 24).padRight(10);
+
+                String ammoText = bullet.getItemType().getName() + " (Dmg: " + bullet.getDamage() + ", Spd: " + String.format(Locale.US, "%.2f", bullet.getSpeed()) + ")";
+                ammoRow.add(new Label(ammoText, costStyle)).left();
+
+                statsTable.add(ammoRow).left().padBottom(5).row();
+            }
+        }
+
+        if (type == BuildingType.LASER_TURRET) {
+            statsTable.add(new Label("Combat Stats:", costStyle)).left().padBottom(5).row();
+
+            statsTable.add(new Label("- Range: " + String.format(Locale.US, "%.1f", BalanceConfig.LASER_TURRET_RANGE) + " blocks", costStyle)).left().row();
+            statsTable.add(new Label("- Damage: " + String.format(Locale.US, "%.0f", BalanceConfig.LASER_TURRET_DAMAGE) + " DPS", costStyle)).left().padBottom(10).row();
+
+            statsTable.add(new Label("Power:", costStyle)).left().padBottom(5).row();
+
+            Label consumeLabel = new Label("- Consumes: " + String.format(Locale.US, "%.0f W", BalanceConfig.LASER_TURRET_POWER_CONSUMPTION) + " (when firing)", costStyle);
+            consumeLabel.setColor(Color.YELLOW);
+            statsTable.add(consumeLabel).left().padBottom(5).row();
         }
 
         Label closeLabel = new Label("(Click anywhere or press ESC to close)", costStyle);
@@ -226,7 +250,7 @@ public class BuildingInfoWindow {
         TextureRegion liquidIcon = getSafeRegion(textures.get(type));
 
         liquidRow.add(new Image(liquidIcon)).size(24, 24).padRight(10);
-        liquidRow.add(new Label(type.name() + ": " + String.format(Locale.US, "%.2f", unitsPerSecond) + "/s", costStyle)).left();
+        liquidRow.add(new Label(type.getName() + ": " + String.format(Locale.US, "%.2f", unitsPerSecond) + "/s", costStyle)).left();
         statsTable.add(liquidRow).left().padBottom(5).row();
     }
 
