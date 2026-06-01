@@ -22,4 +22,6 @@ public final class BalanceConfig {
     public static final float CONVEYOR_SPEED = 1f;
     public static final float CONVEYOR_ITEM_SIZE = 1 / 3f;
 
+    public static final int MAX_BUILD_DISTANCE = 35;
+
 }

@@ -1,9 +1,11 @@
 package io.github.craftorio.model.core;
 
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.model.building.power.PowerConnectable;
 import io.github.craftorio.model.building.power.PowerNetwork;
 import io.github.craftorio.model.building.power.PowerNode;
 import io.github.craftorio.model.building.power.PowerPole;
+import io.github.craftorio.model.enemy.WaveSpawner;
 import io.github.craftorio.model.entity.Player;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.BuildingFactory;
@@ -27,7 +29,6 @@ public class BuildingManager {
         this.worldMap = worldMap;
         this.factory = factory;
         this.player = player;
-
     }
 
     public boolean tryRemoveBuilding(Point pos){
@@ -65,21 +66,58 @@ public class BuildingManager {
 
     public boolean isValidPlace(BuildingType type, Point anchor, Direction direction){
         List<Point> requiredTiles = factory.calculateOccupiedTiles(type, anchor, direction);
-        if (!isAreaFree(requiredTiles) || !isValidTerrainFor(type, requiredTiles, anchor, direction) || !playerNotStuck(requiredTiles, type)) {
+        if (!isAreaFree(requiredTiles) || !isValidTerrainFor(type, requiredTiles, anchor, direction) || !checkWithPlayer(requiredTiles, type)) {
             return false;
         }
         return true;
     }
 
-    private boolean playerNotStuck(List<Point> requiredTiles, BuildingType type){
-        if(type.getWalkable() == true) return true;
-        Point playerLocation = player.getLocation();
-        for (Point p : requiredTiles){
-            if(p.equals(playerLocation))
-                return false;
+    private boolean checkWithPlayer(List<Point> requiredTiles, BuildingType type){
+        if (requiredTiles == null || requiredTiles.isEmpty()) {
+            return false; // Защита от ошибок
         }
-        return true;
+
+        Point anchor = requiredTiles.get(0);
+
+        float dx = player.playerX - (anchor.x + 0.5f);
+        float dy = player.playerY - (anchor.y + 0.5f);
+        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+        if (distance > BalanceConfig.MAX_BUILD_DISTANCE) {
+            return false;
+        }
+
+        if (type.getWalkable()) {
+            return true;
+        }
+
+        float px = player.playerX;
+        float py = player.playerY;
+        float radius = 0.4f;
+
+        float playerLeft = px - radius;
+        float playerRight = px + radius;
+        float playerBottom = py - radius;
+        float playerTop = py + radius;
+
+        for (Point tile : requiredTiles) {
+            float tileLeft = tile.x;
+            float tileRight = tile.x + 1f;
+            float tileBottom = tile.y;
+            float tileTop = tile.y + 1f;
+
+            boolean intersectX = (playerLeft < tileRight) && (playerRight > tileLeft);
+            boolean intersectY = (playerBottom < tileTop) && (playerTop > tileBottom);
+
+            if (intersectX && intersectY) {
+                return false;
+            }
+        }
+
+        return true; // Все проверки пройдены, строить можно!
     }
+
+
     private boolean isAreaFree(List<Point> tiles) {
         for (Point p : tiles) {
             if (registry.getBuildingAt(p.x, p.y) != null) {

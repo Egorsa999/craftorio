@@ -23,6 +23,7 @@ import io.github.craftorio.view.WorldRenderer;
 import io.github.craftorio.view.ui.BuildMenuUI;
 import io.github.craftorio.view.ui.CraftingUI;
 import io.github.craftorio.view.ui.InventoryUI;
+import io.github.craftorio.view.ui.PlayerUI;
 
 import java.awt.Point;
 import java.util.concurrent.ExecutorService;
@@ -39,6 +40,7 @@ public class GameScreen implements Screen {
     private final BuildMenuUI buildMenuUI;
     private final CraftingUI craftingUI;
     private final TextureAtlas atlas;
+    private final PlayerUI playerUI;
 
     // Controllers
     private final PlayerController playerController;
@@ -75,7 +77,7 @@ public class GameScreen implements Screen {
         inventory.add(ItemType.IRON_ORE, 10000);
 
         Point spawnPoint = worldMap.findSpawnPoint();
-        Player player = new Player(worldMap, buildingRegistry, spawnPoint);
+        Player player = new Player(worldMap, buildingRegistry, spawnPoint, inventory);
 
         Point corePoint = new Point(spawnPoint.x - 1, spawnPoint.y + 1);
         this.pathFinder = new PathFinder(corePoint.x + 1, corePoint.y + 1, worldMap, buildingRegistry);
@@ -92,6 +94,7 @@ public class GameScreen implements Screen {
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
 
         // View creation
+
         this.playerCamera = new CameraManager(player, worldMap);
         this.worldRenderer = new WorldRenderer(playerCamera, worldMap, buildingRegistry, waveSpawner, textures,
             player, engine.getBullets(), buildTool::getPreviewState);
@@ -99,6 +102,7 @@ public class GameScreen implements Screen {
         this.inventoryUI = new InventoryUI(textures, inventory);
         this.buildMenuUI = new BuildMenuUI(buildTool, inventory, textures);
         this.craftingUI = new CraftingUI(textures);
+        this.playerUI = new PlayerUI(player, playerCamera);
 
         // Controller creation
         this.playerController = new PlayerController(player, playerCamera);
@@ -144,6 +148,7 @@ public class GameScreen implements Screen {
         inventoryUI.render();
         buildMenuUI.render();
         craftingUI.render();
+        playerUI.render();
     }
 
     @Override
@@ -158,10 +163,12 @@ public class GameScreen implements Screen {
         inventoryUI.resize(gameWidth, gameHeight);
         buildMenuUI.resize(gameWidth, gameHeight);
         craftingUI.resize(gameWidth, gameHeight);
+        playerUI.resize(gameWidth, gameHeight);
 
         inventoryUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
         buildMenuUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
         craftingUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
+        playerUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
     }
 
     @Override
@@ -178,6 +185,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         executorService.shutdownNow();
+        playerUI.dispose();
 
         worldRenderer.dispose();
         inventoryUI.dispose();

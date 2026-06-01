@@ -29,8 +29,14 @@ public class PlayerController {
 
         if (dx != 0 || dy != 0) {
             player.updatePosition(delta, dx, dy);
+            player.stopDigging();
         } else {
             player.stop();
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                player.tryDig();
+            } else {
+                player.stopDigging();
+            }
         }
 
         if (dZoom != 0) {
