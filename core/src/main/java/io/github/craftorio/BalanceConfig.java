@@ -32,6 +32,11 @@ public final class BalanceConfig {
     public static final float TURRET_BULLET_SPEED = 0.4f;
     public static final ItemType TURRET_AMMO_TYPE = ItemType.BULLET;
 
+    // Laser Turret
+    public static final float LASER_TURRET_RANGE = 12.0f;
+    public static final float LASER_TURRET_DAMAGE = 120f; // Damage Per Second
+    public static final float LASER_TURRET_POWER_CONSUMPTION = 400f; //
+
     // Conveyor
     public static final float CONVEYOR_SPEED = 1f;
     public static final float CONVEYOR_ITEM_SIZE = 1 / 3f;

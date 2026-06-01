@@ -13,6 +13,7 @@ public enum BuildingType {
     ROUTER("Router", 1, 1, false, 100, Map.of(ItemType.COPPER_ORE, 3)),
     ASSEMBLER("Assembler", 2, 2, false, 100, Map.of(ItemType.COPPER_ORE, 20, ItemType.IRON_ORE, 10)),
     TURRET("Turret", 1, 1, false, 100, Map.of(ItemType.COPPER_ORE, 15)),
+    LASER_TURRET("Laser Turret", 1, 1, false, 100, Map.of(ItemType.COPPER_ORE, 15, ItemType.IRON_ORE, 5)),
     WALL("Wall", 1, 1, false, 500, Map.of(ItemType.COPPER_ORE, 5)),
     PIPE("Pipe", 1, 1, true, 50, Map.of(ItemType.COPPER_ORE, 2)),
     PUMP("Pump", 1, 1, false, 50, Map.of(ItemType.COPPER_ORE, 10)),
