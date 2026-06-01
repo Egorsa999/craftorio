@@ -42,6 +42,10 @@ public class MapGenerator {
         wallNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         wallNoise.SetFrequency(0.02f);
 
+        FastNoiseLite oilNoise = new FastNoiseLite(baseSeed + 5);
+        oilNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+        oilNoise.SetFrequency(0.025f);
+
         List<OreConfig> ores = new ArrayList<>();
 
         ores.add(new OreConfig(ResourceType.COPPER, createOreNoise(baseSeed + 2, 0.013f), 0.85f));
@@ -51,33 +55,37 @@ public class MapGenerator {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
 
-                // World Generation
                 float terrainValue = (terrainNoise.GetNoise(x, y) + 1.0f) / 2.0f;
 
                 if (terrainValue < 0.2f) {
                     worldMap.setTerrainType(x, y, TerrainType.WATER);
-                } else if (terrainValue < 0.3f) {
-                    worldMap.setTerrainType(x, y, TerrainType.SAND);
                 } else {
-                    worldMap.setTerrainType(x, y, TerrainType.GRASS);
+                    float oilValue = (oilNoise.GetNoise(x, y) + 1.0f) / 2.0f;
 
-                    float wallValue = (wallNoise.GetNoise(x, y) + 1.0f) / 2.0f;
-
-                    if (wallValue > 0.95f) {
+                    if (oilValue > 0.98f) {
                         worldMap.setTerrainType(x, y, TerrainType.OIL);
+                    } else if (terrainValue < 0.3f) {
+                        worldMap.setTerrainType(x, y, TerrainType.SAND);
+                    } else {
+                        worldMap.setTerrainType(x, y, TerrainType.GRASS);
+
+                        float wallValue = (wallNoise.GetNoise(x, y) + 1.0f) / 2.0f;
+
+                        if (wallValue > 0.95f) {
+                            worldMap.setTerrainType(x, y, TerrainType.WALL);
+                        }
                     }
                 }
 
                 TerrainType currentTerrain = worldMap.getCell(x, y).getTerrainType();
 
-                if (currentTerrain == TerrainType.GRASS || currentTerrain == TerrainType.SAND) {
+                 if (currentTerrain == TerrainType.GRASS || currentTerrain == TerrainType.SAND) {
 
                     for (OreConfig ore : ores) {
                         float rawOreValue = (ore.noise.GetNoise(x, y) + 1.0f) / 2.0f;
 
                         if (rawOreValue > ore.threshold) {
                             worldMap.setResourceType(x, y, ore.type);
-
                             break;
                         }
                     }

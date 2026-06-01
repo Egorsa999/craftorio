@@ -8,10 +8,8 @@ public class BuildingInfoProvider {
     public static String getDetailedText(BuildingType type) {
         StringBuilder sb = new StringBuilder();
 
-        // 1. Уникальное описание
         sb.append(getDescription(type)).append("\n\n");
 
-        // 2. Характеристики здания
         sb.append("Size: ").append(type.getWidth()).append("x").append(type.getHeight()).append("\n");
         sb.append("Max HP: ").append(type.getMaxHP()).append("\n");
 
