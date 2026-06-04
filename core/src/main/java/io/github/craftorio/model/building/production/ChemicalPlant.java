@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ChemicalPlant  extends DamageableBuilding implements ThroughLiquid, ReceiveLiquid, PowerConsumer, PowerConnectable, Craftable {
+public class ChemicalPlant  extends DamageableBuilding implements ReceiveItem, ThroughItem, ThroughLiquid, ReceiveLiquid, PowerConsumer, PowerConnectable, Craftable {
 
     private final PowerNode powerNode;
     private final CraftModule craftModule;
@@ -32,7 +32,7 @@ public class ChemicalPlant  extends DamageableBuilding implements ThroughLiquid,
         super(registry, anchor, direction, BuildingType.CHEMICAL_PLANT);
 
         this.powerNode = new PowerNode(this, registry);
-        this.craftModule = new CraftModule(0, 100.0f, List.of(Recipe.ROCKET_FUEL), true, maxPowerPerTick);
+        this.craftModule = new CraftModule(50, 100.0f, List.of(Recipe.ROCKET_FUEL, Recipe.IRON_INGOT), true, maxPowerPerTick);
 
         throughDelta.add(new Point(+0, +2));
         throughDelta.add(new Point(+1, +2));
@@ -48,6 +48,19 @@ public class ChemicalPlant  extends DamageableBuilding implements ThroughLiquid,
     public void update() {
         super.update();
         craftModule.update();
+
+        Map<ItemType, Integer> outputsItem = craftModule.getOutputItems();
+        for (Map.Entry<ItemType, Integer> entry : outputsItem.entrySet()) {
+            if (entry.getValue() > 0) {
+                if (throughItem(entry.getKey())) {
+                    outputsItem.put(entry.getKey(), outputsItem.get(entry.getKey()) - 1);
+                    if (outputsItem.get(entry.getKey()) == 0) {
+                        outputsItem.remove(entry.getKey());
+                    }
+                    break;
+                }
+            }
+        }
 
         Map<LiquidType, Float> outputs = craftModule.getOutputLiquids();
         for (Map.Entry<LiquidType, Float> entry : outputs.entrySet()) {
@@ -120,5 +133,37 @@ public class ChemicalPlant  extends DamageableBuilding implements ThroughLiquid,
     @Override
     public String getBuildingName() {
         return "Chemical Plant";
+    }
+
+    @Override
+    public boolean receiveItem(Building from, ItemType type) {
+        return craftModule.receiveItem(type);
+    }
+
+    @Override
+    public boolean canReceiveItemFrom(Building from, Point point) {
+        return true;
+    }
+
+    @Override
+    public boolean throughItem(ItemType type) {
+        for (int iterate = 0; iterate <= throughDelta.size(); iterate++) {
+            lastThrough++;
+            lastThrough %= throughDelta.size();
+            int x = getX() + throughDelta.get(lastThrough).x;
+            int y = getY() + throughDelta.get(lastThrough).y;
+            Building nextBuilding = registry.getBuildingAt(x, y);
+            if (nextBuilding instanceof ReceiveItem building) {
+                if (building.receiveItem(this, type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canThroughItemIn(Point point) {
+        return true;
     }
 }
