@@ -11,6 +11,7 @@ import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.generator.Cell;
 import io.github.craftorio.model.generator.TerrainType;
 
 import java.awt.Point;
@@ -138,7 +139,9 @@ public class BuildingManager {
         }
 
         for (Point p : tiles) {
-            TerrainType terrainType = worldMap.getCell(p.x, p.y).getTerrainType();
+            Cell cell = worldMap.getCell(p.x, p.y);
+            if (cell == null)return false;
+            TerrainType terrainType = cell.getTerrainType();
             if(terrainType == TerrainType.WALL || terrainType == TerrainType.WATER){
                 return false;
             }
