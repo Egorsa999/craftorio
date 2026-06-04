@@ -99,6 +99,16 @@ public class TextureLoad {
         itemSprites.put(ItemType.BULLET, load("item-bullet"));
         itemSprites.put(ItemType.STONE, load("item-stone"));
 
+        itemSprites.put(ItemType.COPPER_INGOT, load("item-copper-ingot"));
+        itemSprites.put(ItemType.IRON_INGOT, load("item-iron-ingot"));
+        itemSprites.put(ItemType.STEEL, load("item-steel"));
+        itemSprites.put(ItemType.STEEL_BULLET, load("item-steel-bullet"));
+        itemSprites.put(ItemType.GLASS, load("item-glass"));
+        itemSprites.put(ItemType.PLASTIC, load("item-plastic"));
+        itemSprites.put(ItemType.CHIP, load("item-chip"));
+
+
+
         liquidSprites.put(LiquidType.WATER, load("liquid-water"));
         liquidSprites.put(LiquidType.OIL, load("liquid-oil"));
         liquidSprites.put(LiquidType.ROCKET_FUEL, load("liquid-rocket-fuel"));

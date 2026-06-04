@@ -5,7 +5,14 @@ public enum ItemType {
     COPPER_ORE("Copper ore"),
     COAL("Coal"),
     BULLET("Bullet"),
-    STONE("Stone");
+    STONE("Stone"),
+    IRON_INGOT("Iron ingot"),
+    COPPER_INGOT("Copper ingot"),
+    STEEL("Steel"),
+    PLASTIC("Plastic"),
+    STEEL_BULLET("Steel bullet"),
+    GLASS("Glass"),
+    CHIP("Chip");
 
     private final String name;
     ItemType(String name){
