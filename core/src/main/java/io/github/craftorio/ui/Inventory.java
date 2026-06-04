@@ -1,5 +1,6 @@
 package io.github.craftorio.ui;
 
+import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.item.ItemType;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class Inventory {
     }
 
     public boolean canTake(Map<ItemType, Integer> map) {
+        if (GameConfig.INFINITY_RESOURCES) return true;
         for (Map.Entry<ItemType, Integer> entry : map.entrySet()) {
             if (items.getOrDefault(entry.getKey(), 0) < entry.getValue()) {
                 return false;
@@ -30,6 +32,7 @@ public class Inventory {
     }
 
     public void take(Map<ItemType, Integer> map) {
+        if (GameConfig.INFINITY_RESOURCES) return;
         for (Map.Entry<ItemType, Integer> entry : map.entrySet()) {
             items.put(entry.getKey(), items.getOrDefault(entry.getKey(), 0) - entry.getValue());
             if (items.getOrDefault(entry.getKey(), 0) == 0) {

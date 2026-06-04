@@ -6,7 +6,7 @@ public class MainGame extends Game {
 
     @Override
     public void create() {
-        this.setScreen(new GameScreen(this));
+        this.setScreen(new MainMenuScreen(this));
     }
 
     @Override
@@ -18,5 +18,4 @@ public class MainGame extends Game {
     public void dispose() {
         super.dispose();
     }
-
 }
