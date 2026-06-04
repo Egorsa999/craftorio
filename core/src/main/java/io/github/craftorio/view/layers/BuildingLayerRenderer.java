@@ -12,6 +12,8 @@ import io.github.craftorio.model.building.logistics.LiquidRouter;
 import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.building.logistics.UndergroundBelt;
 import io.github.craftorio.model.building.logistics.UndergroundPipe;
+import io.github.craftorio.model.building.power.Accumulator;
+import io.github.craftorio.model.building.power.Battery;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.LiquidType;
 import io.github.craftorio.view.TextureLoad;
@@ -48,10 +50,10 @@ public class BuildingLayerRenderer implements LayerRenderer {
                 }
                 Color colorFilter = new Color(1f, 1f, 1f, 1f);
 
-                if (current instanceof DamageableBuilding damageableCurrent){
+                if (current instanceof DamageableBuilding damageableCurrent) {
                     if (damageableCurrent.isReceivingDamage())
                         colorFilter = new Color(1.0f, 0.3f, 0.3f, 1.0f);
-                    else{
+                    else {
                         float hpPercent = (float) damageableCurrent.getHP() / damageableCurrent.type.getMaxHP();
                         float brightness = 0.3f + (0.7f * hpPercent);
                         colorFilter = new Color(brightness, brightness, brightness, 1.0f);
@@ -90,7 +92,7 @@ public class BuildingLayerRenderer implements LayerRenderer {
 
                         TextureRenderer.drawBuilding(
                             batch, textures.get("blank"),
-                            (float)current.anchor.x, (float)current.anchor.y,
+                            (float) current.anchor.x, (float) current.anchor.y,
                             current.type.getWidth(), current.type.getHeight(),
                             current.direction, blankTint, stateTime
                         );
@@ -109,7 +111,7 @@ public class BuildingLayerRenderer implements LayerRenderer {
 
                         TextureRenderer.drawBuilding(
                             batch, textures.get("blank"),
-                            (float)current.anchor.x, (float)current.anchor.y,
+                            (float) current.anchor.x, (float) current.anchor.y,
                             current.type.getWidth(), current.type.getHeight(),
                             current.direction, blankTint, stateTime
                         );
@@ -117,7 +119,7 @@ public class BuildingLayerRenderer implements LayerRenderer {
 
                     TextureRenderer.drawBuilding(
                         batch, textures.get(current.type),
-                        (float)current.anchor.x, (float)current.anchor.y,
+                        (float) current.anchor.x, (float) current.anchor.y,
                         current.type.getWidth(), current.type.getHeight(),
                         current.direction, colorFilter, stateTime
                     );
@@ -127,14 +129,14 @@ public class BuildingLayerRenderer implements LayerRenderer {
                 if (current instanceof Turret turret) {
                     TextureRenderer.drawBuilding(
                         batch, textures.get("turret-base"),
-                        (float)current.anchor.x, (float)current.anchor.y,
+                        (float) current.anchor.x, (float) current.anchor.y,
                         current.type.getWidth(), current.type.getHeight(),
                         current.direction, colorFilter, stateTime
                     );
 
                     TextureRenderer.draw(
                         batch, textures.get(current.type),
-                        (float)current.anchor.x, (float)current.anchor.y,
+                        (float) current.anchor.x, (float) current.anchor.y,
                         current.type.getWidth(), current.type.getHeight(),
                         turret.getRotationDeg(), colorFilter, stateTime
                     );
@@ -144,16 +146,61 @@ public class BuildingLayerRenderer implements LayerRenderer {
                 if (current instanceof LaserTurret laserTurret) {
                     TextureRenderer.drawBuilding(
                         batch, textures.get("turret-base"),
-                        (float)current.anchor.x, (float)current.anchor.y,
+                        (float) current.anchor.x, (float) current.anchor.y,
                         current.type.getWidth(), current.type.getHeight(),
                         current.direction, colorFilter, stateTime
                     );
 
                     TextureRenderer.draw(
                         batch, textures.get(current.type),
-                        (float)current.anchor.x, (float)current.anchor.y,
+                        (float) current.anchor.x, (float) current.anchor.y,
                         current.type.getWidth(), current.type.getHeight(),
                         laserTurret.getRotationDeg(), colorFilter, stateTime
+                    );
+                    continue;
+                }
+
+                if (current instanceof Accumulator accumulator) {
+                    TextureRenderer.drawBuilding(
+                        batch, textures.get("accumulator-base"),
+                        (float) current.anchor.x, (float) current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        current.direction, colorFilter, stateTime
+                    );
+
+                    float chargeRatio = accumulator.getChargeRatio();
+
+                    if (chargeRatio > 0) {
+                        Color capacityColor = new Color(Color.RED).lerp(Color.GREEN, chargeRatio);
+
+                        capacityColor.mul(colorFilter);
+
+                        TextureRenderer.drawBuilding(
+                            batch, textures.get("accumulator-charging-indicator"),
+                            (float) current.anchor.x, (float) current.anchor.y,
+                            current.type.getWidth(), current.type.getHeight(),
+                            current.direction, capacityColor, stateTime
+                        );
+                    }
+
+                    Color statusColor;
+
+                    if (accumulator.isChargingThisTick()) {
+                        statusColor = new Color(Color.CYAN);
+                    } else if (accumulator.isDischargingThisTick()) {
+                        statusColor = new Color(Color.ORANGE);
+                    } else {
+                        statusColor = new Color(Color.DARK_GRAY);
+                        statusColor.a = 0.5f;
+                    }
+
+                    statusColor.mul(colorFilter);
+
+                    TextureRenderer.drawBuilding(
+                        batch, textures.get("accumulator-status-indicator"),
+                        (float) current.anchor.x, (float) current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        current.direction, statusColor, stateTime
                     );
                     continue;
                 }
@@ -167,6 +214,7 @@ public class BuildingLayerRenderer implements LayerRenderer {
                     current.direction,
                     colorFilter, stateTime
                 );
+
             }
         }
     }

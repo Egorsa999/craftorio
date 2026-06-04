@@ -28,6 +28,7 @@ public class BuildingInfoProvider {
             case FURNACE: return "Smelts raw ores into usable plates and materials.";
             case CHEMICAL_PLANT: return "Processes liquids into advanced chemical products.";
             case OIL_GENERATOR: return "Generates power by burning Oil. Requires a steady liquid flow.";
+            case ACCUMULATOR: return "Stores energy";
             default: return "A standard factory structure.";
         }
     }

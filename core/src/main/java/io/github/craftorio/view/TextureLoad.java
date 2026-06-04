@@ -71,9 +71,14 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.FURNACE, load("furnace"));
         buildingSprites.put(BuildingType.CHEMICAL_PLANT, load("chemical-plant"));
         buildingSprites.put(BuildingType.OIL_GENERATOR, load("oil-generator"));
+        buildingSprites.put(BuildingType.ACCUMULATOR, load("accumulator"));
 
         StringSprites.put("player", load("player"));
         StringSprites.put("turret-base", load("turret-base"));
+        StringSprites.put("accumulator-charging-indicator", load("accumulator-charging-indicator"));
+        StringSprites.put("accumulator-status-indicator", load("accumulator-status-indicator"));
+        StringSprites.put("accumulator-base", load("accumulator-base"));
+
         StringSprites.put("blank", load("blank"));
         StringSprites.put("bullet", load("bullet"));
         StringSprites.put("horizontal-miner-icon", load("horizontal-miner-icon"));
