@@ -13,9 +13,9 @@ public class Rocket extends DamageableBuilding implements ReceiveItem, ReceiveLi
     public static final int REQUIRED_STEEL = 200;
     public static final float REQUIRED_FUEL = 500f;
 
-    private int currentMicrochips = 0;
-    private int currentSteel = 0;
-    private float currentFuel = 0f;
+    private int currentMicrochips = 100;
+    private int currentSteel = 200;
+    private float currentFuel = 500f;
 
     private boolean hasLaunched = false;
 
@@ -76,11 +76,10 @@ public class Rocket extends DamageableBuilding implements ReceiveItem, ReceiveLi
 
     public void launch() {
         if (isReadyToLaunch()) {
-            System.out.println("ROCKET LAUNCHED! YOU WIN!");
             currentMicrochips = 0;
             currentSteel = 0;
             currentFuel = 0f;
-            hasLaunched = true; // Устанавливаем флаг
+            hasLaunched = true;
         }
     }
 

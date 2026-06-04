@@ -108,9 +108,13 @@ public class WaveUI implements UIRenderer {
         float timeLeft = waveSpawner.getTimeRemainingUntilNextWave();
         SpawnDirection dir = waveSpawner.getCurrentWaveDirection();
 
+        boolean isActive = waveSpawner.isWaveActive();
+        int enemyCount = waveSpawner.getActiveEnemies().size();
+
         if (waveSpawner.isInfiniteMode()) {
             waveNumberLabel.setText("Infinite wave!");
             waveNumberLabel.setColor(Color.RED);
+
             timerLabel.setVisible(false);
 
         } else if (waveSpawner.isPreparingForInfinite()) {
@@ -133,20 +137,26 @@ public class WaveUI implements UIRenderer {
             waveNumberLabel.setColor(Color.ORANGE);
 
             timerLabel.setVisible(true);
-            int minutes = (int) (timeLeft / 60);
-            int seconds = (int) (timeLeft % 60);
-            timerLabel.setText(String.format(Locale.US, "%02d:%02d", minutes, seconds));
 
-            if (timeLeft <= 10f && timeLeft > 0) {
-                timerLabel.setColor(Color.RED);
-            } else {
+            if (isActive) {
+                timerLabel.setText("Enemies: " + enemyCount);
                 timerLabel.setColor(Color.WHITE);
+            } else {
+                // Если волна мертва - показываем таймер до следующей
+                int minutes = (int) (timeLeft / 60);
+                int seconds = (int) (timeLeft % 60);
+                timerLabel.setText(String.format(Locale.US, "%02d:%02d", minutes, seconds));
+
+                if (timeLeft <= 10f && timeLeft > 0) {
+                    timerLabel.setColor(Color.RED);
+                } else {
+                    timerLabel.setColor(Color.WHITE);
+                }
             }
         }
 
-        if (dir != null) {
+        if (dir != null && !isActive && !waveSpawner.isInfiniteMode()) {
             directionArrow.setVisible(true);
-
             arrowCell.size(64, 64).padBottom(5);
             switch (dir) {
                 case NORTH: directionArrow.setRotation(0); break;
@@ -156,11 +166,9 @@ public class WaveUI implements UIRenderer {
             }
         } else {
             directionArrow.setVisible(false);
-
             arrowCell.size(0, 0).padBottom(0);
         }
     }
-
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
