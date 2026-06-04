@@ -8,12 +8,13 @@ import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.building.ReceiveLiquid;
 import io.github.craftorio.model.building.ThroughLiquid;
 import io.github.craftorio.model.building.liquid.LiquidNetwork;
+import io.github.craftorio.model.building.liquid.LiquidNetworkNode;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.LiquidType;
 
 import java.awt.Point;
 
-public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLiquid {
+public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLiquid, LiquidNetworkNode {
     private static final float CAPACITY = BalanceConfig.PIPE_CAPACITY;
     private static final float THROUGHPUT = BalanceConfig.PIPE_THROUGHPUT;
 
@@ -28,25 +29,43 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
 
     public Pipe(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.PIPE);
-        this.direction = direction;
         this.pipeType = 0;
         this.rotation = dirToInt(direction) * 90f;
         this.reflection = 1f;
         updateType();
     }
 
+    @Override
+    public int getSubNetworksCount() { return 1; }
+    @Override
+    public LiquidNetwork getNetwork(int index) { return network; }
+    @Override
+    public void setNetwork(int index, LiquidNetwork network) { this.network = network; }
+    @Override
+    public float getCapacity(int index) { return CAPACITY; }
+    @Override
+    public float getPrevFill(int index) { return prevFill; }
+    @Override
+    public LiquidType getPrevLiquidType(int index) { return prevLiquidType; }
+    @Override
+    public void savePrevFill() {
+        this.prevFill = currentFill;
+        this.prevLiquidType = network != null ? network.getLiquidType() : null;
+    }
+    @Override
+    public void setCurrentFill(int index, float fill) { this.currentFill = fill; }
+    @Override
+    public int getIndexForDirection(Direction dir) { return 0; }
+    @Override
+    public LiquidNetworkNode getLinkedNode(int index) { return null; }
+
     public LiquidType getLiquidType() {
-        if (network == null) {
-            return null;
-        }
-        return network.getLiquidType();
+        return network != null ? network.getLiquidType() : null;
     }
 
     @Override
     public float receiveLiquid(Building from, LiquidType type, float amount) {
-        if (network == null || amount <= 0f || !canReceiveLiquidFrom(from, from.getAnchor(), type)) {
-            return 0f;
-        }
+        if (network == null || amount <= 0f || !canReceiveLiquidFrom(from, from != null ? from.getAnchor() : null, type)) return 0f;
         return network.addLiquid(type, amount);
     }
 
@@ -57,60 +76,16 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
     }
 
     @Override
-    public float throughLiquid(LiquidType type, float amount) {
-        if (amount <= 0f || network == null || !network.canAcceptLiquid(type)) {
-            return 0f;
-        }
-
-        Building next = getOutputBuilding();
-        if (next instanceof ReceiveLiquid receiver) {
-            return receiver.receiveLiquid(this, type, amount);
-        }
-        return 0f;
-    }
+    public float throughLiquid(LiquidType type, float amount) { return 0f; }
 
     @Override
     public boolean canThroughLiquidIn(Point point) {
-        Point output = getOutputPoint();
-        return output.equals(point);
+        return getOutputPoint().equals(point);
     }
 
-    public LiquidNetwork getNetwork() {
-        return network;
-    }
-
-    public void setNetwork(LiquidNetwork network) {
-        this.network = network;
-    }
-
-    public void setCurrentFill(float fill) {
-        this.currentFill = fill;
-    }
-
-    public float getCurrentFill() {
-        return currentFill;
-    }
-
-    public void savePrevFill() {
-        this.prevFill = currentFill;
-        this.prevLiquidType = network != null ? network.getLiquidType() : null;
-    }
-
-    public LiquidType getPrevLiquidType() {
-        return prevLiquidType;
-    }
-
-    public float getPrevFill() {
-        return prevFill;
-    }
-
-    public float getLiquidCapacity() {
-        return CAPACITY;
-    }
-
-    public float getThroughput() {
-        return THROUGHPUT;
-    }
+    public float getCurrentFill() { return currentFill; }
+    public float getLiquidCapacity() { return CAPACITY; }
+    public Direction getFlowDirection() { return direction; }
 
     @Override
     public void setAnchor(int x, int y) {
@@ -118,13 +93,8 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
         updateType();
     }
 
-    public Direction getFlowDirection() {
-        return direction;
-    }
-
     private Point getOutputPoint() {
-        int x = getX();
-        int y = getY();
+        int x = getX(); int y = getY();
         return switch (direction) {
             case RIGHT -> new Point(x + 1, y);
             case LEFT -> new Point(x - 1, y);
@@ -140,15 +110,12 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
 
     private boolean flowsInFrom(Direction side) {
         Building building = getNeighborBuilding(side);
-        if (!(building instanceof ThroughLiquid source)) {
-            return false;
-        }
+        if (!(building instanceof ThroughLiquid source)) return false;
         return source.canThroughLiquidIn(new Point(getX(), getY()));
     }
 
     private Building getNeighborBuilding(Direction side) {
-        int x = getX();
-        int y = getY();
+        int x = getX(); int y = getY();
         return switch (side) {
             case UP -> registry.getBuildingAt(x, y + 1);
             case DOWN -> registry.getBuildingAt(x, y - 1);
@@ -159,29 +126,20 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
 
     private Direction perpendicularLeft() {
         return switch (direction) {
-            case UP -> Direction.LEFT;
-            case RIGHT -> Direction.UP;
-            case DOWN -> Direction.RIGHT;
-            case LEFT -> Direction.DOWN;
+            case UP -> Direction.LEFT; case RIGHT -> Direction.UP;
+            case DOWN -> Direction.RIGHT; case LEFT -> Direction.DOWN;
         };
     }
 
     private Direction perpendicularRight() {
         return switch (direction) {
-            case UP -> Direction.RIGHT;
-            case RIGHT -> Direction.DOWN;
-            case DOWN -> Direction.LEFT;
-            case LEFT -> Direction.UP;
+            case UP -> Direction.RIGHT; case RIGHT -> Direction.DOWN;
+            case DOWN -> Direction.LEFT; case LEFT -> Direction.UP;
         };
     }
 
     private int dirToInt(Direction dir) {
-        return switch (dir) {
-            case UP -> 0;
-            case RIGHT -> 1;
-            case DOWN -> 2;
-            case LEFT -> 3;
-        };
+        return switch (dir) { case UP -> 0; case RIGHT -> 1; case DOWN -> 2; case LEFT -> 3; };
     }
 
     private void updateType() {
@@ -189,51 +147,15 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
         boolean leftIn = flowsInFrom(perpendicularLeft());
         boolean rightIn = flowsInFrom(perpendicularRight());
 
-        if (downIn && leftIn && rightIn) {
-            pipeType = 3;
-            rotation = dirToInt(direction) * 90f;
-            reflection = 1f;
-            return;
-        }
-
+        if (downIn && leftIn && rightIn) { pipeType = 3; rotation = dirToInt(direction) * 90f; reflection = 1f; return; }
         if (downIn) {
-            if (rightIn) {
-                pipeType = 2;
-                rotation = dirToInt(direction) * 90f;
-                reflection = 1f;
-                return;
-            }
-            if (leftIn) {
-                pipeType = 2;
-                rotation = dirToInt(direction) * 90f;
-                reflection = -1f;
-                return;
-            }
+            if (rightIn) { pipeType = 2; rotation = dirToInt(direction) * 90f; reflection = 1f; return; }
+            if (leftIn) { pipeType = 2; rotation = dirToInt(direction) * 90f; reflection = -1f; return; }
         }
-
-        if (leftIn && rightIn) {
-            pipeType = 4;
-            rotation = dirToInt(direction) * 90f;
-            reflection = 1f;
-            return;
-        }
-
-        if (leftIn) {
-            pipeType = 1;
-            rotation = dirToInt(direction) * 90f;
-            reflection = 1f;
-            return;
-        }
-        if (rightIn) {
-            pipeType = 1;
-            rotation = dirToInt(direction) * 90f;
-            reflection = -1f;
-            return;
-        }
-
-        pipeType = 0;
-        rotation = dirToInt(direction) * 90f;
-        reflection = 1f;
+        if (leftIn && rightIn) { pipeType = 4; rotation = dirToInt(direction) * 90f; reflection = 1f; return; }
+        if (leftIn) { pipeType = 1; rotation = dirToInt(direction) * 90f; reflection = 1f; return; }
+        if (rightIn) { pipeType = 1; rotation = dirToInt(direction) * 90f; reflection = -1f; return; }
+        pipeType = 0; rotation = dirToInt(direction) * 90f; reflection = 1f;
     }
 
     @Override
@@ -244,30 +166,18 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
     }
 
     private void pushLiquidToOutput() {
-        if (network == null) {
-            return;
-        }
-
+        if (network == null || network.getCurrSystemAmount() <= 0f) return;
         LiquidType type = network.getLiquidType();
-        if (type == null || network.getCurrSystemAmount() <= 0f) {
-            return;
-        }
+        if (type == null) return;
 
         Building output = getOutputBuilding();
-        if (output instanceof Pipe || !(output instanceof ReceiveLiquid receiver)) {
-            return;
-        }
+        if (output instanceof LiquidNetworkNode || !(output instanceof ReceiveLiquid receiver)) return;
 
-        if (!receiver.canReceiveLiquidFrom(this, getAnchor(), getLiquidType())) {
-            return;
-        }
+        if (!receiver.canReceiveLiquidFrom(this, getAnchor(), type)) return;
 
         float toPush = Math.min(THROUGHPUT, network.getCurrSystemAmount());
-
         float taken = network.takeLiquid(toPush);
-        if (taken <= 0f) {
-            return;
-        }
+        if (taken <= 0f) return;
 
         float accepted = receiver.receiveLiquid(this, type, taken);
         if (accepted < taken) {
@@ -275,15 +185,7 @@ public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLi
         }
     }
 
-    public int getPipeType() {
-        return pipeType;
-    }
-
-    public float getRotation() {
-        return rotation;
-    }
-
-    public float getReflection() {
-        return reflection;
-    }
+    public int getPipeType() { return pipeType; }
+    public float getRotation() { return rotation; }
+    public float getReflection() { return reflection; }
 }

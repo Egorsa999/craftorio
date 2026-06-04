@@ -7,131 +7,119 @@ import io.github.craftorio.model.building.DamageableBuilding;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.building.ReceiveLiquid;
 import io.github.craftorio.model.building.ThroughLiquid;
+import io.github.craftorio.model.building.liquid.LiquidNetwork;
+import io.github.craftorio.model.building.liquid.LiquidNetworkNode;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.LiquidType;
 
 import java.awt.Point;
 
-public class LiquidJunction extends DamageableBuilding implements ReceiveLiquid, ThroughLiquid {
+public class LiquidJunction extends DamageableBuilding implements ReceiveLiquid, ThroughLiquid, LiquidNetworkNode {
     private static final float CAPACITY = BalanceConfig.PIPE_CAPACITY;
     private static final float THROUGHPUT = BalanceConfig.PIPE_THROUGHPUT;
 
-    private final float[] amounts;
-    private final LiquidType[] types;
+    private final LiquidNetwork[] networks = new LiquidNetwork[2];
+    private final float[] currentFills = new float[2];
+    private final float[] prevFills = new float[2];
+    private final LiquidType[] prevTypes = new LiquidType[2];
 
     public LiquidJunction(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.LIQUID_JUNCTION);
-
-        amounts = new float[4];
-        types = new LiquidType[4];
     }
 
-    private int dirToIndex(Direction dir) {
-        switch (dir) {
-            case UP: return 0;
-            case RIGHT: return 1;
-            case DOWN: return 2;
-            case LEFT: return 3;
-            default: return 0;
+    @Override
+    public int getSubNetworksCount() { return 2; }
+    @Override
+    public LiquidNetwork getNetwork(int index) { return networks[index]; }
+    @Override
+    public void setNetwork(int index, LiquidNetwork network) { networks[index] = network; }
+    @Override
+    public float getCapacity(int index) { return CAPACITY; }
+    @Override
+    public float getPrevFill(int index) { return prevFills[index]; }
+    @Override
+    public LiquidType getPrevLiquidType(int index) { return prevTypes[index]; }
+
+    @Override
+    public void savePrevFill() {
+        for (int i = 0; i < 2; i++) {
+            prevFills[i] = currentFills[i];
+            prevTypes[i] = networks[i] != null ? networks[i].getLiquidType() : null;
         }
     }
 
-    private Building getNeighbor(Direction dir) {
-        int nextCol = getX();
-        int nextRow = getY();
+    @Override
+    public void setCurrentFill(int index, float fill) { currentFills[index] = fill; }
 
-        switch (dir) {
-            case RIGHT: nextCol++; break;
-            case LEFT:  nextCol--; break;
-            case UP:    nextRow++; break;
-            case DOWN:  nextRow--; break;
-        }
-        return registry.getBuildingAt(nextCol, nextRow);
+    @Override
+    public int getIndexForDirection(Direction dir) {
+        return (dir == Direction.LEFT || dir == Direction.RIGHT) ? 0 : 1;
     }
 
-    private Direction getDirectionFrom(Building sender) {
-        if (sender == null) return Direction.UP;
-
-        if (registry.getBuildingAt(getX() - 1, getY()) == sender) return Direction.RIGHT;
-        if (registry.getBuildingAt(getX() + 1, getY()) == sender) return Direction.LEFT;
-        if (registry.getBuildingAt(getX(), getY() - 1) == sender) return Direction.UP;
-        if (registry.getBuildingAt(getX(), getY() + 1) == sender) return Direction.DOWN;
-
-        return Direction.UP;
-    }
+    @Override
+    public LiquidNetworkNode getLinkedNode(int index) { return null; }
 
     @Override
     public void update() {
         super.update();
         for (Direction dir : Direction.values()) {
-            int index = dirToIndex(dir);
+            int netIndex = getIndexForDirection(dir);
+            LiquidNetwork net = networks[netIndex];
 
-            if (amounts[index] > 0f && types[index] != null) {
-                float toPush = Math.min(THROUGHPUT, amounts[index]);
-                float acceptedAmount = pushToNeighbor(dir, types[index], toPush);
+            if (net == null || net.getCurrSystemAmount() <= 0f) continue;
+            LiquidType type = net.getLiquidType();
+            if (type == null) continue;
 
-                if (acceptedAmount > 0f) {
-                    amounts[index] -= acceptedAmount;
+            int nx = getX(); int ny = getY();
+            switch (dir) {
+                case RIGHT -> nx++; case LEFT -> nx--;
+                case UP -> ny++; case DOWN -> ny--;
+            }
 
-                    if (amounts[index] <= 0.0001f) {
-                        amounts[index] = 0f;
-                        types[index] = null;
+            Building b = registry.getBuildingAt(nx, ny);
+            if (b instanceof ReceiveLiquid receiver && !(b instanceof LiquidNetworkNode)) {
+                if (receiver.canReceiveLiquidFrom(this, getAnchor(), type)) {
+                    float toPush = Math.min(THROUGHPUT, net.getCurrSystemAmount());
+                    float taken = net.takeLiquid(toPush);
+                    if (taken > 0f) {
+                        float accepted = receiver.receiveLiquid(this, type, taken);
+                        if (accepted < taken) net.addLiquid(type, taken - accepted);
                     }
                 }
             }
         }
     }
 
-    private float pushToNeighbor(Direction dir, LiquidType type, float amount) {
-        Building nextBuilding = getNeighbor(dir);
-
-        if (nextBuilding instanceof ReceiveLiquid building) {
-            return building.receiveLiquid(this, type, amount);
-        }
-        return 0f;
+    private Direction getDirectionFrom(Building sender) {
+        if (sender == null) return Direction.UP;
+        if (registry.getBuildingAt(getX() - 1, getY()) == sender) return Direction.LEFT;
+        if (registry.getBuildingAt(getX() + 1, getY()) == sender) return Direction.RIGHT;
+        if (registry.getBuildingAt(getX(), getY() - 1) == sender) return Direction.DOWN;
+        if (registry.getBuildingAt(getX(), getY() + 1) == sender) return Direction.UP;
+        return Direction.UP;
     }
 
     @Override
     public float receiveLiquid(Building from, LiquidType type, float amount) {
         if (from == null || amount <= 0f) return 0f;
-
-        Direction travelingDir = getDirectionFrom(from);
-        int index = dirToIndex(travelingDir);
-
-        if (types[index] != null && types[index] != type) {
-            return 0f;
-        }
-
-        float availableSpace = CAPACITY - amounts[index];
-        if (availableSpace <= 0f) {
-            return 0f;
-        }
-
-        float accepted = Math.min(amount, availableSpace);
-        types[index] = type;
-        amounts[index] += accepted;
-
-        return accepted;
+        Direction fromDir = getDirectionFrom(from);
+        int netIndex = getIndexForDirection(fromDir);
+        LiquidNetwork net = networks[netIndex];
+        if (net == null) return 0f;
+        return net.addLiquid(type, amount);
     }
 
     @Override
     public boolean canReceiveLiquidFrom(Building from, Point point, LiquidType type) {
         if (from == null) return false;
-
-        Direction travelingDir = getDirectionFrom(from);
-        int index = dirToIndex(travelingDir);
-
-        if (types[index] != null && types[index] != type) return false;
-        return amounts[index] < CAPACITY;
-    }
-
-    @Override
-    public float throughLiquid(LiquidType type, float amount) {
-        return 0f;
-    }
-
-    @Override
-    public boolean canThroughLiquidIn(Point point) {
+        int netIndex = getIndexForDirection(getDirectionFrom(from));
+        LiquidNetwork net = networks[netIndex];
+        if (net != null && net.getLiquidType() != null && net.getLiquidType() != type) return false;
         return true;
     }
+
+    @Override
+    public float throughLiquid(LiquidType type, float amount) { return 0f; }
+    @Override
+    public boolean canThroughLiquidIn(Point point) { return true; }
 }

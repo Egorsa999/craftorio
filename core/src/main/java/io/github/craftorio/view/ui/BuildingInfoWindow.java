@@ -226,6 +226,21 @@ public class BuildingInfoWindow {
             }
         }
 
+        if (type == BuildingType.ACCUMULATOR) {
+            Label powerHeader = new Label("Power Storage:", costStyle);
+            statsTable.add(powerHeader).left().padBottom(5).row();
+
+            statsTable.add(new Label("- Capacity: " + String.format(Locale.US, "%.0f W", BalanceConfig.ACCUMULATOR_CAPACITY), costStyle)).left().row();
+
+            Label chargeLabel = new Label("- Max Charge: " + String.format(Locale.US, "%.0f W/s", BalanceConfig.ACCUMULATOR_MAX_CHARGE_RATE), costStyle);
+            chargeLabel.setColor(Color.GREEN);
+            statsTable.add(chargeLabel).left().row();
+
+            Label dischargeLabel = new Label("- Max Discharge: " + String.format(Locale.US, "%.0f W/s", BalanceConfig.ACCUMULATOR_MAX_DISCHARGE_RATE), costStyle);
+            dischargeLabel.setColor(Color.ORANGE);
+            statsTable.add(dischargeLabel).left().padBottom(5).row();
+        }
+
         if (type == BuildingType.LASER_TURRET) {
             statsTable.add(new Label("Combat Stats:", costStyle)).left().padBottom(5).row();
 

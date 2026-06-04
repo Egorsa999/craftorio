@@ -40,24 +40,25 @@ public class WorldMap {
         return this.height;
     }
 
-    private void checkBound(int col, int row) {
+    private boolean checkBound(int col, int row) {
         if (row < 0 || col < 0 || row >= height || col >= width) {
-            throw new IndexOutOfBoundsException();
+            return false;
         }
+        return true;
     }
 
     public Cell getCell(int col, int row) {
-        checkBound(col, row);
+        if (!checkBound(col, row))return null;
         return map[row][col];
     }
 
     public void setResourceType(int col, int row, ResourceType resourceType) {
-        checkBound(col, row);
+        if (!checkBound(col, row))return;
         map[row][col].updateResourceType(resourceType);
     }
 
     public void setTerrainType(int col, int row, TerrainType terrainType) {
-        checkBound(col, row);
+        if (!checkBound(col, row))return;
         map[row][col].updateTerrainType(terrainType);
     }
 

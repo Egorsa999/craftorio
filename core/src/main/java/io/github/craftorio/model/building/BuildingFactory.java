@@ -4,6 +4,7 @@ import io.github.craftorio.model.building.defense.LaserTurret;
 import io.github.craftorio.model.building.defense.Turret;
 import io.github.craftorio.model.building.defense.Wall;
 import io.github.craftorio.model.building.logistics.*;
+import io.github.craftorio.model.building.power.Accumulator;
 import io.github.craftorio.model.building.power.OilGenerator;
 import io.github.craftorio.model.building.production.*;
 import io.github.craftorio.model.building.power.CoalPowerGenerator;
@@ -104,6 +105,7 @@ public class BuildingFactory {
             case FURNACE -> new Furnace(registry, anchor, rotation);
             case CHEMICAL_PLANT -> new ChemicalPlant(registry, anchor, rotation);
             case ROCKET -> new Rocket(registry, anchor, rotation);
+            case ACCUMULATOR -> new Accumulator(registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };
     }

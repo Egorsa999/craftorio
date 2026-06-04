@@ -1,24 +1,30 @@
 package io.github.craftorio.model.building.logistics;
 
 import io.github.craftorio.BalanceConfig;
-import io.github.craftorio.model.building.*;
+import io.github.craftorio.model.building.Building;
+import io.github.craftorio.model.building.BuildingType;
+import io.github.craftorio.model.building.DamageableBuilding;
+import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.building.ReceiveLiquid;
+import io.github.craftorio.model.building.ThroughLiquid;
+import io.github.craftorio.model.building.liquid.LiquidNetwork;
+import io.github.craftorio.model.building.liquid.LiquidNetworkNode;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.LiquidType;
 
 import java.awt.Point;
 
-public class UndergroundPipe extends DamageableBuilding implements ReceiveLiquid, ThroughLiquid {
+public class UndergroundPipe extends DamageableBuilding implements ReceiveLiquid, ThroughLiquid, LiquidNetworkNode {
     private boolean isInput = false;
     private boolean isLinked = false;
     private UndergroundPipe linkedOut = null;
     private UndergroundPipe linkedIn = null;
     private int distance = 1;
 
-    private float currentAmount = 0f;
-    private LiquidType currentType = null;
-
-    private int outputIndex = 0;
-    private static final Direction[] DIRS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
+    private LiquidNetwork network;
+    private float currentFill = 0f;
+    private float prevFill = 0f;
+    private LiquidType prevLiquidType;
 
     public UndergroundPipe(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.UNDERGROUND_PIPE);
@@ -37,6 +43,40 @@ public class UndergroundPipe extends DamageableBuilding implements ReceiveLiquid
         outPipe.direction = dir;
     }
 
+    @Override
+    public int getSubNetworksCount() { return 1; }
+    @Override
+    public LiquidNetwork getNetwork(int index) { return network; }
+    @Override
+    public void setNetwork(int index, LiquidNetwork network) { this.network = network; }
+    @Override
+    public float getPrevFill(int index) { return prevFill; }
+    @Override
+    public LiquidType getPrevLiquidType(int index) { return prevLiquidType; }
+    @Override
+    public void savePrevFill() {
+        this.prevFill = currentFill;
+        this.prevLiquidType = network != null ? network.getLiquidType() : null;
+    }
+    @Override
+    public void setCurrentFill(int index, float fill) { this.currentFill = fill; }
+    @Override
+    public float getCapacity(int index) { return getCapacity(); }
+
+    @Override
+    public int getIndexForDirection(Direction dir) {
+        if (isInput) {
+            return (dir != direction) ? 0 : -1;
+        } else {
+            return (dir != getOppositeDirection(direction)) ? 0 : -1;
+        }
+    }
+
+    @Override
+    public LiquidNetworkNode getLinkedNode(int index) {
+        return getLinkedPipe();
+    }
+
     public float getCapacity() {
         return BalanceConfig.PIPE_CAPACITY * Math.max(1, distance);
     }
@@ -44,159 +84,77 @@ public class UndergroundPipe extends DamageableBuilding implements ReceiveLiquid
     @Override
     public void update() {
         super.update();
-        if (!isLinked || currentAmount <= 0f || currentType == null) return;
+        if (!isLinked || isInput || network == null || network.getCurrSystemAmount() <= 0f) return;
 
-        float toPush = Math.min(BalanceConfig.PIPE_THROUGHPUT, currentAmount);
+        LiquidType type = network.getLiquidType();
+        if (type == null) return;
 
-        if (isInput) {
-            float accepted = linkedOut.receiveLiquid(this, currentType, toPush);
-            if (accepted > 0f) {
-                currentAmount -= accepted;
-                if (currentAmount <= 0.0001f) {
-                    currentAmount = 0f;
-                    currentType = null;
-                }
+        Direction oppositeDir = getOppositeDirection(this.direction);
+
+        for (Direction dir : Direction.values()) {
+            if (dir == oppositeDir) continue;
+
+            int nx = getX(); int ny = getY();
+            switch (dir) {
+                case RIGHT -> nx++; case LEFT -> nx--;
+                case UP -> ny++; case DOWN -> ny--;
             }
-        } else {
-            Direction oppositeDir = getOppositeDirection(this.direction);
 
-            for (int i = 0; i < 4; i++) {
-                int checkIdx = (outputIndex + i) % 4;
-                Direction checkDir = DIRS[checkIdx];
-
-                if (checkDir == oppositeDir) continue;
-
-                float accepted = pushToNeighbor(checkDir, currentType, toPush);
-                if (accepted > 0f) {
-                    currentAmount -= accepted;
-                    if (currentAmount <= 0.0001f) {
-                        currentAmount = 0f;
-                        currentType = null;
+            Building b = registry.getBuildingAt(nx, ny);
+            if (b instanceof ReceiveLiquid receiver && !(b instanceof LiquidNetworkNode)) {
+                if (receiver.canReceiveLiquidFrom(this, getAnchor(), type)) {
+                    float toPush = Math.min(BalanceConfig.PIPE_THROUGHPUT, network.getCurrSystemAmount());
+                    float taken = network.takeLiquid(toPush);
+                    if (taken > 0f) {
+                        float accepted = receiver.receiveLiquid(this, type, taken);
+                        if (accepted < taken) network.addLiquid(type, taken - accepted);
                     }
-
-                    outputIndex = (checkIdx + 1) % 4;
-                    break;
                 }
             }
         }
-    }
-
-    private float pushToNeighbor(Direction dir, LiquidType type, float amount) {
-        int nextCol = getX();
-        int nextRow = getY();
-
-        switch (dir) {
-            case RIGHT: nextCol++; break;
-            case LEFT:  nextCol--; break;
-            case UP:    nextRow++; break;
-            case DOWN:  nextRow--; break;
-        }
-
-        Building nextBuilding = registry.getBuildingAt(nextCol, nextRow);
-        if (nextBuilding instanceof ReceiveLiquid building) {
-            return building.receiveLiquid(this, type, amount);
-        }
-        return 0f;
     }
 
     @Override
     public float receiveLiquid(Building from, LiquidType type, float amount) {
-        if (!isLinked || amount <= 0f) return 0f;
-
-        if (isInput) {
-            if (currentType != null && currentType != type) return 0f;
-
-            float availableSpace = getCapacity() - currentAmount;
-            if (availableSpace <= 0f) return 0f;
-
-            float accepted = Math.min(amount, availableSpace);
-            currentType = type;
-            currentAmount += accepted;
-
-            return accepted;
-        } else {
-            if (from != linkedIn) return 0f;
-
-            if (currentType != null && currentType != type) return 0f;
-
-            float availableSpace = getCapacity() - currentAmount;
-            if (availableSpace <= 0f) return 0f;
-
-            float accepted = Math.min(amount, availableSpace);
-            currentType = type;
-            currentAmount += accepted;
-
-            return accepted;
-        }
+        if (!isLinked || network == null || amount <= 0f) return 0f;
+        return network.addLiquid(type, amount);
     }
 
     @Override
     public boolean canReceiveLiquidFrom(Building from, Point point, LiquidType type) {
-        if (!isLinked) return false;
-        if (!isInput) return false;
+        if (!isLinked || !isInput) return false;
+        if (network != null && network.getLiquidType() != null && network.getLiquidType() != type) return false;
 
-        int frontCol = getX();
-        int frontRow = getY();
+        int frontCol = getX(); int frontRow = getY();
         switch (direction) {
-            case RIGHT: frontCol++; break;
-            case LEFT:  frontCol--; break;
-            case UP:    frontRow++; break;
-            case DOWN:  frontRow--; break;
+            case RIGHT -> frontCol++; case LEFT -> frontCol--;
+            case UP -> frontRow++; case DOWN -> frontRow--;
         }
-
-        if (point != null && point.x == frontCol && point.y == frontRow) return false;
-
-        return true;
+        return point == null || point.x != frontCol || point.y != frontRow;
     }
 
     @Override
-    public float throughLiquid(LiquidType type, float amount) {
-        return 0f;
-    }
+    public float throughLiquid(LiquidType type, float amount) { return 0f; }
 
     @Override
     public boolean canThroughLiquidIn(Point point) {
-        if (!isLinked) return false;
-        if (isInput) return false;
+        if (!isLinked || isInput) return false;
 
         Direction oppositeDir = getOppositeDirection(this.direction);
-        int backCol = getX();
-        int backRow = getY();
+        int backCol = getX(); int backRow = getY();
         switch (oppositeDir) {
-            case RIGHT: backCol++; break;
-            case LEFT:  backCol--; break;
-            case UP:    backRow++; break;
-            case DOWN:  backRow--; break;
+            case RIGHT -> backCol++; case LEFT -> backCol--;
+            case UP -> backRow++; case DOWN -> backRow--;
         }
-
-        if (point != null && point.x == backCol && point.y == backRow) return false;
-
-        return true;
+        return point == null || point.x != backCol || point.y != backRow;
     }
 
     private Direction getOppositeDirection(Direction dir) {
-        switch (dir) {
-            case UP: return Direction.DOWN;
-            case DOWN: return Direction.UP;
-            case LEFT: return Direction.RIGHT;
-            case RIGHT: return Direction.LEFT;
-            default: return Direction.DOWN;
-        }
+        return switch (dir) { case UP -> Direction.DOWN; case DOWN -> Direction.UP; case LEFT -> Direction.RIGHT; case RIGHT -> Direction.LEFT; };
     }
 
-    public UndergroundPipe getLinkedPipe() {
-        return isInput ? linkedOut : linkedIn;
-    }
-
-    public boolean isInputPipe() {
-        return isInput;
-    }
-
-    public LiquidType getLiquidType() {
-        return currentType;
-    }
-
-    public float getCurrentAmount() {
-        return currentAmount;
-    }
+    public UndergroundPipe getLinkedPipe() { return isInput ? linkedOut : linkedIn; }
+    public boolean isInputPipe() { return isInput; }
+    public LiquidType getLiquidType() { return network != null ? network.getLiquidType() : null; }
+    public float getCurrentAmount() { return currentFill * getCapacity(); }
 }

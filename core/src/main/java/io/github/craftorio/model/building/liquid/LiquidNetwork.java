@@ -1,6 +1,5 @@
 package io.github.craftorio.model.building.liquid;
 
-import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.item.LiquidType;
 
 import java.util.ArrayList;
@@ -8,13 +7,22 @@ import java.util.Collections;
 import java.util.List;
 
 public class LiquidNetwork {
-    private final List<Pipe> members = new ArrayList<>();
+    public static class NodeEntry {
+        public final LiquidNetworkNode node;
+        public final int index;
+        public NodeEntry(LiquidNetworkNode node, int index) {
+            this.node = node;
+            this.index = index;
+        }
+    }
+
+    private final List<NodeEntry> members = new ArrayList<>();
     private float currSystemAmount;
     private LiquidType liquidType;
 
-    public void addMember(Pipe pipe) {
-        pipe.setNetwork(this);
-        members.add(pipe);
+    public void addMember(LiquidNetworkNode node, int index) {
+        node.setNetwork(index, this);
+        members.add(new NodeEntry(node, index));
     }
 
     public LiquidType getLiquidType() {
@@ -59,8 +67,8 @@ public class LiquidNetwork {
 
     public float getCurrSystemCapacity() {
         float cap = 0f;
-        for (Pipe pipe : members) {
-            cap += pipe.getLiquidCapacity();
+        for (NodeEntry entry : members) {
+            cap += entry.node.getCapacity(entry.index);
         }
         return cap;
     }
@@ -72,8 +80,8 @@ public class LiquidNetwork {
 
     public void tick() {
         float fill = getFillRatio();
-        for (Pipe pipe : members) {
-            pipe.setCurrentFill(fill);
+        for (NodeEntry entry : members) {
+            entry.node.setCurrentFill(entry.index, fill);
         }
     }
 
@@ -81,22 +89,18 @@ public class LiquidNetwork {
         currSystemAmount = 0f;
         liquidType = null;
 
-        //System.out.println("__________");
-
-        for (Pipe pipe : members) {
-            currSystemAmount += pipe.getPrevFill() * pipe.getLiquidCapacity();
-            LiquidType prevType = pipe.getPrevLiquidType();
-            //System.out.println(prevType);
+        for (NodeEntry entry : members) {
+            currSystemAmount += entry.node.getPrevFill(entry.index) * entry.node.getCapacity(entry.index);
+            LiquidType prevType = entry.node.getPrevLiquidType(entry.index);
             if (prevType != null) {
                 liquidType = prevType;
             }
         }
-        //System.out.println("__________");
 
         currSystemAmount = Math.min(currSystemAmount, getCurrSystemCapacity());
     }
 
-    public List<Pipe> getMembers() {
+    public List<NodeEntry> getMembers() {
         return Collections.unmodifiableList(members);
     }
 }

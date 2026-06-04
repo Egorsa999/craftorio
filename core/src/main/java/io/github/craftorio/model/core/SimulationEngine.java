@@ -1,7 +1,7 @@
 package io.github.craftorio.model.core;
 
 import io.github.craftorio.model.building.liquid.LiquidNetworkManager;
-import io.github.craftorio.model.building.logistics.Pipe;
+import io.github.craftorio.model.building.liquid.LiquidNetworkNode;
 import io.github.craftorio.model.building.power.PowerConnectable;
 import io.github.craftorio.model.building.power.PowerNetwork;
 import io.github.craftorio.model.enemy.WaveSpawner;
@@ -38,13 +38,13 @@ public class SimulationEngine {
         registry.applyPendingChanges();
 
         if (registry.consumeLiquidNetworksDirty()) {
-            List<Pipe> pipes = new ArrayList<>();
+            List<LiquidNetworkNode> nodes = new ArrayList<>();
             for (Building building : registry.getBuildingsForTick()) {
-                if (building instanceof Pipe pipe) {
-                    pipes.add(pipe);
+                if (building instanceof LiquidNetworkNode node) {
+                    nodes.add(node);
                 }
             }
-            liquidNetworkManager.rebuild(pipes);
+            liquidNetworkManager.rebuild(nodes);
         }
 
         Set<PowerNetwork> networks = new HashSet<>();

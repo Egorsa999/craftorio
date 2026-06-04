@@ -1,5 +1,6 @@
 package io.github.craftorio.model.enemy;
 
+import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.core.WorldMap;
 
@@ -11,8 +12,7 @@ import java.util.Random;
 public class WaveSpawner {
 
     private final List<Enemy> activeEnemies = new ArrayList<>();
-
-    private final List<Wave> waves = new ArrayList<>();
+    private final List<Wave> predefinedWaves = new ArrayList<>();
 
     private final PathFinder pathFinder;
     private final BuildingRegistry registry;
@@ -24,37 +24,103 @@ public class WaveSpawner {
     private final int SPREAD_RADIUS = 200;
     private final int SPAWN_DEPTH = 20;
 
+    private int currentWaveIndex = 0;
+    private float timeSinceLastWave = 0;
+
+    private final float NORMAL_WAVE_INTERVAL = 300f;
+    private final float SUDDEN_DEATH_INTERVAL = 10f;
+
+    private boolean isInfiniteMode = false;
+    private int infiniteWaveCount = 0;
+
     public WaveSpawner(PathFinder pathFinder, BuildingRegistry registry, WorldMap worldMap) {
         this.pathFinder = pathFinder;
         this.registry = registry;
         this.worldMap = worldMap;
 
-        this.waves.add(new Wave.Builder(SpawnDirection.EAST)
-            .addEnemies(EnemyType.BASIC_ENEMY, 10).build());
-
-        this.waves.add(new Wave.Builder(SpawnDirection.EAST)
-            .addEnemies(EnemyType.BASIC_ENEMY, 15)
-            .addEnemies(EnemyType.FAT_ENEMY, 3).build());
-
-        this.waves.add(new Wave.Builder(SpawnDirection.EAST)
-            .addEnemies(EnemyType.BASIC_ENEMY, 1000)
-            .addEnemies(EnemyType.FAT_ENEMY, 100)
-            .addEnemies(EnemyType.FAST_ENEMY, 400).build());
+        initPredefinedWaves();
     }
 
+    private void initPredefinedWaves() {
+        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.EAST)
+            .addEnemies(EnemyType.BASIC_ENEMY, 10).build());
 
+        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.WEST)
+            .addEnemies(EnemyType.BASIC_ENEMY, 20)
+            .addEnemies(EnemyType.FAT_ENEMY, 4).build());
 
-    public void spawnWave(int waveIndex) {
-        if (waveIndex < 0 || waveIndex >= waves.size()) {
-            System.err.println("Волны с номером " + waveIndex + " не существует!");
-            return;
+        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.NORTH)
+            .addEnemies(EnemyType.BASIC_ENEMY, 30)
+            .addEnemies(EnemyType.FAST_ENEMY, 15).build());
+
+        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.SOUTH)
+            .addEnemies(EnemyType.BASIC_ENEMY, 45)
+            .addEnemies(EnemyType.FAT_ENEMY, 15)
+            .addEnemies(EnemyType.FAST_ENEMY, 20).build());
+
+        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.EAST)
+            .addEnemies(EnemyType.BASIC_ENEMY, 150)
+            .addEnemies(EnemyType.FAT_ENEMY, 30)
+            .addEnemies(EnemyType.FAST_ENEMY, 70).build());
+    }
+
+    public void update() {
+        activeEnemies.removeIf(Enemy::isDead);
+
+        timeSinceLastWave += GameConfig.TICK_TIME * 100;
+
+        float currentTargetInterval = isInfiniteMode ? SUDDEN_DEATH_INTERVAL : NORMAL_WAVE_INTERVAL;
+
+        if (timeSinceLastWave >= currentTargetInterval) {
+
+            if (!isInfiniteMode) {
+                if (currentWaveIndex < predefinedWaves.size()) {
+                    spawnPredefinedWave(currentWaveIndex);
+                    currentWaveIndex++;
+                    timeSinceLastWave = 0;
+                } else {
+                    isInfiniteMode = true;
+                    spawnInfiniteWave();
+                    timeSinceLastWave = 0;
+                }
+            } else {
+                spawnInfiniteWave();
+                timeSinceLastWave = 0;
+            }
         }
+    }
 
-        Wave wave = waves.get(waveIndex);
+    public boolean isPreparingForInfinite() {
+        return !isInfiniteMode && currentWaveIndex >= predefinedWaves.size();
+    }
+
+    private void spawnPredefinedWave(int index) {
+        executeSpawn(predefinedWaves.get(index));
+    }
+
+    private void spawnInfiniteWave() {
+        infiniteWaveCount++;
+
+        SpawnDirection[] directions = SpawnDirection.values();
+        SpawnDirection randomDir = directions[random.nextInt(directions.length)];
+
+        int basicCount = 10 + (infiniteWaveCount * 2);
+        int fatCount = 2 + infiniteWaveCount;
+        int fastCount = 5 + (infiniteWaveCount * 2);
+
+        Wave proceduralWave = new Wave.Builder(randomDir)
+            .addEnemies(EnemyType.BASIC_ENEMY, basicCount)
+            .addEnemies(EnemyType.FAT_ENEMY, fatCount)
+            .addEnemies(EnemyType.FAST_ENEMY, fastCount)
+            .build();
+
+        executeSpawn(proceduralWave);
+    }
+
+    private void executeSpawn(Wave wave) {
         List<int[]> spawnPool = calculateSpawnPool(wave.getDirection(), 3f);
 
         if (spawnPool.isEmpty()) {
-            System.err.println("Нет валидных клеток для спавна волны " + waveIndex);
             return;
         }
 
@@ -73,15 +139,9 @@ public class WaveSpawner {
         }
     }
 
-    public void update() {
-        activeEnemies.removeIf(Enemy::isDead);
-    }
-
     private List<int[]> calculateSpawnPool(SpawnDirection dir, float maxHitbox) {
         List<int[]> pool = new ArrayList<>();
-
         int minX = 0, maxX = 0, minY = 0, maxY = 0;
-
 
         int coreX = worldMap.getCoreX();
         int coreY = worldMap.getCoreY();
@@ -140,16 +200,44 @@ public class WaveSpawner {
             }
         }
 
-        return true; // Вся зона вокруг точки абсолютно чистая
+        return true;
     }
 
     public void spawnEnemy(float x, float y, EnemyType type){
         activeEnemies.add(new Enemy(x, y, type, pathFinder, registry, activeEnemies, worldMap));
     }
 
+
+    public SpawnDirection getCurrentWaveDirection() {
+        if (isInfiniteMode) {
+            return null;
+        }
+
+        if (currentWaveIndex < predefinedWaves.size()) {
+            return predefinedWaves.get(currentWaveIndex).getDirection();
+        }
+
+        return null;
+    }
+
+    public int getCurrentWaveNumber() {
+        return isInfiniteMode ? predefinedWaves.size() : currentWaveIndex + 1;
+    }
+
+    public float getTimeRemainingUntilNextWave() {
+        float currentTargetInterval = isInfiniteMode ? SUDDEN_DEATH_INTERVAL : NORMAL_WAVE_INTERVAL;
+        return Math.max(0, currentTargetInterval - timeSinceLastWave);
+    }
+
+    public boolean isInfiniteMode() {
+        return isInfiniteMode;
+    }
+
     public List<Enemy> getActiveEnemies() {
         return activeEnemies;
     }
+
+
 
     public PathFinder getPathFinder() {
         return this.pathFinder;

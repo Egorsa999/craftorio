@@ -19,6 +19,12 @@ public final class BalanceConfig {
     public static final float OIL_GENERATOR_POWER_PRODUCTION = 300f;
     public static final float OIL_GENERATOR_OIL_PER_SECOND = 2.0f;
 
+    // Accumulator
+
+    public static final float ACCUMULATOR_CAPACITY = 5000f;
+    public static final float ACCUMULATOR_MAX_CHARGE_RATE = 300f;
+    public static final float ACCUMULATOR_MAX_DISCHARGE_RATE = 300f;
+
     // Pump
     public static final float PUMP_PRODUCTION_RATE_PER_SECOND = 5.0f;
 
