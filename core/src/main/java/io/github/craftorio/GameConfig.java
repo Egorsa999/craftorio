@@ -12,4 +12,6 @@ public final class GameConfig {
 
     public static boolean SPAWN_ENEMY;
     public static boolean INFINITY_RESOURCES;
+
+    public static boolean PAUSE = false;
 }

@@ -68,6 +68,13 @@ public class GameScreen implements Screen {
     private final ExecutorService executorService;
     private Future<?> pathfinderTask;
 
+    private boolean isPaused = false;
+
+    public void togglePause() {
+        this.isPaused = !this.isPaused;
+        buildTool.setPause(isPaused);
+    }
+
     public GameScreen(MainGame game) {
         this.game = game;
 
@@ -134,56 +141,93 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         InputMultiplexer multiplexer = new InputMultiplexer();
+
+        multiplexer.addProcessor(new com.badlogic.gdx.InputAdapter() {
+            @Override
+            public boolean keyDown(int keycode) {
+                if (keycode == com.badlogic.gdx.Input.Keys.P) {
+                    togglePause();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         multiplexer.addProcessor(inventoryUI.getStage());
         multiplexer.addProcessor(buildMenuUI.getStage());
         multiplexer.addProcessor(craftingUI.getStage());
         multiplexer.addProcessor(rocketUI.getStage());
+
+        multiplexer.addProcessor(new com.badlogic.gdx.InputAdapter() {
+            @Override public boolean touchDown(int x, int y, int ptr, int btn) { return isPaused; }
+            @Override public boolean touchUp(int x, int y, int ptr, int btn) { return isPaused; }
+            @Override public boolean touchDragged(int x, int y, int ptr) { return isPaused; }
+            @Override public boolean mouseMoved(int x, int y) { return isPaused; }
+            @Override public boolean keyUp(int keycode) { return isPaused; }
+            @Override public boolean keyDown(int keycode) {
+                if (keycode == com.badlogic.gdx.Input.Keys.ESCAPE) return false;
+                return isPaused;
+            }
+            @Override public boolean scrolled(float amountX, float amountY) { return false; } // Пропускаем скролл (если сделаешь зум на колесико)
+        });
+
         multiplexer.addProcessor(buildInputHandler);
         multiplexer.addProcessor(worldInteractionHandler);
         multiplexer.addProcessor(debugInputHandler);
+
         Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
     public void render(float delta) {
-        accumulator += delta;
-        pathfinderTimer += delta;
+        if (isPaused) {
+            float dZoom = 0;
+            if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.MINUS)) dZoom = 1;
+            if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.PLUS) || Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.EQUALS)) dZoom = -1;
 
-        if (pathfinderTimer >= PATHFINDER_UPDATE_INTERVAL) {
-            pathfinderTimer = 0f;
-            if (pathfinderTask == null || pathfinderTask.isDone()) {
-                pathfinderTask = executorService.submit(pathFinder::updateFlowField);
+            if (dZoom != 0) {
+                playerCamera.addZoom(dZoom * delta * 5.0f);
+            }
+        } else {
+            accumulator += delta;
+            pathfinderTimer += delta;
+
+            if (pathfinderTimer >= PATHFINDER_UPDATE_INTERVAL) {
+                pathfinderTimer = 0f;
+                if (pathfinderTask == null || pathfinderTask.isDone()) {
+                    pathfinderTask = executorService.submit(pathFinder::updateFlowField);
+                }
+            }
+
+            while (accumulator >= GameConfig.TICK_TIME) {
+                playerController.update(GameConfig.TICK_TIME);
+                if (buildTool.isActive()) {
+                    buildInputHandler.updateHoverPosition(Gdx.input.getX(), Gdx.input.getY());
+                }
+                engine.update();
+                accumulator -= GameConfig.TICK_TIME;
+            }
+
+            for (Building building : buildingRegistry.getBuildingsForTick()) {
+                if (building instanceof Rocket rocket) {
+                    if (rocket.hasLaunched()) {
+                        Gdx.app.postRunnable(() -> {
+                            game.setScreen(new WinScreen(game));
+                            dispose();
+                        });
+                        return;
+                    }
+                }
             }
         }
 
-        while (accumulator >= GameConfig.TICK_TIME) {
-            playerController.update(GameConfig.TICK_TIME);
-            if (buildTool.isActive()) {
-                buildInputHandler.updateHoverPosition(Gdx.input.getX(), Gdx.input.getY());
-            }
-            engine.update();
-            accumulator -= GameConfig.TICK_TIME;
-        }
-
-        worldRenderer.render();
+        worldRenderer.render(isPaused);
         inventoryUI.render();
         buildMenuUI.render();
         craftingUI.render();
         rocketUI.render();
         playerUI.render();
         if (GameConfig.SPAWN_ENEMY) waveUI.render();
-
-        for (Building building : buildingRegistry.getBuildingsForTick()) {
-            if (building instanceof Rocket rocket) {
-                if (rocket.hasLaunched()) {
-                    Gdx.app.postRunnable(() -> {
-                        game.setScreen(new WinScreen(game));
-                        dispose();
-                    });
-                    return;
-                }
-            }
-        }
     }
 
     @Override

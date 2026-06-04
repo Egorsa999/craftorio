@@ -3,6 +3,7 @@ package io.github.craftorio.controller;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector3;
+import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.production.Craftable;
 import io.github.craftorio.model.building.production.Rocket;
