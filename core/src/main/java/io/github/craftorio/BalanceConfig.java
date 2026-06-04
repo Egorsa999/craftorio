@@ -1,7 +1,5 @@
 package io.github.craftorio;
 
-import io.github.craftorio.model.item.ItemType;
-
 public final class BalanceConfig {
     private BalanceConfig() {}
 
@@ -18,8 +16,11 @@ public final class BalanceConfig {
     public static final float COAL_GENERATOR_POWER_PRODUCTION = 100f;
     public static final float COAL_GENERATOR_COAL_FRAME_TIME = 100f;
 
+    public static final float OIL_GENERATOR_POWER_PRODUCTION = 300f;
+    public static final float OIL_GENERATOR_OIL_PER_SECOND = 2.0f;
+
     // Pump
-    public static final float PUMP_PRODUCTION_RATE = 5.0f;
+    public static final float PUMP_PRODUCTION_RATE_PER_SECOND = 5.0f;
 
     // Pipe
     public static final float PIPE_CAPACITY = 10.0f;
@@ -54,7 +55,6 @@ public final class BalanceConfig {
 
     // Router
     public static final int ROUTER_SPEED = 15;
-  
-  
+
     public static final int MAX_BUILD_DISTANCE = 35;
 }

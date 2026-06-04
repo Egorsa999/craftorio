@@ -70,6 +70,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.POWER_POLE, load("power-node"));
         buildingSprites.put(BuildingType.FURNACE, load("furnace"));
         buildingSprites.put(BuildingType.CHEMICAL_PLANT, load("chemical-plant"));
+        buildingSprites.put(BuildingType.OIL_GENERATOR, load("oil-generator"));
 
         StringSprites.put("player", load("player"));
         StringSprites.put("turret-base", load("turret-base"));

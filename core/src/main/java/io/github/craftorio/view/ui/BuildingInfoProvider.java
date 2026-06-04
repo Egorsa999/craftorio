@@ -27,6 +27,7 @@ public class BuildingInfoProvider {
             case POWER_POLE: return "Connects buildings to the power grid.";
             case FURNACE: return "Smelts raw ores into usable plates and materials.";
             case CHEMICAL_PLANT: return "Processes liquids into advanced chemical products.";
+            case OIL_GENERATOR: return "Generates power by burning Oil. Requires a steady liquid flow.";
             default: return "A standard factory structure.";
         }
     }

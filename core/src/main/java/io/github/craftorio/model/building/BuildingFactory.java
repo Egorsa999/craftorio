@@ -4,6 +4,7 @@ import io.github.craftorio.model.building.defense.LaserTurret;
 import io.github.craftorio.model.building.defense.Turret;
 import io.github.craftorio.model.building.defense.Wall;
 import io.github.craftorio.model.building.logistics.*;
+import io.github.craftorio.model.building.power.OilGenerator;
 import io.github.craftorio.model.building.production.*;
 import io.github.craftorio.model.building.power.CoalPowerGenerator;
 import io.github.craftorio.model.building.power.PowerPole;
@@ -98,6 +99,7 @@ public class BuildingFactory {
             case UNDERGROUND_PIPE -> new UndergroundPipe(registry, anchor, rotation);
             case PUMP -> new Pump(registry, anchor, rotation, worldMap);
             case COAL_POWER_GENERATOR -> new CoalPowerGenerator(registry, anchor, rotation);
+            case OIL_GENERATOR -> new OilGenerator(registry, anchor, rotation);
             case POWER_POLE -> new PowerPole(registry, anchor, rotation);
             case FURNACE -> new Furnace(registry, anchor, rotation);
             case CHEMICAL_PLANT -> new ChemicalPlant(registry, anchor, rotation);

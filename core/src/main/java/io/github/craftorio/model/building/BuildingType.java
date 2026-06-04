@@ -22,6 +22,7 @@ public enum BuildingType {
     UNDERGROUND_PIPE("Underground Pipe", 1, 1, false, 100, Map.of(ItemType.COPPER_ORE, 10, ItemType.IRON_ORE, 5)),
     PUMP("Pump", 1, 1, false, 50, Map.of(ItemType.COPPER_ORE, 10)),
     COAL_POWER_GENERATOR("Coal Generator", 1, 1, false, 200, Map.of(ItemType.COPPER_ORE, 15, ItemType.IRON_ORE, 15)),
+    OIL_GENERATOR("Oil Generator", 2, 2, false, 200, Map.of(ItemType.COPPER_ORE, 15, ItemType.IRON_ORE, 15)),
     POWER_POLE("Power Node", 1, 1, false, 100, Map.of(ItemType.COPPER_ORE, 2)),
     FURNACE("Furnance", 2, 2, false, 100, Map.of(ItemType.COPPER_ORE, 2)),
     CHEMICAL_PLANT("Chemical Plant", 2, 2, false, 100, Map.of(ItemType.COPPER_ORE, 2));
