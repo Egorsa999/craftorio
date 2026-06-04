@@ -104,6 +104,7 @@ public class BuildingFactory {
             case POWER_POLE -> new PowerPole(registry, anchor, rotation);
             case FURNACE -> new Furnace(registry, anchor, rotation);
             case CHEMICAL_PLANT -> new ChemicalPlant(registry, anchor, rotation);
+            case ROCKET -> new Rocket(registry, anchor, rotation);
             case ACCUMULATOR -> new Accumulator(registry, anchor, rotation);
             default -> throw new IllegalArgumentException("Unknown Building Type : " + type);
         };

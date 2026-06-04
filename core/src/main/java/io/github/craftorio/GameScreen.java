@@ -20,6 +20,11 @@ import io.github.craftorio.ui.Inventory;
 import io.github.craftorio.view.CameraManager;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.WorldRenderer;
+import io.github.craftorio.view.ui.BuildMenuUI;
+import io.github.craftorio.view.ui.CraftingUI;
+import io.github.craftorio.view.ui.InventoryUI;
+import io.github.craftorio.view.ui.PlayerUI;
+import io.github.craftorio.view.ui.RocketUI;
 import io.github.craftorio.view.ui.*;
 
 import java.awt.Point;
@@ -36,6 +41,7 @@ public class GameScreen implements Screen {
     private final InventoryUI inventoryUI;
     private final BuildMenuUI buildMenuUI;
     private final CraftingUI craftingUI;
+    private final RocketUI rocketUI;
     private final TextureAtlas atlas;
     private final PlayerUI playerUI;
     private final WaveUI waveUI;
@@ -92,19 +98,19 @@ public class GameScreen implements Screen {
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
 
         // View creation
-
         this.playerCamera = new CameraManager(player, worldMap);
 
         this.inventoryUI = new InventoryUI(textures, inventory);
         this.buildMenuUI = new BuildMenuUI(buildTool, inventory, textures);
         this.craftingUI = new CraftingUI(textures);
+        this.rocketUI = new RocketUI(textures);
         this.playerUI = new PlayerUI(player, playerCamera);
         this.waveUI = new WaveUI(textures, waveSpawner);
 
         // Controller creation
         this.playerController = new PlayerController(player, playerCamera);
         this.buildInputHandler = new BuildInputHandler(buildTool, playerCamera, factory);
-        this.worldInteractionHandler = new WorldInteractionHandler(playerCamera, buildingManager, craftingUI);
+        this.worldInteractionHandler = new WorldInteractionHandler(playerCamera, buildingManager, craftingUI, rocketUI);
         this.debugInputHandler = new DebugInputHandler(waveSpawner, playerCamera, buildTool);
 
         this.worldRenderer = new WorldRenderer(playerCamera, worldMap, buildingRegistry, waveSpawner, textures,
@@ -117,6 +123,7 @@ public class GameScreen implements Screen {
         multiplexer.addProcessor(inventoryUI.getStage());
         multiplexer.addProcessor(buildMenuUI.getStage());
         multiplexer.addProcessor(craftingUI.getStage());
+        multiplexer.addProcessor(rocketUI.getStage());
         multiplexer.addProcessor(buildInputHandler);
         multiplexer.addProcessor(worldInteractionHandler);
         multiplexer.addProcessor(debugInputHandler);
@@ -148,6 +155,7 @@ public class GameScreen implements Screen {
         inventoryUI.render();
         buildMenuUI.render();
         craftingUI.render();
+        rocketUI.render();
         playerUI.render();
         waveUI.render();
     }
@@ -164,12 +172,14 @@ public class GameScreen implements Screen {
         inventoryUI.resize(gameWidth, gameHeight);
         buildMenuUI.resize(gameWidth, gameHeight);
         craftingUI.resize(gameWidth, gameHeight);
+        rocketUI.resize(gameWidth, gameHeight);
         playerUI.resize(gameWidth, gameHeight);
         waveUI.resize(gameWidth, gameHeight);
 
         inventoryUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
         buildMenuUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
         craftingUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
+        rocketUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
         playerUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
         waveUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
     }
@@ -194,6 +204,7 @@ public class GameScreen implements Screen {
         inventoryUI.dispose();
         buildMenuUI.dispose();
         craftingUI.dispose();
+        rocketUI.dispose();
         waveUI.dispose();
         atlas.dispose();
     }

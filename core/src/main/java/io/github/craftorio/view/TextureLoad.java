@@ -71,6 +71,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.FURNACE, load("furnace"));
         buildingSprites.put(BuildingType.CHEMICAL_PLANT, load("chemical-plant"));
         buildingSprites.put(BuildingType.OIL_GENERATOR, load("oil-generator"));
+        buildingSprites.put(BuildingType.ROCKET, load("rocket-0"));
         buildingSprites.put(BuildingType.ACCUMULATOR, load("accumulator"));
 
         StringSprites.put("player", load("player"));
@@ -91,6 +92,9 @@ public class TextureLoad {
         StringSprites.put("player_run_down", loadAnimated("player_run_down", 0.1f));
         StringSprites.put("slime", loadAnimated("slime",  0.12f));
         StringSprites.put("arrow", load("arrow"));
+        for (int i = 0; i <= 4; i++) {
+            StringSprites.put("rocket-" + i, load("rocket-" + i));
+        }
         StringSprites.put("wave-arrow", load("wave-arrow"));
 
         conveyorTextures.put(0, loadAnimated("conveyor-0", 0.1f));
