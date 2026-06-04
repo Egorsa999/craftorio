@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.audio.Music;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,15 +40,21 @@ public class MainMenuScreen implements Screen {
     private BitmapFont smallFont;
     private TextureAtlas atlas;
 
+    private boolean isMusicPlaying = false;
     private boolean isLoading = false;
     private Table rootTable;
     private Table loadingOverlay;
     private Label dotsLabel;
     private float stateTime = 0f;
 
+    private Music backgroundMusic;
+
     private List<Texture> generatedTextures = new ArrayList<>();
 
     public MainMenuScreen(final MainGame game) {
+
+
+
         this.game = game;
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -128,9 +135,12 @@ public class MainMenuScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 onMusicToggled(musicToggle.isChecked());
+
             }
         });
         onMusicToggled(true);
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/menu-ost.ogg"));
+        backgroundMusic.setLooping(true);
 
         CheckBox resourcesToggle = new CheckBox("  Infinite Resources", toggleStyle);
         resourcesToggle.setChecked(false);
@@ -206,16 +216,14 @@ public class MainMenuScreen implements Screen {
     }
 
     private void onMusicToggled(boolean isEnabled) {
-        System.out.println("Music setting changed to: " + isEnabled);
+        GameConfig.MUTE_MUSIC = !isEnabled;
     }
 
     private void onResourcesToggled(boolean isEnabled) {
-        System.out.println("Infinite resources changed to: " + isEnabled);
         GameConfig.INFINITY_RESOURCES = isEnabled;
     }
 
     private void onEnemiesToggled(boolean isDisabled) {
-        System.out.println("Enemies disabled: " + isDisabled);
         GameConfig.SPAWN_ENEMY = !isDisabled;
     }
 
@@ -280,6 +288,16 @@ public class MainMenuScreen implements Screen {
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
 
+        if (isMusicPlaying && GameConfig.MUTE_MUSIC){
+            backgroundMusic.pause();
+            isMusicPlaying = false;
+        }
+
+        if (!isMusicPlaying && !GameConfig.MUTE_MUSIC){
+            backgroundMusic.play();
+            isMusicPlaying = true;
+        }
+
         if (isLoading && loadingOverlay.isVisible()) {
             stateTime += delta;
             int numDots = ((int) Math.floor(stateTime * 2)) % 4;
@@ -315,6 +333,9 @@ public class MainMenuScreen implements Screen {
         atlas.dispose();
         for (Texture tex : generatedTextures) {
             tex.dispose();
+        }
+        if (backgroundMusic != null) {
+            backgroundMusic.dispose();
         }
     }
 }

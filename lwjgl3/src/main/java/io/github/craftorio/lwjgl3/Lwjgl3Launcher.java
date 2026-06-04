@@ -13,20 +13,16 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        boolean debug = true;
 
-        if (debug) {
-            System.out.println("Packing textures...");
-            TexturePacker.Settings settings = new TexturePacker.Settings();
-            settings.maxWidth = 4096;
-            settings.maxHeight = 4096;
-            settings.paddingX = 2;
-            settings.paddingY = 2;
-            settings.edgePadding = true;
-            settings.duplicatePadding = true;
-
-            TexturePacker.process(settings, "raw", "atlas", "main_atlas");
-        }
+        System.out.println("Packing textures...");
+        TexturePacker.Settings settings = new TexturePacker.Settings();
+        settings.maxWidth = 4096;
+        settings.maxHeight = 4096;
+        settings.paddingX = 2;
+        settings.paddingY = 2;
+        settings.edgePadding = true;
+        settings.duplicatePadding = true;
+        TexturePacker.process(settings, "raw", "atlas", "main_atlas");
         return new Lwjgl3Application(new MainGame(), getDefaultConfiguration());
     }
 

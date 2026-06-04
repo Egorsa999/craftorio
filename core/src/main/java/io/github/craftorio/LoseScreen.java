@@ -2,6 +2,7 @@ package io.github.craftorio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -32,7 +33,13 @@ public class LoseScreen implements Screen {
     private Texture btnUpTex;
     private Texture btnDownTex;
 
+    private Music backgroundMusic;
+
     public LoseScreen(final MainGame game) {
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/lose.ogg"));
+        backgroundMusic.setLooping(true);
+        if (!GameConfig.MUTE_MUSIC)backgroundMusic.play();
+
         this.game = game;
         this.stage = new Stage(new ScreenViewport());
 
@@ -146,5 +153,9 @@ public class LoseScreen implements Screen {
         if (atlas != null) atlas.dispose();
         if (btnUpTex != null) btnUpTex.dispose();
         if (btnDownTex != null) btnDownTex.dispose();
+
+        if (backgroundMusic != null) {
+            backgroundMusic.dispose();
+        }
     }
 }

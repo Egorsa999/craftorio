@@ -3,6 +3,7 @@ package io.github.craftorio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.craftorio.controller.*;
@@ -47,12 +48,14 @@ public class GameScreen implements Screen {
     private final TextureAtlas atlas;
     private final PlayerUI playerUI;
     private final WaveUI waveUI;
+    private boolean isAttackMusicPlaying = false;
 
     // Controllers
     private final PlayerController playerController;
     private final BuildInputHandler buildInputHandler;
     private final WorldInteractionHandler worldInteractionHandler;
     private final DebugInputHandler debugInputHandler;
+    private final WaveSpawner waveSpawner;
 
     // Core Logic
     private final BuildTool buildTool;
@@ -69,6 +72,8 @@ public class GameScreen implements Screen {
     private Future<?> pathfinderTask;
 
     private boolean isPaused = false;
+  
+    private Music ostMusic, attackMusic;
 
     public void togglePause() {
         this.isPaused = !this.isPaused;
@@ -76,6 +81,14 @@ public class GameScreen implements Screen {
     }
 
     public GameScreen(MainGame game) {
+        ostMusic = Gdx.audio.newMusic(Gdx.files.internal("music/game-ost.ogg"));
+        ostMusic.setLooping(true);
+        if (!GameConfig.MUTE_MUSIC)ostMusic.play();
+
+        attackMusic = Gdx.audio.newMusic(Gdx.files.internal("music/attack.ogg"));
+        attackMusic.setLooping(true);
+
+
         this.game = game;
 
         this.executorService = Executors.newSingleThreadExecutor();
@@ -95,9 +108,8 @@ public class GameScreen implements Screen {
 
         Point corePoint = new Point(spawnPoint.x - 1, spawnPoint.y + 1);
         this.pathFinder = new PathFinder(corePoint.x + 1, corePoint.y + 1, worldMap, buildingRegistry);
-        this.pathFinder.updateFlowField();
 
-        WaveSpawner waveSpawner = new WaveSpawner(pathFinder, buildingRegistry, worldMap);
+        this.waveSpawner = new WaveSpawner(pathFinder, buildingRegistry, worldMap);
         LiquidNetworkManager liquidNetworkManager = new LiquidNetworkManager(buildingRegistry);
         this.engine = new SimulationEngine(buildingRegistry, waveSpawner, liquidNetworkManager);
         BuildingFactory factory = new BuildingFactory(buildingRegistry, inventory, worldMap, engine);
@@ -180,6 +192,20 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if (!GameConfig.MUTE_MUSIC){
+            if (waveSpawner.isWaveActive() && !isAttackMusicPlaying){
+                ostMusic.pause();
+                attackMusic.setPosition(0);
+                ostMusic.pause();
+                attackMusic.play();
+                isAttackMusicPlaying = true;
+            }
+            if (!waveSpawner.isWaveActive() && isAttackMusicPlaying){
+                attackMusic.pause();
+                ostMusic.play();
+                isAttackMusicPlaying = false;
+            }
+        }
         if (isPaused) {
             float dZoom = 0;
             if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.MINUS)) dZoom = 1;
@@ -277,5 +303,11 @@ public class GameScreen implements Screen {
         rocketUI.dispose();
         waveUI.dispose();
         atlas.dispose();
+        if (ostMusic != null) {
+            ostMusic.dispose();
+        }
+        if (attackMusic != null) {
+            attackMusic.dispose();
+        }
     }
 }

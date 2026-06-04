@@ -2,6 +2,7 @@ package io.github.craftorio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -25,6 +26,8 @@ public class WinScreen implements Screen {
     private final MainGame game;
     private final Stage stage;
 
+    private Music backgroundMusic;
+
     private BitmapFont titleFont;
     private BitmapFont customFont;
     private TextureAtlas atlas;
@@ -35,6 +38,10 @@ public class WinScreen implements Screen {
     public WinScreen(final MainGame game) {
         this.game = game;
         this.stage = new Stage(new ScreenViewport());
+
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/win.ogg"));
+        backgroundMusic.setLooping(true);
+        if (!GameConfig.MUTE_MUSIC)backgroundMusic.play();
 
         atlas = new TextureAtlas(Gdx.files.internal("atlas/main_atlas.atlas"));
         TextureRegion bgRegion = atlas.findRegion("menu-background");
@@ -145,5 +152,8 @@ public class WinScreen implements Screen {
         if (atlas != null) atlas.dispose();
         if (btnUpTex != null) btnUpTex.dispose();
         if (btnDownTex != null) btnDownTex.dispose();
+        if (backgroundMusic != null) {
+            backgroundMusic.dispose();
+        }
     }
 }
