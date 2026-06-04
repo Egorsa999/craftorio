@@ -45,7 +45,7 @@ public class CameraManager {
     }
 
     public void addZoom(float amount) {
-        camera.zoom = MathUtils.clamp(camera.zoom + amount, 0.2f, 100f);
+        camera.zoom = MathUtils.clamp(camera.zoom + amount, 0.2f, 10f);
     }
 
     public void resize(int width, int height) {
