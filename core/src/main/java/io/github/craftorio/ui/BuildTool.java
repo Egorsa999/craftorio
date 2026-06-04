@@ -6,9 +6,9 @@ import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.core.BuildingManager;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
-import io.github.craftorio.model.entity.Player;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.building.logistics.UndergroundBelt;
+import io.github.craftorio.model.building.logistics.UndergroundPipe;
 
 import java.awt.Point;
 import java.util.HashMap;
@@ -114,7 +114,9 @@ public class BuildTool {
         HashMap<ItemType, Integer> map = new HashMap<>();
         Array<Point> targets = getTargetPositions();
 
-        if (selectedType == BuildingType.UNDERGROUND_BELT && !eraseMode) {
+        boolean isUnderground = selectedType == BuildingType.UNDERGROUND_BELT || selectedType == BuildingType.UNDERGROUND_PIPE;
+
+        if (isUnderground && !eraseMode) {
             if (targets.size < 2) return false;
             Point p1 = targets.get(0);
             Point p2 = targets.get(1);
@@ -148,9 +150,13 @@ public class BuildTool {
             if (lastUndergroundStart != null && lastUndergroundEnd != null) {
                 Building b1 = buildingManager.getRegistry().getBuildingAt(lastUndergroundStart.x, lastUndergroundStart.y);
                 Building b2 = buildingManager.getRegistry().getBuildingAt(lastUndergroundEnd.x, lastUndergroundEnd.y);
+
+                int distance = Math.abs(lastUndergroundStart.x - lastUndergroundEnd.x) + Math.abs(lastUndergroundStart.y - lastUndergroundEnd.y);
+
                 if (b1 instanceof UndergroundBelt u1 && b2 instanceof UndergroundBelt u2) {
-                    int distance = Math.abs(lastUndergroundStart.x - lastUndergroundEnd.x) + Math.abs(lastUndergroundStart.y - lastUndergroundEnd.y);
                     u1.link(u2, distance, dir);
+                } else if (b1 instanceof UndergroundPipe p1Obj && b2 instanceof UndergroundPipe p2Obj) {
+                    p1Obj.link(p2Obj, distance, dir);
                 }
             }
             return true;
@@ -176,10 +182,15 @@ public class BuildTool {
 
             if (building instanceof UndergroundBelt uBelt) {
                 UndergroundBelt partner = uBelt.getLinkedBelt();
-
                 if (partner != null) {
-                    Point partnerPoint = new Point(partner.getX(), partner.getY());
-                    if (buildingManager.tryRemoveBuilding(partnerPoint)) {
+                    if (buildingManager.tryRemoveBuilding(new Point(partner.getX(), partner.getY()))) {
+                        inventory.add(partner.type.getCost());
+                    }
+                }
+            } else if (building instanceof UndergroundPipe uPipe) {
+                UndergroundPipe partner = uPipe.getLinkedPipe();
+                if (partner != null) {
+                    if (buildingManager.tryRemoveBuilding(new Point(partner.getX(), partner.getY()))) {
                         inventory.add(partner.type.getCost());
                     }
                 }
@@ -197,7 +208,11 @@ public class BuildTool {
         Array<Point> targets = getTargetPositions();
 
         Direction dir = currentRotation;
-        if (selectedType == BuildingType.UNDERGROUND_BELT && targets.size == 2) {
+        boolean isUnderground = selectedType == BuildingType.UNDERGROUND_BELT || selectedType == BuildingType.UNDERGROUND_PIPE;
+
+        if (isUnderground) {
+            if (targets.size < 2) return false;
+
             Point p1 = targets.get(0);
             Point p2 = targets.get(1);
             if (p2.x > p1.x) dir = Direction.RIGHT;
@@ -207,7 +222,7 @@ public class BuildTool {
         }
 
         for (Point point : targets) {
-            if (selectedType == BuildingType.UNDERGROUND_BELT) {
+            if (isUnderground) {
                 if (point.equals(lastUndergroundStart) || point.equals(lastUndergroundEnd)) {
                     continue;
                 }
@@ -241,7 +256,9 @@ public class BuildTool {
             return positions;
         }
 
-        if (selectedType == BuildingType.UNDERGROUND_BELT) {
+        boolean isUnderground = selectedType == BuildingType.UNDERGROUND_BELT || selectedType == BuildingType.UNDERGROUND_PIPE;
+
+        if (isUnderground) {
             positions.add(new Point(startDragPosition));
             if (!startDragPosition.equals(hoverPosition)) {
                 int dx = Math.abs(hoverPosition.x - startDragPosition.x);

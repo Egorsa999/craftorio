@@ -166,10 +166,22 @@ public class BuildingInfoWindow {
             statsTable.add(consumeLabel).left().padBottom(5).row();
         }
 
-        if (type == BuildingType.BELT || type == BuildingType.JUNCTION || type == BuildingType.ROUTER) {
+        if (type == BuildingType.BELT || type == BuildingType.JUNCTION || type == BuildingType.ROUTER || type == BuildingType.UNDERGROUND_BELT) {
             statsTable.add(new Label("Logistics:", costStyle)).left().padBottom(5).row();
 
             statsTable.add(new Label("- Speed: " + String.format(Locale.US, "%.2f", BalanceConfig.CONVEYOR_SPEED / BalanceConfig.CONVEYOR_ITEM_SIZE) + " items/s", costStyle)).left().padBottom(5).row();
+        }
+
+        if (type == BuildingType.PIPE || type == BuildingType.LIQUID_JUNCTION || type == BuildingType.LIQUID_ROUTER || type == BuildingType.UNDERGROUND_PIPE) {
+            statsTable.add(new Label("Liquid Logistics:", costStyle)).left().padBottom(5).row();
+
+            if (type == BuildingType.UNDERGROUND_PIPE) {
+                statsTable.add(new Label("- Capacity: " + String.format(Locale.US, "%.1f", BalanceConfig.PIPE_CAPACITY) + " L / block", costStyle)).left().padBottom(5).row();
+            } else {
+                statsTable.add(new Label("- Capacity: " + String.format(Locale.US, "%.1f", BalanceConfig.PIPE_CAPACITY) + " L", costStyle)).left().padBottom(5).row();
+            }
+
+            statsTable.add(new Label("- Max Throughput: " + String.format(Locale.US, "%.1f", BalanceConfig.PIPE_THROUGHPUT * 60f) + " L/s", costStyle)).left().padBottom(5).row();
         }
 
         if (type == BuildingType.PUMP) {
@@ -181,11 +193,6 @@ public class BuildingInfoWindow {
                 float unitsPerSecond = BalanceConfig.PUMP_PRODUCTION_RATE * terrain.getRatio();
                 addLiquidInfo(statsTable, terrain.getLiquidType(), unitsPerSecond);
             }
-        }
-
-        if (type == BuildingType.PIPE) {
-            statsTable.add(new Label("Liquid Storage:", costStyle)).left().padBottom(5).row();
-            statsTable.add(new Label("- Capacity: " + String.format(Locale.US, "%.1f", BalanceConfig.PIPE_CAPACITY) + " L", costStyle)).left().padBottom(5).row();
         }
 
         if (type == BuildingType.TURRET) {

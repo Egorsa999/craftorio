@@ -20,6 +20,8 @@ public class LiquidRouter extends DamageableBuilding implements ReceiveLiquid, T
     private float currentAmount = 0f;
     private int outputIndex = 0;
 
+    private Direction lastReceivedDir = null;
+
     private static final Direction[] DIRS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
 
     public LiquidRouter(BuildingRegistry registry, Point anchor, Direction direction) {
@@ -39,6 +41,17 @@ public class LiquidRouter extends DamageableBuilding implements ReceiveLiquid, T
         return registry.getBuildingAt(nextCol, nextRow);
     }
 
+    private Direction getDirectionTo(Building b) {
+        if (b == null) return null;
+        int dx = b.getX() - getX();
+        int dy = b.getY() - getY();
+        if (dx > 0) return Direction.RIGHT;
+        if (dx < 0) return Direction.LEFT;
+        if (dy > 0) return Direction.UP;
+        if (dy < 0) return Direction.DOWN;
+        return null;
+    }
+
     @Override
     public void update() {
         super.update();
@@ -46,6 +59,8 @@ public class LiquidRouter extends DamageableBuilding implements ReceiveLiquid, T
             for (int i = 0; i < 4; i++) {
                 int checkIdx = (outputIndex + i) % 4;
                 Direction checkDir = DIRS[checkIdx];
+
+                if (checkDir == lastReceivedDir) continue;
 
                 float toPush = Math.min(THROUGHPUT, currentAmount);
                 float accepted = pushToNeighbor(checkDir, currentType, toPush);
@@ -56,12 +71,15 @@ public class LiquidRouter extends DamageableBuilding implements ReceiveLiquid, T
                     if (currentAmount <= 0.0001f) {
                         currentAmount = 0f;
                         currentType = null;
+                        lastReceivedDir = null;
                     }
 
                     outputIndex = (checkIdx + 1) % 4;
                     break;
                 }
             }
+        } else {
+            lastReceivedDir = null;
         }
     }
 
@@ -85,6 +103,10 @@ public class LiquidRouter extends DamageableBuilding implements ReceiveLiquid, T
         float accepted = Math.min(amount, availableSpace);
         currentType = type;
         currentAmount += accepted;
+
+        if (accepted > 0f) {
+            lastReceivedDir = getDirectionTo(from);
+        }
 
         return accepted;
     }

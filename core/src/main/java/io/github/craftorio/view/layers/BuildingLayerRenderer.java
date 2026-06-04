@@ -11,6 +11,7 @@ import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.building.logistics.LiquidRouter;
 import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.building.logistics.UndergroundBelt;
+import io.github.craftorio.model.building.logistics.UndergroundPipe;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.LiquidType;
 import io.github.craftorio.view.TextureLoad;
@@ -59,17 +60,40 @@ public class BuildingLayerRenderer implements LayerRenderer {
 
                 if (current instanceof UndergroundBelt ub) {
                     Building hovered = interactionHandler.getHoveredBuilding();
-
                     if (hovered instanceof UndergroundBelt hoveredUB) {
                         UndergroundBelt partner = hoveredUB.getLinkedBelt();
-
                         if (ub == hoveredUB || ub == partner) {
-                            if (ub.isInputBelt()) {
-                                colorFilter.mul(0.3f, 1.0f, 0.3f, 1.0f);
-                            } else {
-                                colorFilter.mul(1.0f, 1.0f, 0.3f, 1.0f);
-                            }
+                            if (ub.isInputBelt()) colorFilter.mul(0.3f, 1.0f, 0.3f, 1.0f);
+                            else colorFilter.mul(1.0f, 1.0f, 0.3f, 1.0f);
                         }
+                    }
+                }
+
+                if (current instanceof UndergroundPipe up) {
+                    Building hovered = interactionHandler.getHoveredBuilding();
+                    if (hovered instanceof UndergroundPipe hoveredUP) {
+                        UndergroundPipe partner = hoveredUP.getLinkedPipe();
+                        if (up == hoveredUP || up == partner) {
+                            if (up.isInputPipe()) colorFilter.mul(0.3f, 1.0f, 0.3f, 1.0f);
+                            else colorFilter.mul(1.0f, 1.0f, 0.3f, 1.0f);
+                        }
+                    }
+
+                    LiquidType lType = up.getLiquidType();
+                    if (lType != null && up.getCurrentAmount() > 0) {
+                        Color liquidColor = toGdxColor(lType.getColor());
+                        float fillRatio = up.getCurrentAmount() / up.getCapacity();
+                        float alpha = 0.3f + (0.7f * fillRatio);
+
+                        Color blankTint = new Color(liquidColor.r, liquidColor.g, liquidColor.b, alpha);
+                        blankTint.mul(colorFilter);
+
+                        TextureRenderer.drawBuilding(
+                            batch, textures.get("blank"),
+                            (float)current.anchor.x, (float)current.anchor.y,
+                            current.type.getWidth(), current.type.getHeight(),
+                            current.direction, blankTint, stateTime
+                        );
                     }
                 }
 

@@ -55,6 +55,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.PIPE, load("conduit-top-0"));
         buildingSprites.put(BuildingType.LIQUID_JUNCTION, load("liquid-junction"));
         buildingSprites.put(BuildingType.LIQUID_ROUTER, load("liquid-router"));
+        buildingSprites.put(BuildingType.UNDERGROUND_PIPE, load("underground-pipe"));
         buildingSprites.put(BuildingType.HORIZONTAL_MINER, load("horizontal_miner"));
         buildingSprites.put(BuildingType.CORE, load("core"));
         buildingSprites.put(BuildingType.ASSEMBLER, load("assembler"));
