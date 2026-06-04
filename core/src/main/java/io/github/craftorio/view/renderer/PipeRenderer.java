@@ -56,7 +56,7 @@ public class PipeRenderer {
     }
 
     private static Color resolveBottomTint(Pipe pipe) {
-        LiquidNetwork network = pipe.getNetwork();
+        LiquidNetwork network = pipe.getNetwork(0);
         if (network == null) {
             return EMPTY_PIPE_TINT.cpy();
         }

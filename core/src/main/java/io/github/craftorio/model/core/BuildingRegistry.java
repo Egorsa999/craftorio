@@ -1,6 +1,7 @@
 package io.github.craftorio.model.core;
 
 import io.github.craftorio.model.building.Building;
+import io.github.craftorio.model.building.liquid.LiquidNetworkNode;
 import io.github.craftorio.model.building.logistics.Pipe;
 
 import java.awt.Point;
@@ -28,7 +29,7 @@ public class BuildingRegistry {
             collisionGrid.put(p, building);
         }
         pendingAdds.add(building);
-        if (building instanceof Pipe) {
+        if (building instanceof LiquidNetworkNode) {
             liquidNetworksDirty = true;
         }
     }
@@ -41,7 +42,7 @@ public class BuildingRegistry {
             collisionGrid.remove(p);
         }
         pendingRemoves.add(building);
-        if (building instanceof Pipe) {
+        if (building instanceof LiquidNetworkNode) {
             liquidNetworksDirty = true;
         }
     }
