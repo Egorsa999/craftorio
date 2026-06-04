@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ChemicalPlant  extends DamageableBuilding implements ThroughLiquid, ReceiveLiquid, PowerConsumer, PowerConnectable, Craftable {
+public class ChemicalPlant  extends DamageableBuilding implements ThroughLiquid, ReceiveLiquid, PowerConsumer, PowerConnectable, Craftable, ThroughItem, ReceiveItem {
 
     private final PowerNode powerNode;
     private final CraftModule craftModule;
@@ -32,7 +32,7 @@ public class ChemicalPlant  extends DamageableBuilding implements ThroughLiquid,
         super(registry, anchor, direction, BuildingType.CHEMICAL_PLANT);
 
         this.powerNode = new PowerNode(this, registry);
-        this.craftModule = new CraftModule(0, 100.0f, List.of(Recipe.ROCKET_FUEL, Recipe.PLASTIC), true, maxPowerPerTick);
+        this.craftModule = new CraftModule(50, 100.0f, List.of(Recipe.ROCKET_FUEL, Recipe.PLASTIC), true, maxPowerPerTick);
 
         throughDelta.add(new Point(+0, +2));
         throughDelta.add(new Point(+1, +2));
