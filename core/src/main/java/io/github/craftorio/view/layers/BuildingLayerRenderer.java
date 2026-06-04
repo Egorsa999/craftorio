@@ -8,9 +8,11 @@ import io.github.craftorio.model.building.DamageableBuilding;
 import io.github.craftorio.model.building.defense.Turret;
 import io.github.craftorio.model.building.defense.LaserTurret;
 import io.github.craftorio.model.building.logistics.Belt;
+import io.github.craftorio.model.building.logistics.LiquidRouter;
 import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.building.logistics.UndergroundBelt;
 import io.github.craftorio.model.core.BuildingRegistry;
+import io.github.craftorio.model.item.LiquidType;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.TextureRenderer;
 import io.github.craftorio.view.VisibleBounds;
@@ -71,6 +73,33 @@ public class BuildingLayerRenderer implements LayerRenderer {
                     }
                 }
 
+                if (current instanceof LiquidRouter lr) {
+                    LiquidType lType = lr.getLiquidType();
+                    if (lType != null && lr.getCurrentAmount() > 0) {
+                        Color liquidColor = toGdxColor(lType.getColor());
+                        float fillRatio = lr.getCurrentAmount() / lr.getCapacity();
+                        float alpha = 0.3f + (0.7f * fillRatio);
+
+                        Color blankTint = new Color(liquidColor.r, liquidColor.g, liquidColor.b, alpha);
+                        blankTint.mul(colorFilter);
+
+                        TextureRenderer.drawBuilding(
+                            batch, textures.get("blank"),
+                            (float)current.anchor.x, (float)current.anchor.y,
+                            current.type.getWidth(), current.type.getHeight(),
+                            current.direction, blankTint, stateTime
+                        );
+                    }
+
+                    TextureRenderer.drawBuilding(
+                        batch, textures.get(current.type),
+                        (float)current.anchor.x, (float)current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        current.direction, colorFilter, stateTime
+                    );
+                    continue;
+                }
+
                 if (current instanceof Turret turret) {
                     TextureRenderer.drawBuilding(
                         batch, textures.get("turret-base"),
@@ -116,5 +145,14 @@ public class BuildingLayerRenderer implements LayerRenderer {
                 );
             }
         }
+    }
+
+    private Color toGdxColor(java.awt.Color color) {
+        return new Color(
+            color.getRed() / 255f,
+            color.getGreen() / 255f,
+            color.getBlue() / 255f,
+            color.getAlpha() / 255f
+        );
     }
 }
