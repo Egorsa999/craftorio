@@ -10,10 +10,15 @@ import java.awt.*;
 public class Core extends DamageableBuilding implements ReceiveItem {
 
     private final Inventory inventory;
+    private Runnable onDestroyCallback;
 
     public Core(BuildingRegistry registry, Point anchor, Direction direction, Inventory inventory) {
         super(registry, anchor, direction, BuildingType.CORE);
         this.inventory = inventory;
+    }
+
+    public void setOnDestroyCallback(Runnable callback) {
+        this.onDestroyCallback = callback;
     }
 
     @Override
@@ -23,9 +28,16 @@ public class Core extends DamageableBuilding implements ReceiveItem {
 
     @Override
     public boolean receiveItem(Building building, ItemType type) {
-        // Достаем инвентарь напрямую из контекста!
         inventory.add(type, 1);
         return true;
+    }
+
+    @Override
+    public void removeSelf() {
+        registry.removeBuilding(this);
+        if (onDestroyCallback != null) {
+            onDestroyCallback.run();
+        }
     }
 
     @Override

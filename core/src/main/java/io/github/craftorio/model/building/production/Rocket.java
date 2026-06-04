@@ -17,6 +17,8 @@ public class Rocket extends DamageableBuilding implements ReceiveItem, ReceiveLi
     private int currentSteel = 0;
     private float currentFuel = 0f;
 
+    private boolean hasLaunched = false;
+
     public Rocket(BuildingRegistry registry, Point anchor, Direction direction) {
         super(registry, anchor, direction, BuildingType.ROCKET);
     }
@@ -27,7 +29,7 @@ public class Rocket extends DamageableBuilding implements ReceiveItem, ReceiveLi
             currentMicrochips++;
             return true;
         }
-        if (type == ItemType.STEEL && currentSteel < REQUIRED_STEEL) {
+        if (type == ItemType.IRON_ORE && currentSteel < REQUIRED_STEEL) {
             currentSteel++;
             return true;
         }
@@ -78,6 +80,11 @@ public class Rocket extends DamageableBuilding implements ReceiveItem, ReceiveLi
             currentMicrochips = 0;
             currentSteel = 0;
             currentFuel = 0f;
+            hasLaunched = true; // Устанавливаем флаг
         }
+    }
+
+    public boolean hasLaunched() {
+        return hasLaunched;
     }
 }

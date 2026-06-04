@@ -182,6 +182,7 @@ public class BuildingLayerRenderer implements LayerRenderer {
                         (float) current.anchor.x, (float) current.anchor.y,
                         current.type.getWidth(), current.type.getHeight(),
                         current.direction, colorFilter, stateTime);
+                    continue;
                 }
 
                 if (current instanceof Accumulator accumulator) {

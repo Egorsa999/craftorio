@@ -6,10 +6,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.craftorio.controller.*;
+import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
 import io.github.craftorio.model.building.liquid.LiquidNetworkManager;
+import io.github.craftorio.model.building.production.Rocket;
 import io.github.craftorio.model.core.*;
 import io.github.craftorio.model.enemy.PathFinder;
 import io.github.craftorio.model.enemy.WaveSpawner;
@@ -56,6 +58,7 @@ public class GameScreen implements Screen {
     private final BuildTool buildTool;
     private final PathFinder pathFinder;
     private final SimulationEngine engine;
+    private final BuildingRegistry buildingRegistry;
 
     // Timing & Threading
     private float accumulator = 0f;
@@ -75,7 +78,7 @@ public class GameScreen implements Screen {
 
         // Model Creation
         WorldMap worldMap = new WorldMap(GameConfig.WORLD_SIZE_WIDTH, GameConfig.WORLD_SIZE_HEIGHT);
-        BuildingRegistry buildingRegistry = new BuildingRegistry();
+        buildingRegistry = new BuildingRegistry();
         Inventory inventory = new Inventory();
         inventory.add(ItemType.COPPER_ORE, 10000);
         inventory.add(ItemType.IRON_ORE, 10000);
@@ -96,6 +99,17 @@ public class GameScreen implements Screen {
         this.buildTool = new BuildTool(buildingManager, factory, inventory);
 
         buildingManager.tryPlaceBuilding(BuildingType.CORE, corePoint, Direction.UP);
+
+
+        Building coreBuilding = buildingRegistry.getBuildingAt(corePoint.x, corePoint.y);
+        if (coreBuilding instanceof io.github.craftorio.model.building.storage.Core core) {
+            core.setOnDestroyCallback(() -> {
+                Gdx.app.postRunnable(() -> {
+                    game.setScreen(new LoseScreen(game));
+                    dispose();
+                });
+            });
+        }
 
         // View creation
         this.playerCamera = new CameraManager(player, worldMap);
@@ -158,6 +172,18 @@ public class GameScreen implements Screen {
         rocketUI.render();
         playerUI.render();
         if (GameConfig.SPAWN_ENEMY) waveUI.render();
+
+        for (Building building : buildingRegistry.getBuildingsForTick()) {
+            if (building instanceof Rocket rocket) {
+                if (rocket.hasLaunched()) {
+                    Gdx.app.postRunnable(() -> {
+                        game.setScreen(new WinScreen(game));
+                        dispose();
+                    });
+                    return;
+                }
+            }
+        }
     }
 
     @Override
