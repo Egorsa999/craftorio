@@ -157,7 +157,7 @@ public class GameScreen implements Screen {
         craftingUI.render();
         rocketUI.render();
         playerUI.render();
-        waveUI.render();
+        if (GameConfig.SPAWN_ENEMY) waveUI.render();
     }
 
     @Override

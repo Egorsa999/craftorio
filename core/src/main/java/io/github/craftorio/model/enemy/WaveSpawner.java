@@ -67,6 +67,8 @@ public class WaveSpawner {
     public void update() {
         activeEnemies.removeIf(Enemy::isDead);
 
+        if (!GameConfig.SPAWN_ENEMY) return;
+
         timeSinceLastWave += GameConfig.TICK_TIME * 100;
 
         float currentTargetInterval = isInfiniteMode ? SUDDEN_DEATH_INTERVAL : NORMAL_WAVE_INTERVAL;

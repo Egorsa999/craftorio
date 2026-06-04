@@ -179,9 +179,11 @@ public class BuildingLayerRenderer implements LayerRenderer {
 
                     TextureRenderer.drawBuilding(
                         batch, textures.get("rocket-" + spriteIndex),
-                        (float)current.anchor.x, (float)current.anchor.y,
+                        (float) current.anchor.x, (float) current.anchor.y,
                         current.type.getWidth(), current.type.getHeight(),
-                        current.direction, colorFilter, stateTime
+                        current.direction, colorFilter, stateTime);
+                }
+
                 if (current instanceof Accumulator accumulator) {
                     TextureRenderer.drawBuilding(
                         batch, textures.get("accumulator-base"),
