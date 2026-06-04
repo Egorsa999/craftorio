@@ -18,7 +18,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.BalanceConfig;
-import io.github.craftorio.model.building.defense.Turret;
 import io.github.craftorio.model.entity.BulletType;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.item.ItemType;
@@ -134,19 +133,28 @@ public class BuildingInfoWindow {
             addResourceInfo(statsTable, ItemType.STONE, itemsPerSecond);
         }
 
-        if (type == BuildingType.COAL_POWER_GENERATOR) {
+        if (type == BuildingType.COAL_POWER_GENERATOR || type == BuildingType.OIL_GENERATOR) {
             Label powerHeader = new Label("Power and Fuel:", costStyle);
             statsTable.add(powerHeader).left().padBottom(5).row();
 
-            Label outputLabel = new Label("- Output: " + String.format(Locale.US, "%.0f W", BalanceConfig.COAL_GENERATOR_POWER_PRODUCTION), costStyle);
+            float outputPower = type == BuildingType.COAL_POWER_GENERATOR
+                ? BalanceConfig.COAL_GENERATOR_POWER_PRODUCTION
+                : BalanceConfig.OIL_GENERATOR_POWER_PRODUCTION;
+
+            Label outputLabel = new Label("- Output: " + String.format(Locale.US, "%.0f W", outputPower), costStyle);
             outputLabel.setColor(Color.YELLOW);
             statsTable.add(outputLabel).left().padBottom(5).row();
 
-            float consumeSeconds = BalanceConfig.COAL_GENERATOR_COAL_FRAME_TIME / 60f;
-            float coalPerSecond = 1f / consumeSeconds;
-
             statsTable.add(new Label("- Consumes:", costStyle)).left().row();
-            addResourceInfo(statsTable, ItemType.COAL, coalPerSecond);
+
+            if (type == BuildingType.COAL_POWER_GENERATOR) {
+                float consumeSeconds = BalanceConfig.COAL_GENERATOR_COAL_FRAME_TIME / 60f;
+                float coalPerSecond = 1f / consumeSeconds;
+                addResourceInfo(statsTable, ItemType.COAL, coalPerSecond);
+            } else {
+                float oilPerSecond = BalanceConfig.OIL_GENERATOR_OIL_PER_SECOND;
+                addLiquidInfo(statsTable, LiquidType.OIL, oilPerSecond);
+            }
         }
 
         if (type == BuildingType.ASSEMBLER || type == BuildingType.FURNACE || type == BuildingType.CHEMICAL_PLANT) {
@@ -166,10 +174,22 @@ public class BuildingInfoWindow {
             statsTable.add(consumeLabel).left().padBottom(5).row();
         }
 
-        if (type == BuildingType.BELT || type == BuildingType.JUNCTION || type == BuildingType.ROUTER) {
+        if (type == BuildingType.BELT || type == BuildingType.JUNCTION || type == BuildingType.ROUTER || type == BuildingType.UNDERGROUND_BELT) {
             statsTable.add(new Label("Logistics:", costStyle)).left().padBottom(5).row();
 
             statsTable.add(new Label("- Speed: " + String.format(Locale.US, "%.2f", BalanceConfig.CONVEYOR_SPEED / BalanceConfig.CONVEYOR_ITEM_SIZE) + " items/s", costStyle)).left().padBottom(5).row();
+        }
+
+        if (type == BuildingType.PIPE || type == BuildingType.LIQUID_JUNCTION || type == BuildingType.LIQUID_ROUTER || type == BuildingType.UNDERGROUND_PIPE) {
+            statsTable.add(new Label("Liquid Logistics:", costStyle)).left().padBottom(5).row();
+
+            if (type == BuildingType.UNDERGROUND_PIPE) {
+                statsTable.add(new Label("- Capacity: " + String.format(Locale.US, "%.1f", BalanceConfig.PIPE_CAPACITY) + " L / block", costStyle)).left().padBottom(5).row();
+            } else {
+                statsTable.add(new Label("- Capacity: " + String.format(Locale.US, "%.1f", BalanceConfig.PIPE_CAPACITY) + " L", costStyle)).left().padBottom(5).row();
+            }
+
+            statsTable.add(new Label("- Max Throughput: " + String.format(Locale.US, "%.1f", BalanceConfig.PIPE_THROUGHPUT * 60f) + " L/s", costStyle)).left().padBottom(5).row();
         }
 
         if (type == BuildingType.PUMP) {
@@ -178,14 +198,9 @@ public class BuildingInfoWindow {
             for (TerrainType terrain : TerrainType.values()) {
                 if (terrain.getLiquidType() == null) continue;
 
-                float unitsPerSecond = BalanceConfig.PUMP_PRODUCTION_RATE * terrain.getRatio();
+                float unitsPerSecond = BalanceConfig.PUMP_PRODUCTION_RATE_PER_SECOND * terrain.getRatio();
                 addLiquidInfo(statsTable, terrain.getLiquidType(), unitsPerSecond);
             }
-        }
-
-        if (type == BuildingType.PIPE) {
-            statsTable.add(new Label("Liquid Storage:", costStyle)).left().padBottom(5).row();
-            statsTable.add(new Label("- Capacity: " + String.format(Locale.US, "%.1f", BalanceConfig.PIPE_CAPACITY) + " L", costStyle)).left().padBottom(5).row();
         }
 
         if (type == BuildingType.TURRET) {

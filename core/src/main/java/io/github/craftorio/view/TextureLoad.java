@@ -53,11 +53,15 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.MINER, load("miner"));
         buildingSprites.put(BuildingType.BELT, load("conveyor"));
         buildingSprites.put(BuildingType.PIPE, load("conduit-top-0"));
+        buildingSprites.put(BuildingType.LIQUID_JUNCTION, load("liquid-junction"));
+        buildingSprites.put(BuildingType.LIQUID_ROUTER, load("liquid-router"));
+        buildingSprites.put(BuildingType.UNDERGROUND_PIPE, load("underground-pipe"));
         buildingSprites.put(BuildingType.HORIZONTAL_MINER, load("horizontal_miner"));
         buildingSprites.put(BuildingType.CORE, load("core"));
         buildingSprites.put(BuildingType.ASSEMBLER, load("assembler"));
         buildingSprites.put(BuildingType.JUNCTION, load("junction"));
         buildingSprites.put(BuildingType.ROUTER, load("router"));
+        buildingSprites.put(BuildingType.UNDERGROUND_BELT, load("underground-belt"));
         buildingSprites.put(BuildingType.TURRET, load("turret"));
         buildingSprites.put(BuildingType.LASER_TURRET, load("laser-turret"));
         buildingSprites.put(BuildingType.WALL, load("defense-wall"));
@@ -66,6 +70,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.POWER_POLE, load("power-node"));
         buildingSprites.put(BuildingType.FURNACE, load("furnace"));
         buildingSprites.put(BuildingType.CHEMICAL_PLANT, load("chemical-plant"));
+        buildingSprites.put(BuildingType.OIL_GENERATOR, load("oil-generator"));
 
         StringSprites.put("player", load("player"));
         StringSprites.put("turret-base", load("turret-base"));

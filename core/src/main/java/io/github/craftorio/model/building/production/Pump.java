@@ -1,6 +1,7 @@
 package io.github.craftorio.model.building.production;
 
 import io.github.craftorio.BalanceConfig;
+import io.github.craftorio.GameConfig;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.DamageableBuilding;
@@ -16,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Pump extends DamageableBuilding implements ThroughLiquid {
-    private static final float PRODUCTION_RATE = BalanceConfig.PUMP_PRODUCTION_RATE;
+    private static final float PRODUCTION_RATE = BalanceConfig.PUMP_PRODUCTION_RATE_PER_SECOND * GameConfig.TICK_TIME;
     private final float PRODUCTION_RATIO;
     private final LiquidType liquidType;
 
