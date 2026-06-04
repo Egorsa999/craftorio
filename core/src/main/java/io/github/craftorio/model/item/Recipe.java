@@ -33,16 +33,58 @@ public enum Recipe {
         120
     ),
     BULLET(
-        Map.of(ItemType.COPPER_ORE, 1, ItemType.COAL, 1),
+        Map.of(ItemType.COPPER_INGOT, 1, ItemType.COAL, 1),
         Collections.emptyMap(),
         Map.of(ItemType.BULLET, 3),
+        Collections.emptyMap(),
+        60
+    ),
+    STEEL_BULLET(
+        Map.of(ItemType.STEEL, 1, ItemType.COAL, 1),
+        Collections.emptyMap(),
+        Map.of(ItemType.STEEL_BULLET, 1),
         Collections.emptyMap(),
         60
     ),
     IRON_INGOT(
         Map.of(ItemType.IRON_ORE, 2),
         Collections.emptyMap(),
+        Map.of(ItemType.IRON_INGOT, 1),
+        Collections.emptyMap(),
+        120
+    ),
+    COPPER_INGOT(
         Map.of(ItemType.COPPER_ORE, 1),
+        Collections.emptyMap(),
+        Map.of(ItemType.COPPER_INGOT, 1),
+        Collections.emptyMap(),
+        120
+    ),
+    STEEL(
+        Map.of(ItemType.IRON_INGOT, 2, ItemType.COAL, 2),
+        Collections.emptyMap(),
+        Map.of(ItemType.STEEL, 1),
+        Collections.emptyMap(),
+        120
+    ),
+    CHIP(
+        Map.of(ItemType.COPPER_INGOT, 5, ItemType.PLASTIC, 5),
+        Collections.emptyMap(),
+        Map.of(ItemType.CHIP, 1),
+        Collections.emptyMap(),
+        120
+    ),
+    GLASS (
+        Map.of(ItemType.STONE, 2),
+        Collections.emptyMap(),
+        Map.of(ItemType.GLASS, 1),
+        Collections.emptyMap(),
+        120
+    ),
+    PLASTIC(
+        Map.of(ItemType.COAL, 2),
+        Map.of(LiquidType.OIL, 3.0f),
+        Map.of(ItemType.PLASTIC, 1),
         Collections.emptyMap(),
         120
     );

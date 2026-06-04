@@ -16,7 +16,7 @@ public enum BulletType {
             return new Bullet(startX, startY, targetX, targetY, getSpeed(), getDamage(), range, getItemType());
         }
     },
-    PIERCING(ItemType.IRON_ORE, BalanceConfig.PIERCING_BULLET_SPEED, BalanceConfig.PIERCING_BULLET_DAMAGE) {
+    PIERCING(ItemType.STEEL_BULLET, BalanceConfig.PIERCING_BULLET_SPEED, BalanceConfig.PIERCING_BULLET_DAMAGE) {
         @Override
         public Bullet create(float startX, float startY, float targetX, float targetY, float range) {
             return new PiercingBullet(startX, startY, targetX, targetY, getSpeed(), getDamage(), range, getItemType());

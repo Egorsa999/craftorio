@@ -28,7 +28,7 @@ public class Furnace extends DamageableBuilding implements ThroughItem, ReceiveI
         super(registry, anchor, direction, BuildingType.FURNACE);
 
         this.powerNode = new PowerNode(this, registry);
-        this.craftModule = new CraftModule(50, 0.0f, List.of(Recipe.IRON_INGOT), true, maxPowerPerTick);
+        this.craftModule = new CraftModule(50, 0.0f, List.of(Recipe.IRON_INGOT, Recipe.COPPER_INGOT, Recipe.STEEL, Recipe.GLASS), true, maxPowerPerTick);
 
         throughDelta.add(new Point(+0, +2));
         throughDelta.add(new Point(+1, +2));
