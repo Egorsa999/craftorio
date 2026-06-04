@@ -81,6 +81,15 @@ public class BuildingPreviewLayerRenderer implements LayerRenderer {
                 continue;
             }
 
+            if (type == BuildingType.TURRET || type == BuildingType.LASER_TURRET) {
+                TextureRenderer.drawBuilding(
+                    batch, textures.get("turret-base"),
+                    (float)pos.x, (float)pos.y,
+                    type.getWidth(), type.getHeight(),
+                    rotation, colorFilter, 0f
+                );
+            }
+
             TextureRenderer.drawBuilding(
                 batch, textures.get(type),
                 (float)pos.x, (float)pos.y,

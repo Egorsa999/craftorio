@@ -1,5 +1,6 @@
 package io.github.craftorio.model.building;
 
+import io.github.craftorio.model.building.defense.LaserTurret;
 import io.github.craftorio.model.building.defense.Turret;
 import io.github.craftorio.model.building.defense.Wall;
 import io.github.craftorio.model.building.logistics.Belt;
@@ -88,6 +89,7 @@ public class BuildingFactory {
             case HORIZONTAL_MINER -> new HorizontalMiner(registry, anchor, rotation);
             case CORE -> new Core(registry, anchor, rotation, inventory);
             case TURRET -> new Turret(registry, anchor, rotation, engine);
+            case LASER_TURRET -> new LaserTurret(registry, anchor, rotation, engine);
             case JUNCTION -> new Junction(registry, anchor, rotation);
             case ROUTER -> new Router(registry, anchor, rotation);
             case ASSEMBLER -> new Assembler(registry, anchor, rotation);

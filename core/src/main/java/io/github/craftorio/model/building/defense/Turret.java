@@ -1,25 +1,34 @@
 package io.github.craftorio.model.building.defense;
 
 import com.badlogic.gdx.math.MathUtils;
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.model.building.*;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.core.SimulationEngine;
 import io.github.craftorio.model.entity.Bullet;
+import io.github.craftorio.model.entity.BulletType;
 import io.github.craftorio.model.item.ItemType;
 import io.github.craftorio.model.enemy.Enemy;
 
 import java.awt.Point;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Turret extends DamageableBuilding implements ReceiveItem {
-    private final ItemType ammoType = ItemType.BULLET;
-    private int ammoAmount = 0;
+
+    private static final List<BulletType> acceptedAmmo = List.of(
+        BulletType.COPPER,
+        BulletType.STANDARD,
+        BulletType.PIERCING
+    );
+
+    private final Queue<BulletType> ammoBuffer = new LinkedList<>();
 
     private float rotationDeg = 0f;
-    private float range = 8f;
-    private int fireCooldown = 15;
+    private float range = BalanceConfig.TURRET_RANGE;
+    private int fireCooldown = BalanceConfig.TURRET_FIRE_COOLDOWN;
     private int currentCooldown = 0;
-    private int damage = 10;
 
     private final SimulationEngine engine;
 
@@ -38,15 +47,15 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
         if (target != null) {
             aimAt(target.getX(), target.getY());
 
-            if (currentCooldown == 0 && ammoAmount > 0) {
+            if (currentCooldown == 0 && !ammoBuffer.isEmpty()) {
                 float myX = getX() + 0.5f;
                 float myY = getY() + 0.5f;
 
-                Bullet bullet = new Bullet(myX, myY, target.getX(), target.getY(), 0.4f, damage);
-                engine.spawnBullet(bullet);
+                BulletType ammoToFire = ammoBuffer.poll();
+                Bullet bullet = ammoToFire.create(myX, myY, target.getX(), target.getY(), range);
 
+                engine.spawnBullet(bullet);
                 currentCooldown = fireCooldown;
-                ammoAmount--;
             }
         }
     }
@@ -70,12 +79,6 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
         return nearest;
     }
 
-    private float getDistanceTo(Enemy e) {
-        float myX = getX() + 0.5f;
-        float myY = getY() + 0.5f;
-        return (float) Math.hypot(e.getX() - myX, e.getY() - myY);
-    }
-
     private void aimAt(float targetX, float targetY) {
         float myX = getX() + 0.5f;
         float myY = getY() + 0.5f;
@@ -90,13 +93,24 @@ public class Turret extends DamageableBuilding implements ReceiveItem {
 
     @Override
     public boolean receiveItem(Building building, ItemType type) {
-        if (type != ammoType) return false;
-        ammoAmount++;
-        return true;
+        BulletType incomingBulletType = BulletType.fromItemType(type);
+
+        if (incomingBulletType != null
+            && acceptedAmmo.contains(incomingBulletType)
+            && ammoBuffer.size() < BalanceConfig.TURRET_AMMO_CAPACITY) {
+
+            ammoBuffer.add(incomingBulletType);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean canReceiveItemFrom(Building building, Point point) {
         return true;
+    }
+
+    static public List<BulletType> getAcceptedAmmo() {
+        return acceptedAmmo;
     }
 }

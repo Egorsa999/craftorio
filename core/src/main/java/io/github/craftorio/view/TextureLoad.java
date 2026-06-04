@@ -59,6 +59,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.JUNCTION, load("junction"));
         buildingSprites.put(BuildingType.ROUTER, load("router"));
         buildingSprites.put(BuildingType.TURRET, load("turret"));
+        buildingSprites.put(BuildingType.LASER_TURRET, load("laser-turret"));
         buildingSprites.put(BuildingType.WALL, load("defense-wall"));
         buildingSprites.put(BuildingType.PUMP, load("pump"));
         buildingSprites.put(BuildingType.COAL_POWER_GENERATOR, load("coal-generator"));
@@ -67,6 +68,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.CHEMICAL_PLANT, load("chemical-plant"));
 
         StringSprites.put("player", load("player"));
+        StringSprites.put("turret-base", load("turret-base"));
         StringSprites.put("blank", load("blank"));
         StringSprites.put("bullet", load("bullet"));
         StringSprites.put("horizontal-miner-icon", load("horizontal-miner-icon"));

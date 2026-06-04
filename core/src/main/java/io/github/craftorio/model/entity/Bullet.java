@@ -2,27 +2,31 @@ package io.github.craftorio.model.entity;
 
 import com.badlogic.gdx.math.MathUtils;
 import io.github.craftorio.model.enemy.Enemy;
+import io.github.craftorio.model.item.ItemType;
 
 import java.util.List;
 
 public class Bullet {
-    private float x, y;
-    private float velocityX;
-    private float velocityY;
-    private float speed;
-    private int damage;
+    protected float x, y;
+    protected float velocityX;
+    protected float velocityY;
+    protected float speed;
+    protected int damage;
 
-    private float rotationDeg;
-    private boolean isDead = false;
+    protected float rotationDeg;
+    protected boolean isDead = false;
 
-    private float distanceTraveled = 0f;
-    private static final float MAX_DISTANCE = 15f;
+    protected float distanceTraveled = 0f;
+    protected float maxDistance;
+    protected ItemType ammoType;
 
-    public Bullet(float startX, float startY, float targetX, float targetY, float speed, int damage) {
+    public Bullet(float startX, float startY, float targetX, float targetY, float speed, int damage, float maxDistance, ItemType ammoType) {
         this.x = startX;
         this.y = startY;
         this.speed = speed;
         this.damage = damage;
+        this.maxDistance = maxDistance;
+        this.ammoType = ammoType;
 
         float dx = targetX - startX;
         float dy = targetY - startY;
@@ -42,10 +46,15 @@ public class Bullet {
         this.y += velocityY;
 
         distanceTraveled += speed;
-        if (distanceTraveled > MAX_DISTANCE) {
+        if (distanceTraveled > maxDistance) {
             isDead = true;
             return;
         }
+
+        checkCollisions(enemies);
+    }
+
+    protected void checkCollisions(List<Enemy> enemies) {
         float hitRadius = 0.5f;
 
         for (Enemy enemy : enemies) {
@@ -67,4 +76,5 @@ public class Bullet {
     public float getY() { return y; }
     public float getRotationDeg() { return rotationDeg; }
     public boolean isDead() { return isDead; }
+    public ItemType getAmmoType() { return ammoType; }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -17,8 +18,12 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.BalanceConfig;
+import io.github.craftorio.model.building.defense.Turret;
+import io.github.craftorio.model.entity.BulletType;
 import io.github.craftorio.model.generator.ResourceType;
 import io.github.craftorio.model.item.ItemType;
+import io.github.craftorio.model.generator.TerrainType;
+import io.github.craftorio.model.item.LiquidType;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.sprite.GameSprite;
 
@@ -84,9 +89,18 @@ public class BuildingInfoWindow {
         Label title = new Label(type.getDisplayName(), titleStyle);
         title.setColor(Color.ORANGE);
 
+        Stack iconStack = new Stack();
+
+        if (type == BuildingType.TURRET || type == BuildingType.LASER_TURRET) {
+            Image baseIcon = new Image(getSafeRegion(textures.get("turret-base")));
+            baseIcon.setScaling(Scaling.fit);
+            iconStack.add(baseIcon);
+        }
+
         TextureRegion iconRegion = getSafeRegion(textures.get(type));
-        Image icon = new Image(iconRegion);
-        icon.setScaling(Scaling.fit);
+        Image topIcon = new Image(iconRegion);
+        topIcon.setScaling(Scaling.fit);
+        iconStack.add(topIcon);
 
         String descText = BuildingInfoProvider.getDescription(type);
         Label descLabel = new Label(descText, costStyle);
@@ -158,11 +172,63 @@ public class BuildingInfoWindow {
             statsTable.add(new Label("- Speed: " + String.format(Locale.US, "%.2f", BalanceConfig.CONVEYOR_SPEED / BalanceConfig.CONVEYOR_ITEM_SIZE) + " items/s", costStyle)).left().padBottom(5).row();
         }
 
+        if (type == BuildingType.PUMP) {
+            statsTable.add(new Label("Pumping Speed:", costStyle)).left().padBottom(5).row();
+
+            for (TerrainType terrain : TerrainType.values()) {
+                if (terrain.getLiquidType() == null) continue;
+
+                float unitsPerSecond = BalanceConfig.PUMP_PRODUCTION_RATE * terrain.getRatio();
+                addLiquidInfo(statsTable, terrain.getLiquidType(), unitsPerSecond);
+            }
+        }
+
+        if (type == BuildingType.PIPE) {
+            statsTable.add(new Label("Liquid Storage:", costStyle)).left().padBottom(5).row();
+            statsTable.add(new Label("- Capacity: " + String.format(Locale.US, "%.1f", BalanceConfig.PIPE_CAPACITY) + " L", costStyle)).left().padBottom(5).row();
+        }
+
+        if (type == BuildingType.TURRET) {
+            statsTable.add(new Label("Combat Stats:", costStyle)).left().padBottom(5).row();
+
+            statsTable.add(new Label("- Range: " + String.format(Locale.US, "%.1f", BalanceConfig.TURRET_RANGE) + " blocks", costStyle)).left().row();
+
+            float shotsPerSecond = 60f / BalanceConfig.TURRET_FIRE_COOLDOWN;
+            statsTable.add(new Label("- Fire Rate: " + String.format(Locale.US, "%.1f", shotsPerSecond) + "/s", costStyle)).left().padBottom(10).row();
+
+            statsTable.add(new Label("Accepted Ammo:", costStyle)).left().padBottom(5).row();
+
+            for (BulletType bullet : BulletType.values()) {
+                Table ammoRow = new Table();
+                TextureRegion dropIcon = getSafeRegion(textures.get(bullet.getItemType()));
+
+                ammoRow.add(new Image(dropIcon)).size(24, 24).padRight(10);
+
+                String ammoText = bullet.getItemType().getName() + " (Dmg: " + bullet.getDamage() + ", Spd: " + String.format(Locale.US, "%.2f", bullet.getSpeed()) + ")";
+                ammoRow.add(new Label(ammoText, costStyle)).left();
+
+                statsTable.add(ammoRow).left().padBottom(5).row();
+            }
+        }
+
+        if (type == BuildingType.LASER_TURRET) {
+            statsTable.add(new Label("Combat Stats:", costStyle)).left().padBottom(5).row();
+
+            statsTable.add(new Label("- Range: " + String.format(Locale.US, "%.1f", BalanceConfig.LASER_TURRET_RANGE) + " blocks", costStyle)).left().row();
+            statsTable.add(new Label("- Damage: " + String.format(Locale.US, "%.0f", BalanceConfig.LASER_TURRET_DAMAGE) + " DPS", costStyle)).left().padBottom(10).row();
+
+            statsTable.add(new Label("Power:", costStyle)).left().padBottom(5).row();
+
+            Label consumeLabel = new Label("- Consumes: " + String.format(Locale.US, "%.0f W", BalanceConfig.LASER_TURRET_POWER_CONSUMPTION) + " (when firing)", costStyle);
+            consumeLabel.setColor(Color.YELLOW);
+            statsTable.add(consumeLabel).left().padBottom(5).row();
+        }
+
         Label closeLabel = new Label("(Click anywhere or press ESC to close)", costStyle);
         closeLabel.setColor(Color.GRAY);
 
         window.add(title).padBottom(15).row();
-        window.add(icon).size(128, 128).padBottom(15).row();
+        window.add(iconStack).size(128, 128).padBottom(15).row();
         window.add(descLabel).width(400).padBottom(20).row();
         window.add(statsTable).left().padBottom(25).row();
         window.add(closeLabel).row();
@@ -187,6 +253,15 @@ public class BuildingInfoWindow {
         resourceRow.add(new Image(dropIcon)).size(24, 24).padRight(10);
         resourceRow.add(new Label(type.getName() + ": " + String.format(Locale.US, "%.2f", itemsPerSecond) + "/s", costStyle)).left();
         statsTable.add(resourceRow).left().padBottom(5).row();
+    }
+
+    private void addLiquidInfo(Table statsTable, LiquidType type, float unitsPerSecond){
+        Table liquidRow = new Table();
+        TextureRegion liquidIcon = getSafeRegion(textures.get(type));
+
+        liquidRow.add(new Image(liquidIcon)).size(24, 24).padRight(10);
+        liquidRow.add(new Label(type.getName() + ": " + String.format(Locale.US, "%.2f", unitsPerSecond) + "/s", costStyle)).left();
+        statsTable.add(liquidRow).left().padBottom(5).row();
     }
 
     private TextureRegion getSafeRegion(GameSprite sprite) {

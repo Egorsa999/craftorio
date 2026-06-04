@@ -1,5 +1,6 @@
 package io.github.craftorio.model.building.logistics;
 
+import io.github.craftorio.BalanceConfig;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.DamageableBuilding;
@@ -13,8 +14,8 @@ import io.github.craftorio.model.item.LiquidType;
 import java.awt.Point;
 
 public class Pipe extends DamageableBuilding implements ThroughLiquid, ReceiveLiquid {
-    private static final float CAPACITY = 10f;
-    private static final float THROUGHPUT = 10f;
+    private static final float CAPACITY = BalanceConfig.PIPE_CAPACITY;
+    private static final float THROUGHPUT = BalanceConfig.PIPE_THROUGHPUT;
 
     private LiquidNetwork network;
     private float currentFill = 0f;

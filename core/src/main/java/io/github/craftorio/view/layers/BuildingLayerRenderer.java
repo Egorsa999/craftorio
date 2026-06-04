@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.DamageableBuilding;
 import io.github.craftorio.model.building.defense.Turret;
+import io.github.craftorio.model.building.defense.LaserTurret;
 import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.core.BuildingRegistry;
@@ -26,7 +27,6 @@ public class BuildingLayerRenderer implements LayerRenderer {
         this.textures = textures;
     }
 
-
     @Override
     public void render(SpriteBatch batch, VisibleBounds bounds, float stateTime) {
         renderedBuildingsThisFrame.clear();
@@ -46,14 +46,19 @@ public class BuildingLayerRenderer implements LayerRenderer {
                         colorFilter = new Color(1.0f, 0.3f, 0.3f, 1.0f);
                     else{
                         float hpPercent = (float) damageableCurrent.getHP() / damageableCurrent.type.getMaxHP();
-
                         float brightness = 0.3f + (0.7f * hpPercent);
-
                         colorFilter = new Color(brightness, brightness, brightness, 1.0f);
                     }
                 }
 
                 if (current instanceof Turret turret) {
+                    TextureRenderer.drawBuilding(
+                        batch, textures.get("turret-base"),
+                        (float)current.anchor.x, (float)current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        current.direction, colorFilter, stateTime
+                    );
+
                     TextureRenderer.draw(
                         batch, textures.get(current.type),
                         (float)current.anchor.x, (float)current.anchor.y,
@@ -63,10 +68,27 @@ public class BuildingLayerRenderer implements LayerRenderer {
                     continue;
                 }
 
+                if (current instanceof LaserTurret laserTurret) {
+                    TextureRenderer.drawBuilding(
+                        batch, textures.get("turret-base"),
+                        (float)current.anchor.x, (float)current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        current.direction, colorFilter, stateTime
+                    );
+
+                    TextureRenderer.draw(
+                        batch, textures.get(current.type),
+                        (float)current.anchor.x, (float)current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        laserTurret.getRotationDeg(), colorFilter, stateTime
+                    );
+                    continue;
+                }
+
                 float width = current.type.getWidth();
                 float height = current.type.getHeight();
                 TextureRenderer.drawBuilding(
-                    batch, textures .get(current.type),
+                    batch, textures.get(current.type),
                     (float)current.anchor.x, (float)current.anchor.y,
                     width, height,
                     current.direction,

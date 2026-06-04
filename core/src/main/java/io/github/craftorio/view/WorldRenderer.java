@@ -36,7 +36,6 @@ public class WorldRenderer {
         this.worldMap = worldMap;
 
         layerRenderers.add(new MapLayerRenderer(worldMap, textures));
-        //layerRenderers.add(new FlowFieldLayerRenderer(waveSpawner, textures));
         layerRenderers.add(new BeltLayerRenderer(registry, textures));
         layerRenderers.add(new PipeLayerRenderer(registry, textures));
         layerRenderers.add(new ItemLayerRenderer(registry, textures));
@@ -47,6 +46,7 @@ public class WorldRenderer {
         layerRenderers.add(new BuildingPreviewLayerRenderer(previewStateSupplier, textures));
 
         shapeLayerRenderers.add(new WireLayerRenderer(registry));
+        shapeLayerRenderers.add(new LaserLayerRenderer(registry));
 
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
     }
