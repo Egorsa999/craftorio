@@ -1,6 +1,8 @@
 package io.github.craftorio.model.core;
 
 import io.github.craftorio.BalanceConfig;
+import io.github.craftorio.model.building.liquid.LiquidNetworkNode;
+import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.building.power.PowerConnectable;
 import io.github.craftorio.model.building.power.PowerNetwork;
 import io.github.craftorio.model.building.power.PowerNode;

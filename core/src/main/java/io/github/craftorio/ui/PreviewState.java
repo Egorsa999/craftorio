@@ -17,5 +17,6 @@ public record PreviewState(
     BuildingType selectedType,
     Direction currentRotation,
     boolean isValidPlace,
-    Building ghostBuilding
+    Building ghostBuilding,
+    boolean isPaused
 ) {}

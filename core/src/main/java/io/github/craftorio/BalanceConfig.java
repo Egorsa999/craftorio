@@ -29,8 +29,8 @@ public final class BalanceConfig {
     public static final float PUMP_PRODUCTION_RATE_PER_SECOND = 5.0f;
 
     // Pipe
-    public static final float PIPE_CAPACITY = 10.0f;
-    public static final float PIPE_THROUGHPUT = 10.0f;
+    public static final float PIPE_CAPACITY = 2.0f;
+    public static final float PIPE_THROUGHPUT = 2.0f;
 
     // Turret Base Settings
     public static final float TURRET_RANGE = 8.0f;
