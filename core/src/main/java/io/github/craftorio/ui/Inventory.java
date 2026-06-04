@@ -38,6 +38,12 @@ public class Inventory {
         }
     }
 
+    public void add(Map<ItemType, Integer> map){
+        for (Map.Entry<ItemType, Integer> entry : map.entrySet()) {
+            items.put(entry.getKey(), items.getOrDefault(entry.getKey(), 0) + entry.getValue());
+        }
+    }
+
     public Map<ItemType, Integer> getItems(){
         return items;
     }

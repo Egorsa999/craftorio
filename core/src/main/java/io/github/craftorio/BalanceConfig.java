@@ -54,4 +54,7 @@ public final class BalanceConfig {
 
     // Router
     public static final int ROUTER_SPEED = 15;
+  
+  
+    public static final int MAX_BUILD_DISTANCE = 35;
 }

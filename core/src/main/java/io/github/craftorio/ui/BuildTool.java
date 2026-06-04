@@ -6,6 +6,7 @@ import io.github.craftorio.model.building.BuildingFactory;
 import io.github.craftorio.model.core.BuildingManager;
 import io.github.craftorio.model.building.BuildingType;
 import io.github.craftorio.model.building.Direction;
+import io.github.craftorio.model.entity.Player;
 import io.github.craftorio.model.item.ItemType;
 
 import java.awt.Point;
@@ -25,6 +26,7 @@ public class BuildTool {
     private final BuildingFactory factory;
     private Building ghostBuilding = null;
     private final Inventory inventory;
+    //private final Player player;
 
     public BuildTool(BuildingManager buildingManager, BuildingFactory factory, Inventory inventory){
         this.buildingManager = buildingManager;
@@ -118,7 +120,10 @@ public class BuildTool {
 
     public void tryErase() {
         for (Point point : getTargetPositions()) {
-            buildingManager.tryRemoveBuilding(point);
+            Building building = buildingManager.getRegistry().getBuildingAt(point.x, point.y);
+            if (buildingManager.tryRemoveBuilding(point)) {
+                inventory.add(building.type.getCost());
+            }
         }
     }
 
@@ -131,8 +136,11 @@ public class BuildTool {
             }
             if (!buildingManager.isValidPlace(selectedType, point, currentRotation)) return false;
         }
+
         return inventory.canTake(map);
     }
+
+
 
     private Array<Point> getTargetPositions() {
         Array<Point> positions = new Array<>();
