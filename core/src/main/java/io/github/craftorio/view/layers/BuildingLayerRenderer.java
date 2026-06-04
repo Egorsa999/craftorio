@@ -12,6 +12,7 @@ import io.github.craftorio.model.building.logistics.LiquidRouter;
 import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.building.logistics.UndergroundBelt;
 import io.github.craftorio.model.building.logistics.UndergroundPipe;
+import io.github.craftorio.model.building.production.Rocket; // <-- Импортируем Rocket
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.item.LiquidType;
 import io.github.craftorio.view.TextureLoad;
@@ -154,6 +155,31 @@ public class BuildingLayerRenderer implements LayerRenderer {
                         (float)current.anchor.x, (float)current.anchor.y,
                         current.type.getWidth(), current.type.getHeight(),
                         laserTurret.getRotationDeg(), colorFilter, stateTime
+                    );
+                    continue;
+                }
+
+                if (current instanceof Rocket rocket) {
+                    float progress = rocket.getTotalProgress();
+                    int spriteIndex;
+
+                    if (progress <= 0f) {
+                        spriteIndex = 0;
+                    } else if (progress >= 1f) {
+                        spriteIndex = 4;
+                    } else if (progress < 0.33f) {
+                        spriteIndex = 1;
+                    } else if (progress < 0.66f) {
+                        spriteIndex = 2;
+                    } else {
+                        spriteIndex = 3;
+                    }
+
+                    TextureRenderer.drawBuilding(
+                        batch, textures.get("rocket-" + spriteIndex),
+                        (float)current.anchor.x, (float)current.anchor.y,
+                        current.type.getWidth(), current.type.getHeight(),
+                        current.direction, colorFilter, stateTime
                     );
                     continue;
                 }
