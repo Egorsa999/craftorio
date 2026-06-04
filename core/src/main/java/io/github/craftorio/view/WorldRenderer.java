@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import io.github.craftorio.controller.WorldInteractionHandler;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.model.core.WorldMap;
 import io.github.craftorio.model.enemy.WaveSpawner;
@@ -29,7 +30,7 @@ public class WorldRenderer {
 
     public WorldRenderer(CameraManager cameraManager, WorldMap worldMap, BuildingRegistry registry,
                          WaveSpawner waveSpawner, TextureLoad textures, Player player, List<Bullet> bullets,
-                         Supplier<PreviewState> previewStateSupplier) {
+                         Supplier<PreviewState> previewStateSupplier, WorldInteractionHandler worldInteractionHandler) {
         this.cameraManager = cameraManager;
         this.batch = new SpriteBatch();
         this.shapeRenderer = new ShapeRenderer();
@@ -39,7 +40,7 @@ public class WorldRenderer {
         layerRenderers.add(new BeltLayerRenderer(registry, textures));
         layerRenderers.add(new PipeLayerRenderer(registry, textures));
         layerRenderers.add(new ItemLayerRenderer(registry, textures));
-        layerRenderers.add(new BuildingLayerRenderer(registry, textures));
+        layerRenderers.add(new BuildingLayerRenderer(registry, textures, worldInteractionHandler));
         layerRenderers.add(new EnemyLayerRenderer(waveSpawner, textures));
         layerRenderers.add(new PlayerLayerRenderer(player, textures));
         layerRenderers.add(new BulletLayerRenderer(bullets, textures));

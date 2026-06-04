@@ -2,12 +2,14 @@ package io.github.craftorio.view.layers;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.craftorio.controller.WorldInteractionHandler;
 import io.github.craftorio.model.building.Building;
 import io.github.craftorio.model.building.DamageableBuilding;
 import io.github.craftorio.model.building.defense.Turret;
 import io.github.craftorio.model.building.defense.LaserTurret;
 import io.github.craftorio.model.building.logistics.Belt;
 import io.github.craftorio.model.building.logistics.Pipe;
+import io.github.craftorio.model.building.logistics.UndergroundBelt;
 import io.github.craftorio.model.core.BuildingRegistry;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.TextureRenderer;
@@ -20,11 +22,13 @@ public class BuildingLayerRenderer implements LayerRenderer {
 
     private final BuildingRegistry registry;
     private final TextureLoad textures;
+    private final WorldInteractionHandler interactionHandler;
     private final Set<Building> renderedBuildingsThisFrame = new HashSet<>();
 
-    public BuildingLayerRenderer(BuildingRegistry registry, TextureLoad textures) {
+    public BuildingLayerRenderer(BuildingRegistry registry, TextureLoad textures, WorldInteractionHandler interactionHandler) {
         this.registry = registry;
         this.textures = textures;
+        this.interactionHandler = interactionHandler;
     }
 
     @Override
@@ -48,6 +52,22 @@ public class BuildingLayerRenderer implements LayerRenderer {
                         float hpPercent = (float) damageableCurrent.getHP() / damageableCurrent.type.getMaxHP();
                         float brightness = 0.3f + (0.7f * hpPercent);
                         colorFilter = new Color(brightness, brightness, brightness, 1.0f);
+                    }
+                }
+
+                if (current instanceof UndergroundBelt ub) {
+                    Building hovered = interactionHandler.getHoveredBuilding();
+
+                    if (hovered instanceof UndergroundBelt hoveredUB) {
+                        UndergroundBelt partner = hoveredUB.getLinkedBelt();
+
+                        if (ub == hoveredUB || ub == partner) {
+                            if (ub.isInputBelt()) {
+                                colorFilter.mul(0.3f, 1.0f, 0.3f, 1.0f);
+                            } else {
+                                colorFilter.mul(1.0f, 1.0f, 0.3f, 1.0f);
+                            }
+                        }
                     }
                 }
 

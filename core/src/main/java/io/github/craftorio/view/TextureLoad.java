@@ -58,6 +58,7 @@ public class TextureLoad {
         buildingSprites.put(BuildingType.ASSEMBLER, load("assembler"));
         buildingSprites.put(BuildingType.JUNCTION, load("junction"));
         buildingSprites.put(BuildingType.ROUTER, load("router"));
+        buildingSprites.put(BuildingType.UNDERGROUND_BELT, load("underground-belt"));
         buildingSprites.put(BuildingType.TURRET, load("turret"));
         buildingSprites.put(BuildingType.LASER_TURRET, load("laser-turret"));
         buildingSprites.put(BuildingType.WALL, load("defense-wall"));

@@ -96,8 +96,6 @@ public class GameScreen implements Screen {
         // View creation
 
         this.playerCamera = new CameraManager(player, worldMap);
-        this.worldRenderer = new WorldRenderer(playerCamera, worldMap, buildingRegistry, waveSpawner, textures,
-            player, engine.getBullets(), buildTool::getPreviewState);
 
         this.inventoryUI = new InventoryUI(textures, inventory);
         this.buildMenuUI = new BuildMenuUI(buildTool, inventory, textures);
@@ -109,6 +107,9 @@ public class GameScreen implements Screen {
         this.buildInputHandler = new BuildInputHandler(buildTool, playerCamera, factory);
         this.worldInteractionHandler = new WorldInteractionHandler(playerCamera, buildingManager, craftingUI);
         this.debugInputHandler = new DebugInputHandler(waveSpawner, playerCamera, buildTool);
+
+        this.worldRenderer = new WorldRenderer(playerCamera, worldMap, buildingRegistry, waveSpawner, textures,
+            player, engine.getBullets(), buildTool::getPreviewState, worldInteractionHandler);
     }
 
     @Override
