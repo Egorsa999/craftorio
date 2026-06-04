@@ -1,6 +1,8 @@
 package io.github.craftorio.model.core;
 
 import io.github.craftorio.BalanceConfig;
+import io.github.craftorio.model.building.liquid.LiquidNetworkNode;
+import io.github.craftorio.model.building.logistics.Pipe;
 import io.github.craftorio.model.building.power.PowerConnectable;
 import io.github.craftorio.model.building.power.PowerNetwork;
 import io.github.craftorio.model.building.power.PowerNode;
@@ -139,7 +141,7 @@ public class BuildingManager {
 
         for (Point p : tiles) {
             TerrainType terrainType = worldMap.getCell(p.x, p.y).getTerrainType();
-            if(terrainType == TerrainType.WALL || terrainType == TerrainType.WATER){
+            if(terrainType == TerrainType.WALL || (terrainType.getLiquidType() != null && type != BuildingType.PIPE && type != BuildingType.UNDERGROUND_PIPE && type != BuildingType.LIQUID_JUNCTION && type != BuildingType.LIQUID_ROUTER)) {
                 return false;
             }
         }

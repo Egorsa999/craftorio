@@ -30,7 +30,7 @@ public class BuildingPreviewLayerRenderer implements LayerRenderer {
     @Override
     public void render(SpriteBatch batch, VisibleBounds bounds, float stateTime) {
         PreviewState state = stateSupplier.get();
-        if (!state.isActive()) return;
+        if (!state.isActive() || state.isPaused()) return;
 
         if (state.isEraseMode()) {
             Point start = state.isDragging() ? state.dragStart() : state.hoverPosition();

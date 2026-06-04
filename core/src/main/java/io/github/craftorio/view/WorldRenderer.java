@@ -52,9 +52,9 @@ public class WorldRenderer {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
     }
 
-    public void render() {
+    public void render(boolean isPaused) {
         cameraManager.getViewport().apply();
-        stateTime += Gdx.graphics.getDeltaTime();
+        stateTime += (isPaused ? 0.0f : Gdx.graphics.getDeltaTime());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         cameraManager.update();
 

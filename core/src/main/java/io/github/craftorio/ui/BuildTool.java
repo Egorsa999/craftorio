@@ -31,6 +31,8 @@ public class BuildTool {
     private Building ghostBuilding = null;
     private final Inventory inventory;
 
+    private boolean isPaused;
+
     public BuildTool(BuildingManager buildingManager, BuildingFactory factory, Inventory inventory){
         this.buildingManager = buildingManager;
         this.factory = factory;
@@ -312,12 +314,16 @@ public class BuildTool {
 
     public PreviewState getPreviewState() {
         if (!isActive()) {
-            return new PreviewState(false, false, false, null, null, null, null, null, false, null);
+            return new PreviewState(false, false, false, null, null, null, null, null, false, null, isPaused);
         }
         return new PreviewState(
             true, eraseMode, isDragging, startDragPosition, hoverPosition,
             getTargetPositions(), selectedType, currentRotation,
-            isValidPlace(), ghostBuilding
+            isValidPlace(), ghostBuilding, isPaused
         );
+    }
+
+    public void setPause(boolean isPaused) {
+        this.isPaused = isPaused;
     }
 }
