@@ -93,6 +93,7 @@ public class BuildingFactory {
             case ASSEMBLER -> new Assembler(registry, anchor, rotation);
             case WALL -> new Wall(registry, anchor, rotation);
             case PIPE -> new Pipe(registry, anchor, rotation);
+            case LIQUID_JUNCTION -> new LiquidJunction(registry, anchor, rotation);
             case PUMP -> new Pump(registry, anchor, rotation, worldMap);
             case COAL_POWER_GENERATOR -> new CoalPowerGenerator(registry, anchor, rotation);
             case POWER_POLE -> new PowerPole(registry, anchor, rotation);
