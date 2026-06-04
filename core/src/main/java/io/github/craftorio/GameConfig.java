@@ -9,4 +9,7 @@ public final class GameConfig {
     public static final float PLAYER_SPEED = 8f;
 
     public static final float TICK_TIME = 1f / 60f; // 60 Tick Per Second
+
+    public static boolean SPAWN_ENEMY;
+    public static boolean INFINITY_RESOURCES;
 }
