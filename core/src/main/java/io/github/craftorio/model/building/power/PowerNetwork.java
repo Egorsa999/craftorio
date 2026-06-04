@@ -103,8 +103,11 @@ public class PowerNetwork {
         }
 
 
+        boolean noDemand = totalDemand <= 0.001f;
 
-        if (totalDemand == 0f && totalBatteryChargeSpace == 0f) {
+
+        boolean noActiveCharging = Math.min(totalSupply, totalBatteryChargeSpace) <= 0.001f;
+        if (noDemand && noActiveCharging) {
             currentStatus = PowerStatus.IDLE;
         } else if (satisfactionRatio >= 0.999f) {
             currentStatus = PowerStatus.POWERED;

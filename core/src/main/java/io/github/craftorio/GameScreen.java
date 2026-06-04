@@ -20,10 +20,7 @@ import io.github.craftorio.ui.Inventory;
 import io.github.craftorio.view.CameraManager;
 import io.github.craftorio.view.TextureLoad;
 import io.github.craftorio.view.WorldRenderer;
-import io.github.craftorio.view.ui.BuildMenuUI;
-import io.github.craftorio.view.ui.CraftingUI;
-import io.github.craftorio.view.ui.InventoryUI;
-import io.github.craftorio.view.ui.PlayerUI;
+import io.github.craftorio.view.ui.*;
 
 import java.awt.Point;
 import java.util.concurrent.ExecutorService;
@@ -41,6 +38,7 @@ public class GameScreen implements Screen {
     private final CraftingUI craftingUI;
     private final TextureAtlas atlas;
     private final PlayerUI playerUI;
+    private final WaveUI waveUI;
 
     // Controllers
     private final PlayerController playerController;
@@ -101,6 +99,7 @@ public class GameScreen implements Screen {
         this.buildMenuUI = new BuildMenuUI(buildTool, inventory, textures);
         this.craftingUI = new CraftingUI(textures);
         this.playerUI = new PlayerUI(player, playerCamera);
+        this.waveUI = new WaveUI(textures, waveSpawner);
 
         // Controller creation
         this.playerController = new PlayerController(player, playerCamera);
@@ -150,6 +149,7 @@ public class GameScreen implements Screen {
         buildMenuUI.render();
         craftingUI.render();
         playerUI.render();
+        waveUI.render();
     }
 
     @Override
@@ -165,11 +165,13 @@ public class GameScreen implements Screen {
         buildMenuUI.resize(gameWidth, gameHeight);
         craftingUI.resize(gameWidth, gameHeight);
         playerUI.resize(gameWidth, gameHeight);
+        waveUI.resize(gameWidth, gameHeight);
 
         inventoryUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
         buildMenuUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
         craftingUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
         playerUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
+        waveUI.getStage().getViewport().setScreenBounds(gameX, gameY, gameWidth, gameHeight);
     }
 
     @Override
@@ -192,6 +194,7 @@ public class GameScreen implements Screen {
         inventoryUI.dispose();
         buildMenuUI.dispose();
         craftingUI.dispose();
+        waveUI.dispose();
         atlas.dispose();
     }
 }
