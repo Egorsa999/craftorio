@@ -142,9 +142,9 @@ public class BuildingManager {
 
         for (Point p : tiles) {
             Cell cell = worldMap.getCell(p.x, p.y);
-            if (cell == null)return false;
+            if (cell == null) return false;
             TerrainType terrainType = cell.getTerrainType();
-            if(terrainType == TerrainType.WALL || terrainType == TerrainType.WATER){
+            if (terrainType == TerrainType.WALL || (terrainType.getLiquidType() != null && type != BuildingType.PIPE && type != BuildingType.UNDERGROUND_PIPE && type != BuildingType.LIQUID_JUNCTION && type != BuildingType.LIQUID_ROUTER)) {
                 return false;
             }
         }
