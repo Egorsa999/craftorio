@@ -29,7 +29,7 @@ public class Rocket extends DamageableBuilding implements ReceiveItem, ReceiveLi
             currentMicrochips++;
             return true;
         }
-        if (type == ItemType.IRON_ORE && currentSteel < REQUIRED_STEEL) {
+        if (type == ItemType.STEEL && currentSteel < REQUIRED_STEEL) {
             currentSteel++;
             return true;
         }
