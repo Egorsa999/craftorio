@@ -65,28 +65,28 @@ public enum Recipe {
         Collections.emptyMap(),
         Map.of(ItemType.STEEL, 1),
         Collections.emptyMap(),
-        120
+        180
     ),
     CHIP(
         Map.of(ItemType.COPPER_INGOT, 5, ItemType.PLASTIC, 5),
         Collections.emptyMap(),
         Map.of(ItemType.CHIP, 1),
         Collections.emptyMap(),
-        120
+        360
     ),
     GLASS (
         Map.of(ItemType.STONE, 2),
         Collections.emptyMap(),
         Map.of(ItemType.GLASS, 1),
         Collections.emptyMap(),
-        120
+        60
     ),
     PLASTIC(
         Map.of(ItemType.COAL, 2),
         Map.of(LiquidType.OIL, 3.0f),
         Map.of(ItemType.PLASTIC, 1),
         Collections.emptyMap(),
-        120
+        180
     );
 
     private final Map<ItemType, Integer> inputItems;
