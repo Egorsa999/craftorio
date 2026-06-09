@@ -1,5 +1,6 @@
 package io.github.craftorio.model.building;
 
+import io.github.craftorio.model.building.power.PowerConnectable;
 import io.github.craftorio.model.core.BuildingRegistry;
 
 import java.awt.Point;
@@ -63,7 +64,11 @@ public abstract class Building {
     }
 
     protected void removeSelf() {
+
         registry.removeBuilding(this);
+        if (this instanceof PowerConnectable cBuilding){
+            cBuilding.getPowerNode().disconnect();
+        }
     }
 
     public List<Point> getOccupiedTiles() { return occupiedTiles; }

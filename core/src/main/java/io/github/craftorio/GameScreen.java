@@ -72,7 +72,7 @@ public class GameScreen implements Screen {
     private Future<?> pathfinderTask;
 
     private boolean isPaused = false;
-  
+
     private Music ostMusic, attackMusic;
 
     public void togglePause() {

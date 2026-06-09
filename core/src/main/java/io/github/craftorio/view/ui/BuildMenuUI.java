@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -153,6 +154,8 @@ public class BuildMenuUI implements UIRenderer {
         infoIconStack.add(infoTopIcon);
 
         Table textTable = new Table();
+        textTable.top().left();
+
         titleLabel = new Label("", titleStyle);
         titleLabel.setEllipsis(true);
 
@@ -173,12 +176,12 @@ public class BuildMenuUI implements UIRenderer {
         costTable = new Table();
         costTable.top().left();
 
-        textTable.add(titleLabel).expandX().fillX().left().row();
+        textTable.add(titleLabel).expandX().fillX().left().padTop(10).row();
         textTable.add(helpButton).right().padRight(10).row();
-        textTable.add(costTable).left().top().expandY();
+        textTable.add(costTable).left().top().padTop(4).padBottom(-10);
 
         infoTable.add(infoIconStack).size(72, 72).padRight(16).top();
-        infoTable.add(textTable).expandX().fillX().height(90).left().top();
+        infoTable.add(textTable).expandX().fillX().left().top();
 
         infoCell = windowTable.add(infoTable).left().fillX();
         infoTable.setVisible(false);
@@ -245,7 +248,6 @@ public class BuildMenuUI implements UIRenderer {
         stage.addActor(rootTable);
     }
 
-
     private void updateInfoPanel(BuildingType type) {
         if (type == null) {
             infoTable.setVisible(false);
@@ -255,7 +257,7 @@ public class BuildMenuUI implements UIRenderer {
         }
 
         infoTable.setVisible(true);
-        infoCell.height(90).padBottom(15);
+        infoCell.height(Value.prefHeight).padBottom(15);
 
         titleLabel.setText(type.getDisplayName());
 

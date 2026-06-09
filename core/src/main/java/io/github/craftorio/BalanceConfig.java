@@ -4,8 +4,8 @@ public final class BalanceConfig {
     private BalanceConfig() {}
 
     // Miners
-    public static final float MINER_TICKS = 500f;
-    public static final float HORIZONTAL_MINER_TICKS = 240f;
+    public static final float MINER_TICKS = 350f;
+    public static final float HORIZONTAL_MINER_TICKS = 120f;
 
     // Power Consumer
     public static final float FURNACE_POWER_CONSUMPTION = 50f;
@@ -53,7 +53,7 @@ public final class BalanceConfig {
     // Laser Turret
     public static final float LASER_TURRET_RANGE = 12.0f;
     public static final float LASER_TURRET_DAMAGE = 120f;
-    public static final float LASER_TURRET_POWER_CONSUMPTION = 400f;
+    public static final float LASER_TURRET_POWER_CONSUMPTION = 500f;
 
     // Conveyor
     public static final float CONVEYOR_SPEED = 1f;
