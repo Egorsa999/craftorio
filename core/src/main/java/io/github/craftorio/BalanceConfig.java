@@ -60,7 +60,7 @@ public final class BalanceConfig {
     public static final float CONVEYOR_ITEM_SIZE = 1 / 3f;
 
     // Router
-    public static final int ROUTER_SPEED = 15;
+    public static final int ROUTER_SPEED = 0;
 
     public static final int MAX_BUILD_DISTANCE = 35;
 }
