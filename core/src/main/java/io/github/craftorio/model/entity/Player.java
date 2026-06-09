@@ -31,7 +31,7 @@ public class Player {
 
     public static final float speed = GameConfig.PLAYER_SPEED;
 
-    private static final float HITBOX_RADIUS = 0.35f;
+    private static final float HITBOX_RADIUS = 0.2f;
 
 
     public Point getLocation() {

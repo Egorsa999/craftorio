@@ -40,7 +40,7 @@ public enum Recipe {
         60
     ),
     STEEL_BULLET(
-        Map.of(ItemType.STEEL, 1, ItemType.COAL, 1),
+        Map.of(ItemType.STEEL, 1, ItemType.BULLET, 1),
         Collections.emptyMap(),
         Map.of(ItemType.STEEL_BULLET, 1),
         Collections.emptyMap(),
