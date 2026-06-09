@@ -17,8 +17,6 @@ public class PiercingBullet extends Bullet {
 
     @Override
     protected void checkCollisions(List<Enemy> enemies) {
-        float hitRadius = 0.5f;
-
         for (Enemy enemy : enemies) {
             if (enemy.isDead() || damagedEnemies.contains(enemy)) continue;
 
@@ -26,7 +24,7 @@ public class PiercingBullet extends Bullet {
             float dy = enemy.getY() - this.y;
             float dist = (float) Math.hypot(dx, dy);
 
-            if (dist < hitRadius) {
+            if (dist < enemy.getHitRadius()) {
                 enemy.receiveDamage(damage);
                 damagedEnemies.add(enemy);
             }

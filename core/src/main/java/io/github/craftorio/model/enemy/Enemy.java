@@ -282,4 +282,8 @@ public class Enemy {
     public boolean isDead() {
         return this.hp <= 0;
     }
+
+    public float getHitRadius() {
+        return type.getHitbox();
+    }
 }
