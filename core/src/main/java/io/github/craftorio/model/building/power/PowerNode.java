@@ -29,15 +29,15 @@ public class PowerNode {
         PowerNetwork.merge(this.network, other.network);
     }
 
-    public void connect(){
+    public void connect() {
         double radius = 5.0;
         double radiusSq = radius * radius;
 
         boolean isNewPole = owner instanceof PowerPole;
 
         PowerConnectable ownerConnectable = (PowerConnectable) owner;
-        Map<PowerNetwork, PowerConnectable> closestPerNetwork = new HashMap<>();
-        Map<PowerNetwork, Double> minDistancesSq = new HashMap<>();
+        Map<PowerNetwork, PowerConnectable> bestPerNetwork = new HashMap<>();
+        Map<PowerNetwork, Double> bestDistancesSq = new HashMap<>();
 
         for (Building building : registry.getBuildingsForTick()) {
             if (building == owner) continue;
@@ -55,19 +55,35 @@ public class PowerNode {
                 if (distSq <= radiusSq) {
                     PowerNetwork targetNetwork = targetConnectable.getPowerNode().getNetwork();
 
-                    if (targetNetwork == null) continue;
+                    if (targetNetwork == null || targetNetwork == this.network) continue;
 
-                    if(targetNetwork == this.network)continue;
+                    boolean isTargetPole = targetConnectable instanceof PowerPole;
+                    boolean hasExisting = bestPerNetwork.containsKey(targetNetwork);
+                    boolean shouldReplace = false;
 
-                    if (!minDistancesSq.containsKey(targetNetwork) || distSq < minDistancesSq.get(targetNetwork)) {
-                        minDistancesSq.put(targetNetwork, distSq);
-                        closestPerNetwork.put(targetNetwork, targetConnectable);
+                    if (!hasExisting) {
+                        shouldReplace = true;
+                    } else {
+                        boolean isExistingPole = bestPerNetwork.get(targetNetwork) instanceof PowerPole;
+
+                        if (isTargetPole && !isExistingPole) {
+                            shouldReplace = true;
+                        } else if (isTargetPole == isExistingPole) {
+                            if (distSq < bestDistancesSq.get(targetNetwork)) {
+                                shouldReplace = true;
+                            }
+                        }
+                    }
+
+                    if (shouldReplace) {
+                        bestDistancesSq.put(targetNetwork, distSq);
+                        bestPerNetwork.put(targetNetwork, targetConnectable);
                     }
                 }
             }
         }
 
-        for (PowerConnectable target : closestPerNetwork.values()) {
+        for (PowerConnectable target : bestPerNetwork.values()) {
             ownerConnectable.getPowerNode().connectTo(target.getPowerNode());
         }
     }
@@ -123,8 +139,7 @@ public class PowerNode {
         }
     }
 
-
-    public Building getOwner(){
+    public Building getOwner() {
         return owner;
     }
 
