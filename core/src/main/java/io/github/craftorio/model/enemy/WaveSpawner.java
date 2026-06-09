@@ -27,8 +27,8 @@ public class WaveSpawner {
     private int currentWaveIndex = 0;
     private float timeSinceLastWave = 0;
 
-    private final float NORMAL_WAVE_INTERVAL = 300f;
-    private final float SUDDEN_DEATH_INTERVAL = 10f;
+    private final float NORMAL_WAVE_INTERVAL = 90f;
+    private final float SUDDEN_DEATH_INTERVAL = 5f;
 
     private boolean isInfiniteMode = false;
     private int infiniteWaveCount = 0;
@@ -44,26 +44,26 @@ public class WaveSpawner {
     }
 
     private void initPredefinedWaves() {
-        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.EAST)
-            .addEnemies(EnemyType.BASIC_ENEMY, 10).build());
-
-        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.WEST)
-            .addEnemies(EnemyType.BASIC_ENEMY, 20)
-            .addEnemies(EnemyType.FAT_ENEMY, 4).build());
-
-        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.NORTH)
-            .addEnemies(EnemyType.BASIC_ENEMY, 30)
-            .addEnemies(EnemyType.FAST_ENEMY, 15).build());
-
-        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.SOUTH)
-            .addEnemies(EnemyType.BASIC_ENEMY, 45)
-            .addEnemies(EnemyType.FAT_ENEMY, 15)
-            .addEnemies(EnemyType.FAST_ENEMY, 20).build());
-
-        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.EAST)
-            .addEnemies(EnemyType.BASIC_ENEMY, 150)
-            .addEnemies(EnemyType.FAT_ENEMY, 30)
-            .addEnemies(EnemyType.FAST_ENEMY, 70).build());
+//        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.EAST)
+//            .addEnemies(EnemyType.BASIC_ENEMY, 10).build());
+//
+//        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.WEST)
+//            .addEnemies(EnemyType.BASIC_ENEMY, 20)
+//            .addEnemies(EnemyType.FAT_ENEMY, 4).build());
+//
+//        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.NORTH)
+//            .addEnemies(EnemyType.BASIC_ENEMY, 30)
+//            .addEnemies(EnemyType.FAST_ENEMY, 15).build());
+//
+//        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.SOUTH)
+//            .addEnemies(EnemyType.BASIC_ENEMY, 45)
+//            .addEnemies(EnemyType.FAT_ENEMY, 15)
+//            .addEnemies(EnemyType.FAST_ENEMY, 20).build());
+//
+//        this.predefinedWaves.add(new Wave.Builder(SpawnDirection.EAST)
+//            .addEnemies(EnemyType.BASIC_ENEMY, 150)
+//            .addEnemies(EnemyType.FAT_ENEMY, 30)
+//            .addEnemies(EnemyType.FAST_ENEMY, 70).build());
     }
 
     public void update() {

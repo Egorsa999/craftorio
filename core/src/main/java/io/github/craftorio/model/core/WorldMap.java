@@ -63,28 +63,30 @@ public class WorldMap {
     }
 
     public Point findSpawnPoint(){
-        int counter = 0;
-        while (true){
-            int x = MathUtils.random(width / 2 - 200, width / 2 + 200);
-            int y = MathUtils.random(height / 2 - 200, height / 2 + 200);
-            boolean isGood = true;
-            for (int dx = 0; dx <= 7; dx++){
-                for (int dy = 0; dy <= 7; dy++){
-                    Cell current = getCell(x + dx, y + dy);
-                    isGood &= current.getTerrainType().getWalkability();
-                    isGood &= current.getResourceType() == ResourceType.NONE;
-                }
-            }
-            if (counter++ == 10000)break;
-            if (isGood){
-                CoreX = x + 3;
-                CoreY = y + 1;
-                return new Point(x + 3, y + 1);
-            }
-
-            }
-        System.err.println("Can't find spawnPoint!");
-        return new Point(10, 10);
+//        int counter = 0;
+//        while (true){
+//            int x = MathUtils.random(width / 2 - 200, width / 2 + 200);
+//            int y = MathUtils.random(height / 2 - 200, height / 2 + 200);
+//            boolean isGood = true;
+//            for (int dx = 0; dx <= 7; dx++){
+//                for (int dy = 0; dy <= 7; dy++){
+//                    Cell current = getCell(x + dx, y + dy);
+//                    isGood &= current.getTerrainType().getWalkability();
+//                    isGood &= current.getResourceType() == ResourceType.NONE;
+//                }
+//            }
+//            if (counter++ == 10000)break;
+//            if (isGood){
+//                CoreX = x + 3;
+//                CoreY = y + 1;
+//                return new Point(x + 3, y + 1);
+//            }
+//
+//            }
+//        System.err.println("Can't find spawnPoint!");
+        CoreX = 500 + 3;
+        CoreY = 500 + 1;
+        return new Point(500, 500);
     }
 
     public int getCoreX() {

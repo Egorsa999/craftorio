@@ -32,7 +32,7 @@ public class MapGenerator {
         int width = worldMap.getWidth();
         int height = worldMap.getHeight();
 
-        int baseSeed = MathUtils.random(99999);
+        int baseSeed = 6767;
 
         FastNoiseLite terrainNoise = new FastNoiseLite(baseSeed);
         terrainNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
