@@ -78,7 +78,7 @@ public class WaveSpawner {
                     timeSinceLastWave = 0;
                 }
             } else {
-                timeSinceLastWave += GameConfig.TICK_TIME;
+                timeSinceLastWave += GameConfig.TICK_TIME * 100;
 
                 if (timeSinceLastWave >= NORMAL_WAVE_INTERVAL) {
                     if (currentWaveIndex < predefinedWaves.size()) {
@@ -94,7 +94,7 @@ public class WaveSpawner {
                 }
             }
         } else {
-            timeSinceLastWave += GameConfig.TICK_TIME;
+            timeSinceLastWave += GameConfig.TICK_TIME * 100;
 
             if (timeSinceLastWave >= SUDDEN_DEATH_INTERVAL) {
                 spawnInfiniteWave();
