@@ -100,8 +100,9 @@ public class GameScreen implements Screen {
         WorldMap worldMap = new WorldMap(GameConfig.WORLD_SIZE_WIDTH, GameConfig.WORLD_SIZE_HEIGHT);
         buildingRegistry = new BuildingRegistry();
         Inventory inventory = new Inventory();
-        inventory.add(ItemType.COPPER_ORE, 10000);
-        inventory.add(ItemType.IRON_ORE, 10000);
+        inventory.add(ItemType.COPPER_ORE, 100);
+        inventory.add(ItemType.IRON_ORE, 100);
+        inventory.add(ItemType.STONE, 100);
 
         Point spawnPoint = worldMap.findSpawnPoint();
         Player player = new Player(worldMap, buildingRegistry, spawnPoint, inventory);
