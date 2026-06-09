@@ -30,7 +30,7 @@ public enum Recipe {
         Map.of(LiquidType.WATER, 10.0f, LiquidType.OIL, 5.0f),
         Collections.emptyMap(),
         Map.of(LiquidType.ROCKET_FUEL, 1.0f),
-        120
+        180
     ),
     BULLET(
         Map.of(ItemType.COPPER_INGOT, 1, ItemType.COAL, 1),
